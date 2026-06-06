@@ -10,6 +10,8 @@ class UserModel extends UserEntity {
     super.address,
     super.createdAt,
     super.role = null,
+    super.identityNumber,
+    super.cityId,
     super.vehicleType,
     super.vehicleModel,
     super.iban,
@@ -35,6 +37,10 @@ class UserModel extends UserEntity {
           : null,
       role: (json['role'] as String? ?? json['user_type'] as String? ?? 'user')
           .toLowerCase(),
+      identityNumber: json['identity_number'] as String?,
+      cityId: json['city_id'] is int
+          ? json['city_id'] as int
+          : int.tryParse(json['city_id']?.toString() ?? ''),
       vehicleType: json['vehicle_type'] as String?,
       vehicleModel: json['vehicle_model'] as String?,
       iban: json['iban'] as String?,
@@ -57,6 +63,8 @@ class UserModel extends UserEntity {
       address: address,
       createdAt: createdAt,
       role: role,
+      identityNumber: identityNumber,
+      cityId: cityId,
       vehicleType: vehicleType,
       vehicleModel: vehicleModel,
       iban: iban,
@@ -79,6 +87,8 @@ class UserModel extends UserEntity {
       'address': address,
       'created_at': createdAt?.toIso8601String(),
       'role': role,
+      'identity_number': identityNumber,
+      'city_id': cityId,
       'vehicle_type': vehicleType,
       'vehicle_model': vehicleModel,
       'iban': iban,

@@ -13,6 +13,8 @@ class UserEntity extends Equatable {
   bool get isDriver => role?.toLowerCase() == 'driver';
 
   // Vehicle data fields
+  final String? identityNumber;
+  final int? cityId;
   final String? vehicleType;
   final String? vehicleModel;
   final String? iban;
@@ -32,6 +34,8 @@ class UserEntity extends Equatable {
     this.address,
     this.createdAt,
     this.role = 'user',
+    this.identityNumber,
+    this.cityId,
     this.vehicleType,
     this.vehicleModel,
     this.iban,
@@ -53,6 +57,8 @@ class UserEntity extends Equatable {
     address,
     createdAt,
     role,
+    identityNumber,
+    cityId,
     vehicleType,
     vehicleModel,
     iban,

@@ -18,6 +18,28 @@ class AccountRepositoryImpl implements AccountRepository {
   Future<Either<Failure, UserEntity>> getUserProfile() async {
     try {
       final user = await remoteDataSource.getUserProfile();
+      final cachedImage = await dataSource.getProfileImage();
+      if (cachedImage != null && cachedImage.isNotEmpty) {
+        return Right(UserEntity(
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          profileImage: cachedImage,
+          address: user.address,
+          createdAt: user.createdAt,
+          role: user.role,
+          vehicleType: user.vehicleType,
+          vehicleModel: user.vehicleModel,
+          iban: user.iban,
+          bankName: user.bankName,
+          driverLicenseImage: user.driverLicenseImage,
+          vehicleRegistrationImage: user.vehicleRegistrationImage,
+          vehicleInsuranceImage: user.vehicleInsuranceImage,
+          vehicleFrontImage: user.vehicleFrontImage,
+          vehicleRearImage: user.vehicleRearImage,
+        ));
+      }
       return Right(user);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));

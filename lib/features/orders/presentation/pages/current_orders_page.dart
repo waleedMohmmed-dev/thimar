@@ -20,12 +20,6 @@ class _CurrentOrdersPageState extends State<CurrentOrdersPage>
   bool get wantKeepAlive => true;
 
   @override
-  void initState() {
-    super.initState();
-    context.read<OrdersBloc>().add(const CurrentOrdersRequested());
-  }
-
-  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();

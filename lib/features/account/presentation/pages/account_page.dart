@@ -1,7 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:thimar/core/extensions/context_extensions.dart';
 import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/features/account/presentation/bloc/account_bloc.dart';
 import 'package:thimar/features/account/presentation/bloc/account_event.dart';
 import 'package:thimar/features/account/presentation/bloc/account_state.dart';
@@ -12,10 +11,7 @@ class AccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<AccountBloc>()..add(const AccountStarted()),
-      child: const _AccountView(),
-    );
+    return const _AccountView();
   }
 }
 

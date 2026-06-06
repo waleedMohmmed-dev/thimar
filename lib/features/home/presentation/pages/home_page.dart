@@ -16,6 +16,11 @@ import 'package:thimar/features/home/presentation/widgets/promo_banner_section.d
 import 'package:thimar/features/home/presentation/widgets/search_field.dart'
     as home_search;
 import 'package:thimar/features/orders/presentation/bloc/orders_bloc.dart';
+import 'package:thimar/features/orders/presentation/bloc/orders_event.dart';
+import 'package:thimar/features/account/presentation/bloc/account_bloc.dart';
+import 'package:thimar/features/account/presentation/bloc/account_event.dart';
+import 'package:thimar/features/notifications/presentation/bloc/notifications_bloc.dart';
+import 'package:thimar/features/notifications/presentation/bloc/notifications_event.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -38,6 +43,8 @@ class HomePage extends StatelessWidget {
             create: (_) =>
                 sl<HomeBloc>(param1: role)..add(const ProductsFetched()),
           ),
+        BlocProvider(create: (_) => sl<AccountBloc>()),
+        BlocProvider(create: (_) => sl<NotificationsBloc>()),
       ],
       child: _HomeShell(role: role),
     );
@@ -55,6 +62,34 @@ class _HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<_HomeShell> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadTabData(0));
+  }
+
+  void _onTabTapped(int index) {
+    setState(() => _currentIndex = index);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadTabData(index));
+  }
+
+  void _loadTabData(int index) {
+    switch (index) {
+      case 0:
+        if (widget.role.isDriver) {
+          context.read<OrdersBloc>().add(const PendingOrdersRequested());
+        }
+      case 1:
+        if (widget.role.isDriver) {
+          context.read<OrdersBloc>().add(const CurrentOrdersRequested());
+        }
+      case 2:
+        context.read<NotificationsBloc>().add(const NotificationsFetched());
+      case 3:
+        context.read<AccountBloc>().add(const AccountStarted());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +110,7 @@ class _HomeShellState extends State<_HomeShell> {
       ),
       bottomNavigationBar: AppNavBar(
         currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap: _onTabTapped,
         items: const [
           AppNavBarItem(labelKey: 'nav_home', icon: Icons.home_outlined),
           AppNavBarItem(

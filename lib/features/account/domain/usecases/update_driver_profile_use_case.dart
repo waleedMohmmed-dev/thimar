@@ -16,6 +16,7 @@ class DriverProfileParams extends Equatable {
   final String fullname;
   final String phone;
   final String identityNumber;
+  final String password;
   final String iban;
   final String carType;
   final String carModel;
@@ -31,6 +32,7 @@ class DriverProfileParams extends Equatable {
     required this.fullname,
     required this.phone,
     required this.identityNumber,
+    this.password = '',
     required this.iban,
     required this.carType,
     required this.carModel,
@@ -48,6 +50,7 @@ class DriverProfileParams extends Equatable {
         fullname,
         phone,
         identityNumber,
+        password,
         iban,
         carType,
         carModel,

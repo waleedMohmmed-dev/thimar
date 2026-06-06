@@ -3,6 +3,7 @@ import 'package:thimar/core/cache/cache_keys.dart';
 import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/networking/api_service.dart';
+import 'package:thimar/core/networking/driver_endpoints.dart';
 import 'package:thimar/core/networking/endpoints.dart';
 import 'package:thimar/features/account/data/models/user_model.dart';
 import 'package:thimar/features/account/domain/usecases/update_driver_profile_use_case.dart';
@@ -25,9 +26,9 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
       boxName: CacheConstants.userBox,
     );
     if (userType == 'driver') {
-      return Endpoints.driverProfile;
+      return DriverEndpoints.profile;
     }
-    return Endpoints.driverProfile;
+    return DriverEndpoints.profile;
   }
 
   @override
@@ -47,6 +48,10 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
       'car_model': params.carModel,
       'city_id': params.cityId.toString(),
     };
+
+    if (params.password.isNotEmpty) {
+      formDataMap['password'] = params.password;
+    }
 
     if (params.imagePath != null) {
       formDataMap['image'] = await MultipartFile.fromFile(

@@ -1,7 +1,5 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/features/notifications/presentation/bloc/notifications_bloc.dart';
-import 'package:thimar/features/notifications/presentation/bloc/notifications_event.dart';
 import 'package:thimar/features/notifications/presentation/bloc/notifications_state.dart';
 import 'package:thimar/features/notifications/presentation/widgets/notifications_widgets.dart';
 
@@ -10,10 +8,7 @@ class NotificationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<NotificationsBloc>(),
-      child: const _NotificationsView(),
-    );
+    return const _NotificationsView();
   }
 }
 
@@ -25,12 +20,6 @@ class _NotificationsView extends StatefulWidget {
 }
 
 class _NotificationsViewState extends State<_NotificationsView> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<NotificationsBloc>().add(const NotificationsFetched());
-  }
-
   @override
   Widget build(BuildContext context) {
     final cs = context.colorScheme;

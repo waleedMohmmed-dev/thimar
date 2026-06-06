@@ -1,4 +1,5 @@
 import 'package:thimar/core/networking/api_service.dart';
+import 'package:thimar/core/networking/driver_endpoints.dart';
 import 'package:thimar/core/networking/endpoints.dart';
 import 'package:thimar/features/orders/data/models/order_model.dart';
 import 'package:thimar/features/orders/data/models/order_details_model.dart';
@@ -26,14 +27,14 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
 
   @override
   Future<List<OrderModel>> getPendingOrders() async {
-    final response = await _apiService.get(Endpoints.driverPendingOrders);
+    final response = await _apiService.get(DriverEndpoints.pendingOrders);
     final List data = response['data'] ?? [];
     return data.map((json) => OrderModel.fromJson(json)).toList();
   }
 
   @override
   Future<List<OrderModel>> getCurrentOrders() async {
-    final response = await _apiService.get(Endpoints.driverCurrentOrders);
+    final response = await _apiService.get(DriverEndpoints.currentOrders);
     final List data = response['data'] ?? [];
     return data.map((json) => OrderModel.fromJson(json)).toList();
   }
@@ -43,7 +44,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
     int page = 1,
   }) async {
     final response = await _apiService.get(
-      Endpoints.driverFinishedOrders,
+      DriverEndpoints.finishedOrders,
       params: {'page': page},
     );
     final List data = response['data'] ?? [];
@@ -60,7 +61,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
     String keyword,
   ) async {
     final response = await _apiService.get(
-      Endpoints.driverSearchCurrent,
+      DriverEndpoints.searchCurrent,
       params: {'keyword': keyword},
     );
     final List data = response['data'] ?? [];
@@ -72,7 +73,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
     String keyword,
   ) async {
     final response = await _apiService.get(
-      Endpoints.driverSearch,
+      DriverEndpoints.search,
       params: {'keyword': keyword},
     );
     final List data = response['data'] ?? [];
@@ -82,7 +83,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   @override
   Future<String> refuseOrder(String orderId) async {
     final response = await _apiService.post(
-      '${Endpoints.driverRefuseOrder}/$orderId',
+      '${DriverEndpoints.refuseOrder}/$orderId',
     );
     return response['message']?.toString() ?? '';
   }
@@ -114,7 +115,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   @override
   Future<String> acceptOrder(String orderId) async {
     final response = await _apiService.post(
-      '${Endpoints.driverAcceptOrder}/$orderId',
+      '${DriverEndpoints.acceptOrder}/$orderId',
     );
     return response['message']?.toString() ?? '';
   }
@@ -122,7 +123,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   @override
   Future<String> startDeliveringOrder(String orderId) async {
     final response = await _apiService.post(
-      '${Endpoints.driverStartDelivering}/$orderId',
+      '${DriverEndpoints.startDelivering}/$orderId',
     );
     return response['message']?.toString() ?? '';
   }
@@ -130,7 +131,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   @override
   Future<String> finishOrder(String orderId, double clientPaidAmount) async {
     final response = await _apiService.post(
-      '${Endpoints.driverFinishOrder}/$orderId',
+      '${DriverEndpoints.finishOrder}/$orderId',
       body: {'client_paid_amount': clientPaidAmount},
     );
     return response['message']?.toString() ?? '';

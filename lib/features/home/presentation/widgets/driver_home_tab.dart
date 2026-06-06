@@ -13,12 +13,6 @@ class DriverHomeTab extends StatefulWidget {
 
 class _DriverHomeTabState extends State<DriverHomeTab> {
   @override
-  void initState() {
-    super.initState();
-    context.read<OrdersBloc>().add(const PendingOrdersRequested());
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocListener<OrdersBloc, OrdersState>(
       listenWhen: (prev, curr) =>

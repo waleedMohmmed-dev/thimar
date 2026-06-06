@@ -1,6 +1,7 @@
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/core/networking/api_service.dart';
+import 'package:thimar/core/networking/driver_endpoints.dart';
 import 'package:thimar/core/networking/endpoints.dart';
 
 import 'package:thimar/features/auth/data/models/user_model.dart';
@@ -151,7 +152,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final formData = FormData.fromMap(formDataMap);
     final response = await _apiService.post(
-      Endpoints.driverRegister,
+      DriverEndpoints.register,
       body: formData,
     );
     final data = response['data'];

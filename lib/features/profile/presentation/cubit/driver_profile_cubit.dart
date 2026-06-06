@@ -1,8 +1,12 @@
 import 'package:thimar/core/imports/core_imports.dart';
+import 'package:thimar/core/cache/cache_constants.dart';
+import 'package:thimar/core/cache/cache_keys.dart';
+import 'package:thimar/core/cache/cache_service.dart';
+import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/features/account/domain/entities/user_entity.dart';
 import 'package:thimar/features/account/domain/usecases/update_driver_profile_use_case.dart';
 import 'package:thimar/core/networking/api_service.dart';
-import 'package:thimar/core/networking/endpoints.dart';
+import 'package:thimar/core/networking/driver_endpoints.dart';
 import 'package:thimar/features/account/data/models/user_model.dart';
 
 enum DriverProfileStatus { initial, loading, success, failure }
@@ -46,8 +50,35 @@ class DriverProfileCubit extends Cubit<DriverProfileState> {
   Future<void> getProfile() async {
     emit(state.copyWith(status: DriverProfileStatus.loading));
     try {
-      final response = await _apiService.get(Endpoints.driverProfile);
-      final user = UserModel.fromJson(response['data']).toEntity();
+      final response = await _apiService.get(DriverEndpoints.profile);
+      var user = UserModel.fromJson(response['data']).toEntity();
+      final cachedImage = sl<HiveCacheService>().get<String>(
+        key: CacheKeys.profileImage,
+        boxName: CacheConstants.userBox,
+      );
+      if (cachedImage != null && cachedImage.isNotEmpty) {
+        user = UserEntity(
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          profileImage: cachedImage,
+          address: user.address,
+          createdAt: user.createdAt,
+          role: user.role,
+          vehicleType: user.vehicleType,
+          vehicleModel: user.vehicleModel,
+          iban: user.iban,
+          bankName: user.bankName,
+          driverLicenseImage: user.driverLicenseImage,
+          vehicleRegistrationImage: user.vehicleRegistrationImage,
+          vehicleInsuranceImage: user.vehicleInsuranceImage,
+          vehicleFrontImage: user.vehicleFrontImage,
+          vehicleRearImage: user.vehicleRearImage,
+          identityNumber: user.identityNumber,
+          cityId: user.cityId,
+        );
+      }
       emit(state.copyWith(status: DriverProfileStatus.success, user: user));
     } catch (e) {
       emit(state.copyWith(status: DriverProfileStatus.failure, errorMessage: e.toString()));
@@ -73,7 +104,7 @@ class DriverProfileCubit extends Cubit<DriverProfileState> {
       // ... Add other file fields here ...
 
       final formData = FormData.fromMap(formDataMap);
-      final response = await _apiService.post(Endpoints.driverProfile, body: formData);
+      final response = await _apiService.post(DriverEndpoints.profile, body: formData);
       final user = UserModel.fromJson(response['data']).toEntity();
       emit(state.copyWith(
         status: DriverProfileStatus.success, 

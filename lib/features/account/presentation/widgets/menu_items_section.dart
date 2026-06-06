@@ -50,14 +50,14 @@ class MenuItemsSection extends StatelessWidget {
         onTap: () => context.goProfile(),
       ),
       MenuItemData(
-        icon: Icons.help,
-        label: 'أسئلة متكررة',
-        onTap: () => context.goFaq(),
-      ),
-      MenuItemData(
         icon: Icons.info,
         label: 'عن التطبيق',
         onTap: () => context.goAboutApp(),
+      ),
+      MenuItemData(
+        icon: Icons.help_outline,
+        label: 'أسئلة متكررة',
+        onTap: () => context.goFaq(),
       ),
       MenuItemData(
         icon: Icons.privacy_tip,

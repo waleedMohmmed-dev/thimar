@@ -92,17 +92,18 @@ class _ProfileImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (user?.profileImage != null && user!.profileImage!.isNotEmpty) {
       final imagePath = user.profileImage!;
-      final resolved = _resolveImageUrl(imagePath);
 
-      if (resolved.startsWith('http://') || resolved.startsWith('https://')) {
-        return Image.network(
-          resolved,
+      if (File(imagePath).existsSync()) {
+        return Image.file(
+          File(imagePath),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => const _DefaultAvatar(),
         );
       }
-      return Image.file(
-        File(resolved),
+
+      final resolved = _resolveImageUrl(imagePath);
+      return Image.network(
+        resolved,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => const _DefaultAvatar(),
       );
