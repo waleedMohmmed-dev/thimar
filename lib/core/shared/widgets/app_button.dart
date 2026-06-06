@@ -1,6 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 
 class AppButton extends StatelessWidget {
   final String label;
@@ -13,7 +11,7 @@ class AppButton extends StatelessWidget {
   final double? width;
 
   const AppButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.onPressed,
     this.isLoading = false,
@@ -22,7 +20,7 @@ class AppButton extends StatelessWidget {
     this.size = ButtonSize.medium,
     this.icon,
     this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

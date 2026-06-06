@@ -1,33 +1,59 @@
 import 'package:thimar/core/imports/core_imports.dart';
+import 'package:thimar/core/cache/cache_constants.dart';
+import 'package:thimar/core/cache/cache_keys.dart';
+import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/injection/injection.dart';
+import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:thimar/features/orders/presentation/pages/orders_page.dart';
 import 'package:thimar/features/account/presentation/pages/account_page.dart';
+import 'package:thimar/features/home/presentation/bloc/home_bloc.dart';
+import 'package:thimar/features/home/presentation/bloc/home_event.dart';
+import 'package:thimar/features/home/presentation/bloc/home_state.dart';
 import 'package:thimar/features/home/presentation/widgets/driver_home_tab.dart';
+import 'package:thimar/features/home/presentation/widgets/home_top_header.dart';
+import 'package:thimar/features/home/presentation/widgets/promo_banner_section.dart';
+import 'package:thimar/features/home/presentation/widgets/search_field.dart'
+    as home_search;
 import 'package:thimar/features/orders/presentation/bloc/orders_bloc.dart';
-import 'package:thimar/features/orders/presentation/bloc/orders_event.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // FORCE DRIVER MODE ONLY
-    return BlocProvider(
-      create: (_) => sl<OrdersBloc>(),
-      child: const _DriverHomeShell(),
+    final role = UserRole.fromString(
+      sl<HiveCacheService>().get<String>(
+        key: CacheKeys.userType,
+        boxName: CacheConstants.userBox,
+      ),
+    );
+
+    return MultiBlocProvider(
+      providers: [
+        if (role.isDriver)
+          BlocProvider(create: (_) => sl<OrdersBloc>())
+        else
+          BlocProvider(
+            create: (_) =>
+                sl<HomeBloc>(param1: role)..add(const ProductsFetched()),
+          ),
+      ],
+      child: _HomeShell(role: role),
     );
   }
 }
 
-class _DriverHomeShell extends StatefulWidget {
-  const _DriverHomeShell();
+class _HomeShell extends StatefulWidget {
+  final UserRole role;
+
+  const _HomeShell({required this.role});
 
   @override
-  State<_DriverHomeShell> createState() => _DriverHomeShellState();
+  State<_HomeShell> createState() => _HomeShellState();
 }
 
-class _DriverHomeShellState extends State<_DriverHomeShell> {
+class _HomeShellState extends State<_HomeShell> {
   int _currentIndex = 0;
 
   @override
@@ -35,12 +61,15 @@ class _DriverHomeShellState extends State<_DriverHomeShell> {
     return Scaffold(
       body: SafeArea(
         child: IndexedStack(
+          key: ValueKey(_currentIndex),
           index: _currentIndex,
-          children: const [
-            DriverHomeTab(),
-            OrdersPage(),
-            NotificationsPage(),
-            AccountPage(),
+          children: [
+            widget.role.isDriver
+                ? const DriverHomeTab()
+                : const _ClientHomeTab(),
+            OrdersPage(role: widget.role),
+            const NotificationsPage(),
+            const AccountPage(),
           ],
         ),
       ),
@@ -49,7 +78,10 @@ class _DriverHomeShellState extends State<_DriverHomeShell> {
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
           AppNavBarItem(labelKey: 'nav_home', icon: Icons.home_outlined),
-          AppNavBarItem(labelKey: 'nav_orders', icon: Icons.receipt_long_outlined),
+          AppNavBarItem(
+            labelKey: 'nav_orders',
+            icon: Icons.receipt_long_outlined,
+          ),
           AppNavBarItem(
             labelKey: 'nav_notifications',
             icon: Icons.notifications_none_outlined,
@@ -57,6 +89,111 @@ class _DriverHomeShellState extends State<_DriverHomeShell> {
           AppNavBarItem(labelKey: 'nav_account', icon: Icons.person_outline),
         ],
       ),
+    );
+  }
+}
+
+class _ClientHomeTab extends StatefulWidget {
+  const _ClientHomeTab();
+
+  @override
+  State<_ClientHomeTab> createState() => _ClientHomeTabState();
+}
+
+class _ClientHomeTabState extends State<_ClientHomeTab> {
+  final _searchController = TextEditingController();
+  int _bannerIndex = 0;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        final products = _searchController.text.trim().isEmpty
+            ? state.products
+            : state.searchResults;
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<HomeBloc>().add(const ProductsFetched());
+          },
+          child: ListView(
+            padding: EdgeInsets.only(bottom: 100.h),
+            children: [
+              const HomeTopHeader(),
+              home_search.SearchField(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() {});
+                  context.read<HomeBloc>().add(ProductsSearched(value));
+                },
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: PromoBannerSection(
+                  currentIndex: _bannerIndex,
+                  onPageChanged: (index, _) {
+                    setState(() => _bannerIndex = index);
+                  },
+                ),
+              ),
+              if (state.isLoading)
+                SizedBox(
+                  height: 240.h,
+                  child: const Center(child: AppLoading()),
+                )
+              else if (state.errorMessage != null)
+                AppError(
+                  message: state.errorMessage!,
+                  onRetry: () {
+                    context.read<HomeBloc>().add(const ProductsFetched());
+                  },
+                )
+              else if (products.isEmpty)
+                AppEmptyState(
+                  icon: Icons.shopping_basket_outlined,
+                  title: 'no_products'.tr(),
+                  subtitle: 'check_back_later'.tr(),
+                )
+              else
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: products.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 14.h,
+                      crossAxisSpacing: 14.w,
+                      childAspectRatio: 0.72,
+                    ),
+                    itemBuilder: (context, index) {
+                      final product = products[index];
+                      return ProductCard(
+                        product: product,
+                        isFavorite: state.favoriteIds.contains(product.id),
+                        onFavoriteToggle: () {
+                          context.read<HomeBloc>().add(
+                            ProductFavoriteToggled(product.id),
+                          );
+                        },
+                        onAddToCart: () {
+                          context.showSnackBar('added_to_cart'.tr());
+                        },
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

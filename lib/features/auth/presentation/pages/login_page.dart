@@ -4,16 +4,18 @@ import 'package:thimar/features/auth/presentation/bloc/auth_state.dart';
 import 'package:thimar/features/auth/presentation/widgets/auth_widgets.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  final String userType;
+  const LoginPage({super.key, required this.userType});
 
   @override
   Widget build(BuildContext context) {
-    return const _LoginView();
+    return _LoginView(userType: userType);
   }
 }
 
 class _LoginView extends StatefulWidget {
-  const _LoginView();
+  final String userType;
+  const _LoginView({required this.userType});
 
   @override
   State<_LoginView> createState() => _LoginViewState();
@@ -92,6 +94,7 @@ class _LoginViewState extends State<_LoginView> {
                           formKey: _formKey,
                           phoneController: _phoneController,
                           passwordController: _passwordController,
+                          userType: widget.userType,
                         ),
                       ],
                     ),

@@ -4,7 +4,7 @@ import 'package:thimar/core/networking/api_service.dart';
 import 'package:thimar/core/networking/dio_client.dart';
 import 'package:thimar/core/cache/hive_service.dart';
 import 'package:thimar/core/cache/cache_service.dart';
-import 'package:thimar/core/services/role_service.dart';
+import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/features/account/domain/usecases/update_driver_profile_use_case.dart';
 import 'package:thimar/features/auth/domain/repositories/auth_repository.dart';
 import 'package:thimar/features/auth/domain/usecases/login_use_case.dart';
@@ -17,11 +17,15 @@ import 'package:thimar/features/auth/data/datasources/auth_remote_data_source.da
 import 'package:thimar/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:thimar/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:thimar/features/orders/data/datasources/orders_remote_data_source.dart';
+import 'package:thimar/features/orders/data/datasources/client_orders_remote_data_source.dart';
 import 'package:thimar/features/orders/data/repositories/orders_repository_impl.dart';
+import 'package:thimar/features/orders/data/repositories/client_orders_repository_impl.dart';
 import 'package:thimar/features/orders/domain/repositories/orders_repository.dart';
+import 'package:thimar/features/orders/domain/repositories/client_orders_repository.dart';
 import 'package:thimar/features/orders/domain/usecases/get_pending_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/get_current_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/get_finished_orders_use_case.dart';
+import 'package:thimar/features/orders/domain/usecases/get_client_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/search_current_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/search_finished_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/refuse_order_use_case.dart';
@@ -29,8 +33,15 @@ import 'package:thimar/features/orders/domain/usecases/get_order_details_use_cas
 import 'package:thimar/features/orders/domain/usecases/accept_order_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/start_delivering_order_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/finish_order_use_case.dart';
+import 'package:thimar/features/orders/presentation/bloc/client_orders_bloc.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:thimar/features/profile/presentation/cubit/driver_profile_cubit.dart';
+import 'package:thimar/features/home/data/datasources/home_remote_data_source.dart';
+import 'package:thimar/features/home/data/repositories/home_repository_impl.dart';
+import 'package:thimar/features/home/domain/repositories/home_repository.dart';
+import 'package:thimar/features/home/domain/usecases/get_products_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/search_products_use_case.dart';
+import 'package:thimar/features/home/presentation/bloc/home_bloc.dart';
 
 import 'package:thimar/features/transaction_history/data/datasources/transaction_history_remote_data_source.dart';
 import 'package:thimar/features/transaction_history/data/repositories/transaction_history_repository_impl.dart';
@@ -97,9 +108,6 @@ Future<void> initInjection() async {
   sl.registerLazySingleton<HiveCacheService>(
     () => HiveCacheService(sl<HiveService>()),
   );
-  sl.registerLazySingleton<RoleService>(
-    () => RoleService(sl<HiveCacheService>()),
-  );
 
   sl.registerLazySingleton<Dio>(() => Dio());
   sl.registerLazySingleton<DioClient>(
@@ -109,7 +117,7 @@ Future<void> initInjection() async {
 
   // --- Auth Feature ---
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(sl<ApiService>(), sl<HiveCacheService>()),
+    () => AuthRemoteDataSourceImpl(sl<ApiService>()),
   );
   sl.registerLazySingleton<AuthRepository>(
     () =>
@@ -190,6 +198,42 @@ Future<void> initInjection() async {
       searchCurrentOrdersUseCase: sl<SearchCurrentOrdersUseCase>(),
       searchFinishedOrdersUseCase: sl<SearchFinishedOrdersUseCase>(),
       refuseOrderUseCase: sl<RefuseOrderUseCase>(),
+    ),
+  );
+
+  // --- Orders Feature (Client) ---
+  sl.registerLazySingleton<ClientOrdersRemoteDataSource>(
+    () => ClientOrdersRemoteDataSourceImpl(sl<ApiService>()),
+  );
+  sl.registerLazySingleton<ClientOrdersRepository>(
+    () => ClientOrdersRepositoryImpl(sl<ClientOrdersRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<GetClientOrdersUseCase>(
+    () => GetClientOrdersUseCase(sl<ClientOrdersRepository>()),
+  );
+  sl.registerFactory<ClientOrdersBloc>(
+    () =>
+        ClientOrdersBloc(getClientOrdersUseCase: sl<GetClientOrdersUseCase>()),
+  );
+
+  // --- Home Feature ---
+  sl.registerLazySingleton<HomeRemoteDataSource>(
+    () => HomeRemoteDataSourceImpl(sl<ApiService>()),
+  );
+  sl.registerLazySingleton<HomeRepository>(
+    () => HomeRepositoryImpl(sl<HomeRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<GetProductsUseCase>(
+    () => GetProductsUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<SearchProductsUseCase>(
+    () => SearchProductsUseCase(sl<HomeRepository>()),
+  );
+  sl.registerFactoryParam<HomeBloc, UserRole, void>(
+    (role, _) => HomeBloc(
+      getProductsUseCase: sl<GetProductsUseCase>(),
+      searchProductsUseCase: sl<SearchProductsUseCase>(),
+      role: role,
     ),
   );
 
@@ -347,5 +391,7 @@ Future<void> initInjection() async {
   );
 
   // --- Splash Feature ---
-  sl.registerFactory<SplashBloc>(() => SplashBloc(roleService: sl<RoleService>()));
+  sl.registerFactory<SplashBloc>(
+    () => SplashBloc(cacheService: sl<HiveCacheService>()),
+  );
 }

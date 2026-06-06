@@ -5,7 +5,7 @@ import 'package:thimar/features/transaction_history/presentation/bloc/transactio
 import 'package:thimar/features/transaction_history/presentation/widgets/history_widgets.dart';
 
 class TransactionHistoryPage extends StatefulWidget {
-  const TransactionHistoryPage({Key? key}) : super(key: key);
+  const TransactionHistoryPage({super.key});
 
   @override
   State<TransactionHistoryPage> createState() => _TransactionHistoryPageState();

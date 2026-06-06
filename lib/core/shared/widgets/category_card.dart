@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 
 /// Category card widget displaying category image and name
 class CategoryCard extends StatelessWidget {

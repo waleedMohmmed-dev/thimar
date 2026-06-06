@@ -1,6 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 
 class AppSvg extends StatelessWidget {
   final String assetName;
@@ -9,12 +7,12 @@ class AppSvg extends StatelessWidget {
   final Color? color;
 
   const AppSvg({
-    Key? key,
+    super.key,
     required this.assetName,
     this.width,
     this.height,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

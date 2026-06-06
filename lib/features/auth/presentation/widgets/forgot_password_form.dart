@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:thimar/features/auth/presentation/bloc/auth_event.dart';
 import 'package:thimar/features/auth/presentation/bloc/auth_state.dart';

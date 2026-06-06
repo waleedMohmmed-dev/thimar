@@ -1,5 +1,6 @@
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/imports/packages_imports.dart';
+
 import 'package:thimar/features/auth/domain/usecases/login_use_case.dart';
 import 'package:thimar/features/auth/domain/usecases/driver_register_use_case.dart';
 import 'package:thimar/features/auth/domain/usecases/verify_account_use_case.dart';
@@ -25,13 +26,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required ResendCodeUseCase resendCodeUseCase,
     required ResetPasswordUseCase resetPasswordUseCase,
     dynamic registerUseCase, // Ignored client register
-  })  : _loginUseCase = loginUseCase,
-        _driverRegisterUseCase = driverRegisterUseCase,
-        _verifyAccountUseCase = verifyAccountUseCase,
-        _forgotPasswordUseCase = forgotPasswordUseCase,
-        _resendCodeUseCase = resendCodeUseCase,
-        _resetPasswordUseCase = resetPasswordUseCase,
-        super(const AuthState()) {
+  }) : _loginUseCase = loginUseCase,
+       _driverRegisterUseCase = driverRegisterUseCase,
+       _verifyAccountUseCase = verifyAccountUseCase,
+       _forgotPasswordUseCase = forgotPasswordUseCase,
+       _resendCodeUseCase = resendCodeUseCase,
+       _resetPasswordUseCase = resetPasswordUseCase,
+       super(const AuthState()) {
     on<LoginSubmitted>(_onLoginSubmitted);
     on<DriverRegisterSubmitted>(_onDriverRegisterSubmitted);
     on<VerifyOtpSubmitted>(_onVerifyOtpSubmitted);
@@ -50,21 +51,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       LoginParams(
         phone: event.phone,
         password: event.password,
+        userType: event.userType,
         lat: event.lat,
         lng: event.lng,
       ),
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (user) => emit(state.copyWith(
-        isLoading: false,
-        user: user,
-        successMessage: 'login_success'.tr(),
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (user) => emit(
+        state.copyWith(
+          isLoading: false,
+          user: user,
+          role: user.role,
+          successMessage: 'login_success'.tr(),
+        ),
+      ),
     );
   }
 
@@ -98,15 +101,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (user) => emit(state.copyWith(
-        isLoading: false,
-        user: user,
-        successMessage: 'register_success'.tr(),
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (user) => emit(
+        state.copyWith(
+          isLoading: false,
+          user: user,
+          role: user?.role,
+          successMessage: 'register_success'.tr(),
+        ),
+      ),
     );
   }
 
@@ -117,21 +121,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(isLoading: true, clearError: true, clearSuccess: true));
 
     final result = await _verifyAccountUseCase(
-      VerifyAccountParams(
-        code: event.code,
-        phone: event.phone,
-      ),
+      VerifyAccountParams(code: event.code, phone: event.phone),
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (_) => emit(state.copyWith(
-        isLoading: false,
-        successMessage: 'تم التحقق بنجاح',
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (_) => emit(
+        state.copyWith(isLoading: false, successMessage: 'تم التحقق بنجاح'),
+      ),
     );
   }
 
@@ -146,14 +144,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (_) => emit(state.copyWith(
-        isLoading: false,
-        successMessage: 'تم إرسال الكود بنجاح',
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (_) => emit(
+        state.copyWith(
+          isLoading: false,
+          successMessage: 'تم إرسال الكود بنجاح',
+        ),
+      ),
     );
   }
 
@@ -168,14 +166,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (_) => emit(state.copyWith(
-        isLoading: false,
-        successMessage: 'تم إعادة إرسال الكود بنجاح',
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (_) => emit(
+        state.copyWith(
+          isLoading: false,
+          successMessage: 'تم إعادة إرسال الكود بنجاح',
+        ),
+      ),
     );
   }
 
@@ -194,14 +192,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (_) => emit(state.copyWith(
-        isLoading: false,
-        successMessage: 'تم تغيير كلمة المرور بنجاح',
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (_) => emit(
+        state.copyWith(
+          isLoading: false,
+          successMessage: 'تم تغيير كلمة المرور بنجاح',
+        ),
+      ),
     );
   }
 }

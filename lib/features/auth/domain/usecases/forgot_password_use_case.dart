@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/auth/domain/repositories/auth_repository.dart';
 
 class ForgotPasswordUseCase extends UseCase<void, ForgotPasswordParams> {

@@ -1,6 +1,5 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
+import 'package:thimar/core/models/user_role.dart';
 
 class UserEntity extends Equatable {
   final String id;
@@ -8,7 +7,7 @@ class UserEntity extends Equatable {
   final String email;
   final String phone;
   final String token;
-  final String role; // 'user' or 'driver'
+  final UserRole role;
 
   const UserEntity({
     required this.id,
@@ -16,7 +15,7 @@ class UserEntity extends Equatable {
     required this.email,
     required this.phone,
     required this.token,
-    this.role = 'user',
+    required this.role,
   });
 
   UserEntity copyWith({
@@ -25,7 +24,7 @@ class UserEntity extends Equatable {
     String? email,
     String? phone,
     String? token,
-    String? role,
+    UserRole? role,
   }) {
     return UserEntity(
       id: id ?? this.id,

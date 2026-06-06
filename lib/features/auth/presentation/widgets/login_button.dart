@@ -8,12 +8,14 @@ class LoginButton extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController phoneController;
   final TextEditingController passwordController;
+  final String userType;
 
   const LoginButton({
     super.key,
     required this.formKey,
     required this.phoneController,
     required this.passwordController,
+    required this.userType,
   });
 
   Future<Position?> _getCurrentPosition() async {
@@ -51,6 +53,7 @@ class LoginButton extends StatelessWidget {
                   LoginSubmitted(
                     phone: phoneController.text.trim(),
                     password: passwordController.text,
+                    userType: userType,
                     lat: position?.latitude ?? 0.0,
                     lng: position?.longitude ?? 0.0,
                   ),

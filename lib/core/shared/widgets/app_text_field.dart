@@ -1,6 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 
 class AppTextField extends StatefulWidget {
   final String? hintText;
@@ -27,7 +25,7 @@ class AppTextField extends StatefulWidget {
   final String? counterText;
 
   const AppTextField({
-    Key? key,
+    super.key,
     this.hintText,
     this.labelText,
     this.controller,
@@ -50,7 +48,7 @@ class AppTextField extends StatefulWidget {
     this.style,
     this.focusNode,
     this.counterText,
-  }) : super(key: key);
+  });
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();

@@ -1,6 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/features/wallet/domain/usecases/get_wallet_use_case.dart';
 import 'package:thimar/features/wallet/presentation/bloc/wallet_event.dart';
 import 'package:thimar/features/wallet/presentation/bloc/wallet_state.dart';

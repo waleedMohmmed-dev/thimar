@@ -1,10 +1,9 @@
+import 'package:thimar/core/cache/cache_constants.dart';
+import 'package:thimar/core/cache/cache_keys.dart';
+import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/networking/api_service.dart';
 import 'package:thimar/core/networking/endpoints.dart';
-import 'package:thimar/core/cache/cache_service.dart';
-import 'package:thimar/core/cache/cache_keys.dart';
-import 'package:thimar/core/cache/cache_constants.dart';
-import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/features/account/data/models/user_model.dart';
 import 'package:thimar/features/account/domain/usecases/update_driver_profile_use_case.dart';
 
@@ -21,6 +20,13 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
   AccountRemoteDataSourceImpl(this._apiService, this._cacheService);
 
   String get _profileEndpoint {
+    final userType = _cacheService.get<String>(
+      key: CacheKeys.userType,
+      boxName: CacheConstants.userBox,
+    );
+    if (userType == 'driver') {
+      return Endpoints.driverProfile;
+    }
     return Endpoints.driverProfile;
   }
 
@@ -43,30 +49,45 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
     };
 
     if (params.imagePath != null) {
-      formDataMap['image'] = await MultipartFile.fromFile(params.imagePath!, filename: 'image.jpg');
+      formDataMap['image'] = await MultipartFile.fromFile(
+        params.imagePath!,
+        filename: 'image.jpg',
+      );
     }
     if (params.carLicenceImagePath != null) {
-      formDataMap['car_licence_image'] = await MultipartFile.fromFile(params.carLicenceImagePath!, filename: 'car_licence_image.jpg');
+      formDataMap['car_licence_image'] = await MultipartFile.fromFile(
+        params.carLicenceImagePath!,
+        filename: 'car_licence_image.jpg',
+      );
     }
     if (params.carFormImagePath != null) {
-      formDataMap['car_form_image'] = await MultipartFile.fromFile(params.carFormImagePath!, filename: 'car_form_image.jpg');
+      formDataMap['car_form_image'] = await MultipartFile.fromFile(
+        params.carFormImagePath!,
+        filename: 'car_form_image.jpg',
+      );
     }
     if (params.carInsuranceImagePath != null) {
-      formDataMap['car_insurance_image'] = await MultipartFile.fromFile(params.carInsuranceImagePath!, filename: 'car_insurance_image.jpg');
+      formDataMap['car_insurance_image'] = await MultipartFile.fromFile(
+        params.carInsuranceImagePath!,
+        filename: 'car_insurance_image.jpg',
+      );
     }
     if (params.carFrontImagePath != null) {
-      formDataMap['car_front_image'] = await MultipartFile.fromFile(params.carFrontImagePath!, filename: 'car_front_image.jpg');
+      formDataMap['car_front_image'] = await MultipartFile.fromFile(
+        params.carFrontImagePath!,
+        filename: 'car_front_image.jpg',
+      );
     }
     if (params.carBackImagePath != null) {
-      formDataMap['car_back_image'] = await MultipartFile.fromFile(params.carBackImagePath!, filename: 'car_back_image.jpg');
+      formDataMap['car_back_image'] = await MultipartFile.fromFile(
+        params.carBackImagePath!,
+        filename: 'car_back_image.jpg',
+      );
     }
 
     final formData = FormData.fromMap(formDataMap);
 
-    await _apiService.post(
-      _profileEndpoint,
-      body: formData,
-    );
+    await _apiService.post(_profileEndpoint, body: formData);
   }
 
   @override

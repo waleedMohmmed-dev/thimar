@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/privacy/domain/usecases/get_privacy_use_case.dart';
 import 'privacy_event.dart';
 import 'privacy_state.dart';

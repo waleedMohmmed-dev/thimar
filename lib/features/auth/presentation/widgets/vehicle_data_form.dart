@@ -216,7 +216,7 @@ class VehicleDataForm extends StatelessWidget {
           AuthActionRow(
             label: ' لديك حساب بالفعل ؟',
             actionLabel: 'تسجيل الدخول',
-            onActionTap: () => context.goLogin(),
+            onActionTap: () => context.goLogin('driver'),
           ),
           SizedBox(height: 16.h),
         ],

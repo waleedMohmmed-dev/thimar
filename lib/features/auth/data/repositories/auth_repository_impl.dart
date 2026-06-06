@@ -2,7 +2,6 @@ import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/cache/cache_keys.dart';
 import 'package:thimar/core/cache/cache_constants.dart';
-import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/features/auth/domain/entities/user_entity.dart';
 import 'package:thimar/features/auth/domain/repositories/auth_repository.dart';
 import 'package:thimar/features/auth/data/datasources/auth_remote_data_source.dart';
@@ -17,6 +16,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntity>> login({
     required String phone,
     required String password,
+    required String userType,
     required double lat,
     required double lng,
   }) async {
@@ -24,6 +24,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final userModel = await remoteDataSource.login(
         phone: phone,
         password: password,
+        userType: userType,
         lat: lat,
         lng: lng,
       );
@@ -105,7 +106,6 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   Future<void> _saveAuthData(dynamic userModel) async {
-    final normalizedRole = UserRole.fromString(userModel.role).storageValue;
     await Future.wait([
       _cacheService.save(
         key: CacheKeys.token,
@@ -118,8 +118,8 @@ class AuthRepositoryImpl implements AuthRepository {
         boxName: CacheConstants.userBox,
       ),
       _cacheService.save(
-        key: CacheKeys.userRole,
-        value: normalizedRole,
+        key: CacheKeys.userType,
+        value: userModel.role.apiValue,
         boxName: CacheConstants.userBox,
       ),
     ]);
@@ -160,39 +160,49 @@ class AuthRepositoryImpl implements AuthRepository {
     ];
 
     if (driverLicensePath != null) {
-      futures.add(_cacheService.save(
-        key: CacheKeys.driverLicense,
-        value: driverLicensePath,
-        boxName: CacheConstants.userBox,
-      ));
+      futures.add(
+        _cacheService.save(
+          key: CacheKeys.driverLicense,
+          value: driverLicensePath,
+          boxName: CacheConstants.userBox,
+        ),
+      );
     }
     if (vehicleRegistrationPath != null) {
-      futures.add(_cacheService.save(
-        key: CacheKeys.vehicleRegistration,
-        value: vehicleRegistrationPath,
-        boxName: CacheConstants.userBox,
-      ));
+      futures.add(
+        _cacheService.save(
+          key: CacheKeys.vehicleRegistration,
+          value: vehicleRegistrationPath,
+          boxName: CacheConstants.userBox,
+        ),
+      );
     }
     if (vehicleInsurancePath != null) {
-      futures.add(_cacheService.save(
-        key: CacheKeys.vehicleInsurance,
-        value: vehicleInsurancePath,
-        boxName: CacheConstants.userBox,
-      ));
+      futures.add(
+        _cacheService.save(
+          key: CacheKeys.vehicleInsurance,
+          value: vehicleInsurancePath,
+          boxName: CacheConstants.userBox,
+        ),
+      );
     }
     if (vehicleFrontPath != null) {
-      futures.add(_cacheService.save(
-        key: CacheKeys.vehicleFront,
-        value: vehicleFrontPath,
-        boxName: CacheConstants.userBox,
-      ));
+      futures.add(
+        _cacheService.save(
+          key: CacheKeys.vehicleFront,
+          value: vehicleFrontPath,
+          boxName: CacheConstants.userBox,
+        ),
+      );
     }
     if (vehicleRearPath != null) {
-      futures.add(_cacheService.save(
-        key: CacheKeys.vehicleRear,
-        value: vehicleRearPath,
-        boxName: CacheConstants.userBox,
-      ));
+      futures.add(
+        _cacheService.save(
+          key: CacheKeys.vehicleRear,
+          value: vehicleRearPath,
+          boxName: CacheConstants.userBox,
+        ),
+      );
     }
 
     await Future.wait(futures);
@@ -216,9 +226,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> forgotPassword({
-    required String phone,
-  }) async {
+  Future<Either<Failure, void>> forgotPassword({required String phone}) async {
     try {
       await remoteDataSource.forgotPassword(phone: phone);
       return const Right(null);
@@ -232,9 +240,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> resendCode({
-    required String phone,
-  }) async {
+  Future<Either<Failure, void>> resendCode({required String phone}) async {
     try {
       await remoteDataSource.resendCode(phone: phone);
       return const Right(null);

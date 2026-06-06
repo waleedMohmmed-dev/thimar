@@ -5,10 +5,6 @@ import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/cache/cache_keys.dart';
 import 'package:thimar/core/cache/cache_constants.dart';
 
-import 'package:thimar/core/models/user_role.dart';
-import 'package:thimar/core/services/screen_tracker_service.dart';
-import 'dart:developer' as dev;
-
 class DioClient {
   final Dio _dio;
   final HiveCacheService _cacheService;
@@ -32,22 +28,6 @@ class DioClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final roleValue = _cacheService.get<String>(
-            key: CacheKeys.userRole,
-            boxName: CacheConstants.userBox,
-          );
-          final role = UserRole.fromString(roleValue);
-
-          // MANDATORY LOGGING FOR DRIVER MODE
-          dev.log(
-            '----------------------------------------\n'
-            'ROLE: ${role.name.toUpperCase()}\n'
-            'SCREEN: ${ScreenTrackerService.currentScreen}\n'
-            'ENDPOINT: ${options.path}\n'
-            '----------------------------------------',
-            name: 'API_LOG',
-          );
-
           final token = _cacheService.get<String>(
             key: CacheKeys.token,
             boxName: CacheConstants.userBox,
@@ -78,9 +58,18 @@ class DioClient {
 
   Future<void> _handleUnauthorized() async {
     try {
-      await _cacheService.delete(key: CacheKeys.token, boxName: CacheConstants.userBox);
-      await _cacheService.delete(key: CacheKeys.userId, boxName: CacheConstants.userBox);
-      await _cacheService.delete(key: CacheKeys.userRole, boxName: CacheConstants.userBox);
+      await _cacheService.delete(
+        key: CacheKeys.token,
+        boxName: CacheConstants.userBox,
+      );
+      await _cacheService.delete(
+        key: CacheKeys.userId,
+        boxName: CacheConstants.userBox,
+      );
+      await _cacheService.delete(
+        key: CacheKeys.userType,
+        boxName: CacheConstants.userBox,
+      );
     } catch (_) {}
     _authController.add(null);
   }

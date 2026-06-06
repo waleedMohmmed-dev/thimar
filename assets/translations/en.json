@@ -98,6 +98,7 @@
   "order_status_on_way": "On the way",
   "order_status_delivered": "Delivered",
   "order_status_cancelled": "Cancelled",
+  "no_orders": "No orders",
   "no_current_orders": "No current orders",
   "no_finished_orders": "No finished orders",
   "orders_empty_subtitle": "Your orders will appear here once available",

@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/features/wallet/domain/entities/wallet_entity.dart';
 import 'package:thimar/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:thimar/features/wallet/data/datasources/wallet_remote_data_source.dart';

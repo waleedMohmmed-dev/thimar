@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/home/domain/entities/product_entity.dart';
 
 /// Product card widget with discount badge, add to cart button, and favorite toggle

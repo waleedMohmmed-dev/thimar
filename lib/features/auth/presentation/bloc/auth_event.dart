@@ -11,18 +11,20 @@ abstract class AuthEvent extends Equatable {
 class LoginSubmitted extends AuthEvent {
   final String phone;
   final String password;
+  final String userType;
   final double lat;
   final double lng;
 
   const LoginSubmitted({
     required this.phone,
     required this.password,
+    required this.userType,
     required this.lat,
     required this.lng,
   });
 
   @override
-  List<Object?> get props => [phone, password, lat, lng];
+  List<Object?> get props => [phone, password, userType, lat, lng];
 }
 
 class RegisterSubmitted extends AuthEvent {

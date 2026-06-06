@@ -1,10 +1,7 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/core/injection/injection.dart';
-import 'package:thimar/core/routing/navigation_extensions.dart';
 import 'package:thimar/features/orders/domain/entities/order_entity.dart';
 import 'package:thimar/features/orders/domain/usecases/get_pending_orders_use_case.dart';
-import 'package:thimar/core/shared/widgets/app_button.dart';
 
 class DriverProfileSuccessDialog extends StatefulWidget {
   const DriverProfileSuccessDialog({super.key});

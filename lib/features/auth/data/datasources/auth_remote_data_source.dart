@@ -1,16 +1,15 @@
 import 'package:thimar/core/imports/core_imports.dart';
+import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/core/networking/api_service.dart';
 import 'package:thimar/core/networking/endpoints.dart';
-import 'package:thimar/core/cache/cache_service.dart';
-import 'package:thimar/core/cache/cache_keys.dart';
-import 'package:thimar/core/cache/cache_constants.dart';
-import 'package:thimar/core/models/user_role.dart';
+
 import 'package:thimar/features/auth/data/models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
   Future<UserModel> login({
     required String phone,
     required String password,
+    required String userType,
     required double lat,
     required double lng,
   });
@@ -36,18 +35,11 @@ abstract class AuthRemoteDataSource {
     String? vehicleRearPath,
   });
 
-  Future<void> verifyAccount({
-    required String code,
-    required String phone,
-  });
+  Future<void> verifyAccount({required String code, required String phone});
 
-  Future<void> forgotPassword({
-    required String phone,
-  });
+  Future<void> forgotPassword({required String phone});
 
-  Future<void> resendCode({
-    required String phone,
-  });
+  Future<void> resendCode({required String phone});
 
   Future<void> resetPassword({
     required String phone,
@@ -58,43 +50,33 @@ abstract class AuthRemoteDataSource {
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final ApiService _apiService;
-  final HiveCacheService _cacheService;
 
-  AuthRemoteDataSourceImpl(this._apiService, this._cacheService);
-
-  String get _userType {
-    final role = _cacheService.get<String>(
-      key: CacheKeys.userRole,
-      boxName: CacheConstants.userBox,
-    );
-    if (role != null && role.isNotEmpty) {
-      return UserRole.fromString(role).apiValue;
-    }
-    final onboardingRole = _cacheService.get<String>(
-      key: CacheKeys.userRole,
-      boxName: CacheConstants.appBox,
-    );
-    return UserRole.fromString(onboardingRole).apiValue;
-  }
+  AuthRemoteDataSourceImpl(this._apiService);
 
   @override
   Future<UserModel> login({
     required String phone,
     required String password,
+    required String userType,
     required double lat,
     required double lng,
   }) async {
-    final formData = FormData.fromMap({
+    final normalizedUserType = UserRole.fromString(userType).apiValue;
+    final formData = FormData.fromMap(<String, dynamic>{
       'phone': phone,
       'password': password,
       'device_token': 'test',
       'type': 'ios',
-      'user_type': _userType,
+      'user_type': normalizedUserType,
       'lat': lat.toString(),
       'lng': lng.toString(),
     });
 
-    final response = await _apiService.post(Endpoints.login, body: formData);
+    final response = await _apiService.post(
+      Endpoints.login,
+      body: formData,
+      options: Options(contentType: Headers.multipartFormDataContentType),
+    );
     return UserModel.fromJson(response['data']);
   }
 
@@ -193,23 +175,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> forgotPassword({
-    required String phone,
-  }) async {
-    final formData = FormData.fromMap({
-      'phone': phone,
-    });
+  Future<void> forgotPassword({required String phone}) async {
+    final formData = FormData.fromMap({'phone': phone});
 
     await _apiService.post(Endpoints.forgetPassword, body: formData);
   }
 
   @override
-  Future<void> resendCode({
-    required String phone,
-  }) async {
-    final formData = FormData.fromMap({
-      'phone': phone,
-    });
+  Future<void> resendCode({required String phone}) async {
+    final formData = FormData.fromMap({'phone': phone});
 
     await _apiService.post(Endpoints.resendCode, body: formData);
   }

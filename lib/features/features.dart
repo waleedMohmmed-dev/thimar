@@ -1,4 +1,4 @@
-library features;
+library;
 
 export 'package:thimar/features/splash/presentation/bloc/splash_bloc.dart';
 export 'package:thimar/features/auth/presentation/bloc/auth_bloc.dart';

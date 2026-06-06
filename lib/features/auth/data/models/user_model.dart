@@ -1,21 +1,15 @@
+import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/features/auth/domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
   const UserModel({
-    required String id,
-    required String name,
-    required String email,
-    required String phone,
-    required String token,
-    String role = 'user',
-  }) : super(
-         id: id,
-         name: name,
-         email: email,
-         phone: phone,
-         token: token,
-         role: role,
-       );
+    required super.id,
+    required super.name,
+    required super.email,
+    required super.phone,
+    required super.token,
+    required super.role,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -24,7 +18,7 @@ class UserModel extends UserEntity {
       email: json['email']?.toString() ?? '',
       phone: json['phone']?.toString() ?? '',
       token: json['token']?.toString() ?? '',
-      role: json['role']?.toString() ?? 'user',
+      role: UserRole.fromString(json['role']?.toString() ?? json['user_type']?.toString()),
     );
   }
 
@@ -35,7 +29,7 @@ class UserModel extends UserEntity {
       'email': email,
       'phone': phone,
       'token': token,
-      'role': role,
+      'role': role.apiValue,
     };
   }
 
@@ -50,3 +44,4 @@ class UserModel extends UserEntity {
     );
   }
 }
+

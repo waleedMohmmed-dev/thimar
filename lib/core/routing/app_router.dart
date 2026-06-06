@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:thimar/core/cache/cache_constants.dart';
+import 'package:thimar/core/cache/cache_keys.dart';
+import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/core/injection/injection.dart';
-import 'package:thimar/core/services/role_service.dart';
+
 import 'package:thimar/core/networking/dio_client.dart';
 import 'package:thimar/core/services/screen_tracker_service.dart';
 
@@ -192,8 +195,12 @@ final goRouter = GoRouter(
   observers: [ScreenTrackerObserver()],
   refreshListenable: GoRouterRefreshStream(DioClient.onUnauthorized),
   redirect: (context, state) {
-    final roleService = sl<RoleService>();
-    final isLoggedIn = roleService.isLoggedIn;
+    final cacheService = sl<HiveCacheService>();
+    final token = cacheService.get<String>(
+      key: CacheKeys.token,
+      boxName: CacheConstants.userBox,
+    );
+    final isLoggedIn = token != null && token.isNotEmpty;
     final location = state.matchedLocation;
 
     // Public routes - always accessible
@@ -254,11 +261,11 @@ final goRouter = GoRouter(
 
     // =========== AUTHENTICATION FLOW ===========
     GoRoute(
-      path: AppRoutes.login,
+      path: '${AppRoutes.login}/:userType',
       name: 'Login',
       pageBuilder: (context, state) => CustomTransitionPage<void>(
         key: state.pageKey,
-        child: const LoginPage(),
+        child: LoginPage(userType: state.pathParameters['userType'] ?? 'user'),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -269,7 +276,7 @@ final goRouter = GoRouter(
       name: 'Driver Registration',
       pageBuilder: (context, state) => CustomTransitionPage<void>(
         key: state.pageKey,
-        child: const DriverRegistrationPage(),
+        child: const RegistrationPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             _rtlAwareSlideTransition(
               context: context,

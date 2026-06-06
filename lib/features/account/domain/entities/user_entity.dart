@@ -10,6 +10,8 @@ class UserEntity extends Equatable {
   final DateTime? createdAt;
   final String? role; // 'user' or 'driver'
 
+  bool get isDriver => role?.toLowerCase() == 'driver';
+
   // Vehicle data fields
   final String? vehicleType;
   final String? vehicleModel;

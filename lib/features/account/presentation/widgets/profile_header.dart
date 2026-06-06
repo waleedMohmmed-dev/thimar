@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:thimar/core/imports/core_imports.dart';
+import 'package:thimar/core/networking/endpoints.dart';
 
 class ProfileHeader extends StatelessWidget {
   final dynamic user;
@@ -44,9 +45,7 @@ class ProfileHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              child: ClipOval(
-                child: _ProfileImage(user: user),
-              ),
+              child: ClipOval(child: _ProfileImage(user: user)),
             ),
           ),
           SizedBox(height: 16.h),
@@ -73,7 +72,6 @@ class ProfileHeader extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _ProfileImage extends StatelessWidget {
@@ -81,19 +79,30 @@ class _ProfileImage extends StatelessWidget {
 
   const _ProfileImage({required this.user});
 
+  String _resolveImageUrl(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    final base = Endpoints.baseUrl.replaceAll('/api/', '/');
+    final cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return '$base$cleanPath';
+  }
+
   @override
   Widget build(BuildContext context) {
     if (user?.profileImage != null && user!.profileImage!.isNotEmpty) {
       final imagePath = user.profileImage!;
-      if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      final resolved = _resolveImageUrl(imagePath);
+
+      if (resolved.startsWith('http://') || resolved.startsWith('https://')) {
         return Image.network(
-          imagePath,
+          resolved,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => const _DefaultAvatar(),
         );
       }
       return Image.file(
-        File(imagePath),
+        File(resolved),
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => const _DefaultAvatar(),
       );

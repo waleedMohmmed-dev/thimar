@@ -1,17 +1,33 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
+import 'package:thimar/core/cache/cache_constants.dart';
+import 'package:thimar/core/cache/cache_keys.dart';
+import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/injection/injection.dart';
+import 'package:thimar/core/models/user_role.dart';
+import 'package:thimar/features/orders/presentation/bloc/client_orders_bloc.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_event.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_state.dart';
 import 'package:thimar/features/orders/presentation/pages/current_orders_page.dart';
 import 'package:thimar/features/orders/presentation/pages/finished_orders_page.dart';
+import 'package:thimar/features/orders/presentation/widgets/order_card.dart';
 
 class OrdersPage extends StatelessWidget {
-  const OrdersPage({super.key});
+  final UserRole? role;
+
+  const OrdersPage({super.key, this.role});
 
   @override
   Widget build(BuildContext context) {
+    final currentRole = role ?? _cachedRole;
+
+    if (!currentRole.isDriver) {
+      return BlocProvider(
+        create: (_) => sl<ClientOrdersBloc>()..add(const ClientOrdersStarted()),
+        child: _ClientOrdersView(showScaffold: role == null),
+      );
+    }
+
     final hasOrdersBloc = context.read<OrdersBloc?>() != null;
 
     if (hasOrdersBloc) {
@@ -21,6 +37,15 @@ class OrdersPage extends StatelessWidget {
     return BlocProvider(
       create: (_) => sl<OrdersBloc>(),
       child: const _OrdersView(),
+    );
+  }
+
+  UserRole get _cachedRole {
+    return UserRole.fromString(
+      sl<HiveCacheService>().get<String>(
+        key: CacheKeys.userType,
+        boxName: CacheConstants.userBox,
+      ),
     );
   }
 }
@@ -110,6 +135,95 @@ class _OrdersViewState extends State<_OrdersView> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ClientOrdersView extends StatelessWidget {
+  final bool showScaffold;
+
+  const _ClientOrdersView({required this.showScaffold});
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = context.textTheme;
+
+    final content = Column(
+      children: [
+        if (!showScaffold) ...[
+          Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 28.h, 16.w, 0),
+            child: Text(
+              'orders_title'.tr(),
+              style: tt.headlineSmall?.copyWith(
+                color: context.colorScheme.primary,
+                fontSize: 27.sp,
+                fontWeight: FontWeight.w900,
+                height: 1.15,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(height: 18.h),
+        ],
+        Expanded(
+          child: BlocBuilder<ClientOrdersBloc, ClientOrdersState>(
+            builder: (context, state) {
+              if (state.status == ClientOrdersStatus.loading ||
+                  state.status == ClientOrdersStatus.initial) {
+                return const Center(child: AppLoading());
+              }
+
+              if (state.status == ClientOrdersStatus.failure) {
+                return AppError(
+                  message: state.errorMessage ?? 'unexpected_error'.tr(),
+                  onRetry: () {
+                    context.read<ClientOrdersBloc>().add(
+                      const ClientOrdersStarted(),
+                    );
+                  },
+                );
+              }
+
+              if (state.orders.isEmpty) {
+                return AppEmptyState(
+                  icon: Icons.receipt_long_outlined,
+                  title: 'no_orders'.tr(),
+                  subtitle: 'orders_empty_subtitle'.tr(),
+                );
+              }
+
+              return ListView.separated(
+                padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 100.h),
+                itemCount: state.orders.length,
+                separatorBuilder: (context, index) => SizedBox(height: 14.h),
+                itemBuilder: (context, index) {
+                  final order = state.orders[index];
+                  return OrderCard(order: order);
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+
+    if (!showScaffold) return content;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'orders_title'.tr(),
+          style: tt.headlineSmall?.copyWith(
+            color: context.colorScheme.primary,
+            fontSize: 27.sp,
+            fontWeight: FontWeight.w900,
+            height: 1.15,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: content,
     );
   }
 }

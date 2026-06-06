@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/car_models/domain/entities/car_model_entity.dart';
 import 'package:thimar/features/car_models/domain/repositories/car_models_repository.dart';
 

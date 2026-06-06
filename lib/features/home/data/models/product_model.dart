@@ -1,23 +1,14 @@
-import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/features/home/domain/entities/product_entity.dart';
 
 class ProductModel extends ProductEntity {
   const ProductModel({
-    required String id,
-    required String name,
-    required String description,
-    required double price,
-    required String imageUrl,
+    required super.id,
+    required super.name,
+    required super.description,
+    required super.price,
+    required super.imageUrl,
     super.discount,
-  }) : super(
-          id: id,
-          name: name,
-          description: description,
-          price: price,
-          imageUrl: imageUrl,
-        );
+  });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(

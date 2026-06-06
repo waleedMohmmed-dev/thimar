@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/faq/domain/usecases/get_faqs_use_case.dart';
 import 'faq_event.dart';
 import 'faq_state.dart';

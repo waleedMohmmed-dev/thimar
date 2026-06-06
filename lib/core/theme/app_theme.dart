@@ -1,6 +1,5 @@
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 
 class AppTheme {
   static const Color primaryColor = Color(0xFF4C8613);

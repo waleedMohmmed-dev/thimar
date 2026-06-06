@@ -1,22 +1,13 @@
-import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/features/wallet/domain/entities/transaction_entity.dart';
 
 class TransactionModel extends TransactionEntity {
   const TransactionModel({
-    required String id,
-    required double amount,
-    required TransactionType type,
-    required String description,
-    required DateTime date,
-  }) : super(
-          id: id,
-          amount: amount,
-          type: type,
-          description: description,
-          date: date,
-        );
+    required super.id,
+    required super.amount,
+    required super.type,
+    required super.description,
+    required super.date,
+  });
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     return TransactionModel(

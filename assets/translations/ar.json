@@ -98,6 +98,7 @@
   "order_status_on_way": "في الطريق",
   "order_status_delivered": "تم التوصيل",
   "order_status_cancelled": "ملغي",
+  "no_orders": "لا توجد طلبات",
   "no_current_orders": "لا توجد طلبات حالية",
   "no_finished_orders": "لا توجد طلبات منتهية",
   "orders_empty_subtitle": "طلباتك هتظهر هنا بمجرد توفرها",

@@ -1,17 +1,18 @@
 enum UserRole {
-  user('user', 'client'),
-  driver('driver', 'driver');
+  client('user'),
+  driver('driver');
 
-  final String storageValue;
   final String apiValue;
-
-  const UserRole(this.storageValue, this.apiValue);
-
-  static UserRole fromString(String? value) {
-    if (value == 'driver') return UserRole.driver;
-    return UserRole.user;
-  }
+  const UserRole(this.apiValue);
 
   bool get isDriver => this == UserRole.driver;
-  bool get isUser => this == UserRole.user;
+  String get storageValue => apiValue;
+
+  static UserRole fromString(String? value) {
+    if (value == null) return UserRole.client;
+    return UserRole.values.firstWhere(
+      (r) => r.apiValue == value.toLowerCase(),
+      orElse: () => UserRole.client,
+    );
+  }
 }

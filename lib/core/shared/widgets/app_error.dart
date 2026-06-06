@@ -1,6 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 
 class AppError extends StatelessWidget {
   final String message;
@@ -8,11 +6,11 @@ class AppError extends StatelessWidget {
   final IconData icon;
 
   const AppError({
-    Key? key,
+    super.key,
     required this.message,
     this.onRetry,
     this.icon = Icons.error_outline,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

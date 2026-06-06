@@ -1,4 +1,9 @@
 import 'package:thimar/core/imports/core_imports.dart';
+import 'package:thimar/core/cache/cache_constants.dart';
+import 'package:thimar/core/cache/cache_keys.dart';
+import 'package:thimar/core/cache/cache_service.dart';
+import 'package:thimar/core/injection/injection.dart';
+import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/features/orders/domain/entities/order_entity.dart';
 import 'package:thimar/features/orders/presentation/widgets/order_details_widgets.dart';
 import 'package:thimar/features/orders/presentation/bloc/order_details_cubit.dart';
@@ -60,24 +65,28 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
         if (state.acceptSuccessMessage != null &&
             state.acceptSuccessMessage!.isNotEmpty) {
           context.showSnackBar(state.acceptSuccessMessage!);
-          context.read<OrdersBloc>().add(const PendingOrdersRequested());
-          context.read<OrdersBloc>().add(const CurrentOrdersRequested());
+          _refreshOrders(context, const [
+            PendingOrdersRequested(),
+            CurrentOrdersRequested(),
+          ]);
         }
         if (state.rejectSuccessMessage != null &&
             state.rejectSuccessMessage!.isNotEmpty) {
           context.showSnackBar(state.rejectSuccessMessage!);
-          context.read<OrdersBloc>().add(const PendingOrdersRequested());
+          _refreshOrders(context, const [PendingOrdersRequested()]);
         }
         if (state.startDeliverySuccessMessage != null &&
             state.startDeliverySuccessMessage!.isNotEmpty) {
           context.showSnackBar(state.startDeliverySuccessMessage!);
-          context.read<OrdersBloc>().add(const CurrentOrdersRequested());
+          _refreshOrders(context, const [CurrentOrdersRequested()]);
         }
         if (state.finishSuccessMessage != null &&
             state.finishSuccessMessage!.isNotEmpty) {
           context.showSnackBar(state.finishSuccessMessage!);
-          context.read<OrdersBloc>().add(const CurrentOrdersRequested());
-          context.read<OrdersBloc>().add(const FinishedOrdersRequested());
+          _refreshOrders(context, const [
+            CurrentOrdersRequested(),
+            FinishedOrdersRequested(),
+          ]);
         }
       },
       builder: (context, orderState) {
@@ -99,62 +108,54 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
           body: orderState.detailsStatus == OrderDetailsStatus.loading
               ? const Center(child: AppLoading())
               : orderState.detailsStatus == OrderDetailsStatus.failure
-                  ? AppError(
-                      message:
-                          orderState.errorMessage ?? 'unexpected_error'.tr(),
-                      onRetry: () {
-                        context
-                            .read<OrderDetailsCubit>()
-                            .loadOrderDetails(widget.order.id);
-                      },
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(16.w),
-                            child: OrderInfoHeader(order: order),
-                          ),
-                          SizedBox(height: 16.h),
-
-                          Padding(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 16.w),
-                            child: DeliveryTimeSection(order: order),
-                          ),
-                          SizedBox(height: 16.h),
-
-                          if (order.notes != null &&
-                              order.notes!.isNotEmpty) ...[
-                            Padding(
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: 16.w),
-                              child:
-                                  NotesDisplaySection(notes: order.notes!),
-                            ),
-                            SizedBox(height: 16.h),
-                          ],
-
-                          Padding(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 16.w),
-                            child: DeliveryAddressSection(order: order),
-                          ),
-                          SizedBox(height: 24.h),
-
-                          Padding(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 16.w),
-                            child: OrderSummaryCard(order: order),
-                          ),
-                          SizedBox(height: 24.h),
-
-                          _buildDriverActions(
-                              context, orderState, order),
-                          SizedBox(height: 16.h),
-                        ],
+              ? AppError(
+                  message: orderState.errorMessage ?? 'unexpected_error'.tr(),
+                  onRetry: () {
+                    context.read<OrderDetailsCubit>().loadOrderDetails(
+                      widget.order.id,
+                    );
+                  },
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(16.w),
+                        child: OrderInfoHeader(order: order),
                       ),
-                    ),
+                      SizedBox(height: 16.h),
+
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: DeliveryTimeSection(order: order),
+                      ),
+                      SizedBox(height: 16.h),
+
+                      if (order.notes != null && order.notes!.isNotEmpty) ...[
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: NotesDisplaySection(notes: order.notes!),
+                        ),
+                        SizedBox(height: 16.h),
+                      ],
+
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: DeliveryAddressSection(order: order),
+                      ),
+                      SizedBox(height: 24.h),
+
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: OrderSummaryCard(order: order),
+                      ),
+                      SizedBox(height: 24.h),
+
+                      _buildDriverActions(context, orderState, order),
+                      SizedBox(height: 16.h),
+                    ],
+                  ),
+                ),
         );
       },
     );
@@ -165,6 +166,8 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
     OrderDetailsState orderState,
     OrderEntity order,
   ) {
+    if (!_currentRole.isDriver) return const SizedBox.shrink();
+
     final currentStatus = orderState.status ?? order.status;
 
     if (currentStatus == OrderStatus.pendingApproval) {
@@ -178,9 +181,7 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                 variant: ButtonVariant.primary,
                 isLoading: orderState.isAccepting,
                 onPressed: () {
-                  context
-                      .read<OrderDetailsCubit>()
-                      .acceptOrder(order.id);
+                  context.read<OrderDetailsCubit>().acceptOrder(order.id);
                 },
               ),
             ),
@@ -191,9 +192,7 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                 variant: ButtonVariant.error,
                 isLoading: orderState.isRejecting,
                 onPressed: () {
-                  context
-                      .read<OrderDetailsCubit>()
-                      .rejectOrder(order.id);
+                  context.read<OrderDetailsCubit>().rejectOrder(order.id);
                 },
               ),
             ),
@@ -208,9 +207,7 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
           variant: ButtonVariant.primary,
           isLoading: orderState.isStartingDelivery,
           onPressed: () {
-            context
-                .read<OrderDetailsCubit>()
-                .startDeliveringOrder(order.id);
+            context.read<OrderDetailsCubit>().startDeliveringOrder(order.id);
           },
         ),
       );
@@ -226,9 +223,7 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
               context,
               totalAmount: order.total,
               onConfirm: (amount) {
-                context
-                    .read<OrderDetailsCubit>()
-                    .finishOrder(order.id, amount);
+                context.read<OrderDetailsCubit>().finishOrder(order.id, amount);
               },
             );
           },
@@ -236,5 +231,23 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
       );
     }
     return const SizedBox.shrink();
+  }
+
+  UserRole get _currentRole {
+    return UserRole.fromString(
+      sl<HiveCacheService>().get<String>(
+        key: CacheKeys.userType,
+        boxName: CacheConstants.userBox,
+      ),
+    );
+  }
+
+  void _refreshOrders(BuildContext context, List<OrdersEvent> events) {
+    final ordersBloc = context.read<OrdersBloc?>();
+    if (ordersBloc == null) return;
+
+    for (final event in events) {
+      ordersBloc.add(event);
+    }
   }
 }

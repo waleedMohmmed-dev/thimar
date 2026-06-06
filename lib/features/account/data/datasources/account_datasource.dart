@@ -22,44 +22,36 @@ class AccountDataSourceImpl implements AccountDataSource {
     final imagePath = await getProfileImage();
     final role = UserRole.fromString(
       _cacheService.get<String>(
-        key: CacheKeys.userRole,
+        key: CacheKeys.userType,
         boxName: CacheConstants.userBox,
       ),
     );
 
     return UserModel(
       id: '1',
-      name: role.isDriver ? 'أحمد (سائق)' : 'محمد علي',
-      email: role.isDriver ? 'driver@example.com' : 'mohammad@example.com',
-      phone: role.isDriver ? '+966555555555' : '+966547878856',
+      name: 'مستخدم',
+      email: 'user@example.com',
+      phone: '+966555555555',
       profileImage: imagePath,
       address: 'الرياض',
       createdAt: DateTime.now(),
       role: role.storageValue,
-      vehicleType:
-          _cacheService.get<String>(
-            key: CacheKeys.vehicleType,
-            boxName: CacheConstants.userBox,
-          ) ??
-          (role.isDriver ? 'تويوتا كامري' : null),
-      vehicleModel:
-          _cacheService.get<String>(
-            key: CacheKeys.vehicleModel,
-            boxName: CacheConstants.userBox,
-          ) ??
-          (role.isDriver ? '2024' : null),
-      iban:
-          _cacheService.get<String>(
-            key: CacheKeys.iban,
-            boxName: CacheConstants.userBox,
-          ) ??
-          (role.isDriver ? 'SA1234567890123456789012' : null),
-      bankName:
-          _cacheService.get<String>(
-            key: CacheKeys.bankName,
-            boxName: CacheConstants.userBox,
-          ) ??
-          (role.isDriver ? 'البنك الأهلي السعودي' : null),
+      vehicleType: _cacheService.get<String>(
+        key: CacheKeys.vehicleType,
+        boxName: CacheConstants.userBox,
+      ),
+      vehicleModel: _cacheService.get<String>(
+        key: CacheKeys.vehicleModel,
+        boxName: CacheConstants.userBox,
+      ),
+      iban: _cacheService.get<String>(
+        key: CacheKeys.iban,
+        boxName: CacheConstants.userBox,
+      ),
+      bankName: _cacheService.get<String>(
+        key: CacheKeys.bankName,
+        boxName: CacheConstants.userBox,
+      ),
       driverLicenseImage: _cacheService.get<String>(
         key: CacheKeys.driverLicense,
         boxName: CacheConstants.userBox,
@@ -90,6 +82,12 @@ class AccountDataSourceImpl implements AccountDataSource {
     }
     // Save vehicle data if present
     final userRole = UserRole.fromString(user.role);
+    await _cacheService.save(
+      key: CacheKeys.userType,
+      value: userRole.storageValue,
+      boxName: CacheConstants.userBox,
+    );
+
     if (userRole.isDriver) {
       if (user.vehicleType != null) {
         await _cacheService.save(
@@ -177,9 +175,5 @@ class AccountDataSourceImpl implements AccountDataSource {
   @override
   Future<void> logout() async {
     await _cacheService.clear(boxName: CacheConstants.userBox);
-    await _cacheService.delete(
-      key: CacheKeys.userRole,
-      boxName: CacheConstants.appBox,
-    );
   }
 }

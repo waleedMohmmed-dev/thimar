@@ -1,7 +1,5 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
-import 'package:thimar/core/services/role_service.dart';
+import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/features/home/domain/usecases/get_products_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/search_products_use_case.dart';
 import 'package:thimar/features/home/presentation/bloc/home_event.dart';
@@ -10,22 +8,22 @@ import 'package:thimar/features/home/presentation/bloc/home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetProductsUseCase _getProductsUseCase;
   final SearchProductsUseCase _searchProductsUseCase;
-  final RoleService _roleService;
+  final UserRole _role;
 
   HomeBloc({
     required GetProductsUseCase getProductsUseCase,
     required SearchProductsUseCase searchProductsUseCase,
-    required RoleService roleService,
-  })  : _getProductsUseCase = getProductsUseCase,
-        _searchProductsUseCase = searchProductsUseCase,
-        _roleService = roleService,
-        super(const HomeState()) {
+    required UserRole role,
+  }) : _getProductsUseCase = getProductsUseCase,
+       _searchProductsUseCase = searchProductsUseCase,
+       _role = role,
+       super(const HomeState()) {
     on<ProductsFetched>(_onProductsFetched);
     on<ProductFavoriteToggled>(_onProductFavoriteToggled);
     on<ProductsSearched>(_onProductsSearched);
   }
 
-  bool get _isDriver => _roleService.currentRole.isDriver;
+  bool get _isDriver => _role == UserRole.driver;
 
   Future<void> _onProductsFetched(
     ProductsFetched event,
@@ -43,14 +41,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     if (isClosed) return;
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (products) => emit(state.copyWith(
-        isLoading: false,
-        products: products,
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (products) => emit(state.copyWith(isLoading: false, products: products)),
     );
   }
 
@@ -78,7 +71,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     if (event.keyword.trim().isEmpty) {
-      emit(state.copyWith(searchResults: [], isSearching: false, searchError: null));
+      emit(
+        state.copyWith(
+          searchResults: [],
+          isSearching: false,
+          searchError: null,
+        ),
+      );
       return;
     }
 
@@ -88,14 +87,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     if (isClosed) return;
     result.fold(
-      (failure) => emit(state.copyWith(
-        isSearching: false,
-        searchError: failure.message,
-      )),
-      (products) => emit(state.copyWith(
-        isSearching: false,
-        searchResults: products,
-      )),
+      (failure) => emit(
+        state.copyWith(isSearching: false, searchError: failure.message),
+      ),
+      (products) =>
+          emit(state.copyWith(isSearching: false, searchResults: products)),
     );
   }
 }

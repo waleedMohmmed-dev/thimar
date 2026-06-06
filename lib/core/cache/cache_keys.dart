@@ -9,7 +9,7 @@ class CacheKeys {
 
   // Profile/User keys
   static const String userId = 'user_id';
-  static const String userRole = 'user_role';
+  static const String userType = 'user_type';
   static const String profileImage = 'profile_image_path';
   static const String vehicleType = 'vehicle_type';
   static const String vehicleModel = 'vehicle_model';

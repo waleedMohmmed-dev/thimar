@@ -1,16 +1,14 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 
 class AppLoading extends StatelessWidget {
   final String? message;
   final Color? color;
 
   const AppLoading({
-    Key? key,
+    super.key,
     this.message,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

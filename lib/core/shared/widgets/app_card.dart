@@ -1,6 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 
 class AppCard extends StatelessWidget {
   final Widget child;
@@ -11,14 +9,14 @@ class AppCard extends StatelessWidget {
   final bool hasBorder;
 
   const AppCard({
-    Key? key,
+    super.key,
     required this.child,
     this.onTap,
     this.backgroundColor,
     this.padding = const EdgeInsets.all(16),
     this.elevation = 2,
     this.hasBorder = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

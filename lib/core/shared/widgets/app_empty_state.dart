@@ -1,6 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 
 class AppEmptyState extends StatelessWidget {
   final String? title;
@@ -8,11 +6,11 @@ class AppEmptyState extends StatelessWidget {
   final IconData icon;
 
   const AppEmptyState({
-    Key? key,
+    super.key,
     this.title,
     this.subtitle,
     this.icon = Icons.folder_open_outlined,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/orders/presentation/widgets/payment_method.dart';
 
 class PaymentMethodCard extends StatelessWidget {

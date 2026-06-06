@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/about_app/domain/usecases/get_about_app_use_case.dart';
 
 part 'about_app_states.dart';

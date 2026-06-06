@@ -1,4 +1,3 @@
-import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/networking/api_service.dart';
 import 'package:thimar/core/networking/endpoints.dart';
 import 'package:thimar/features/orders/data/models/order_model.dart';

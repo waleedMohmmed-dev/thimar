@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/core/networking/api_service.dart';
@@ -10,8 +10,8 @@ import 'package:thimar/features/car_models/presentation/bloc/car_models_bloc.dar
 import 'package:thimar/features/car_models/presentation/bloc/car_models_event.dart';
 import 'package:thimar/features/car_models/presentation/bloc/car_models_state.dart';
 
-class DriverRegistrationPage extends StatelessWidget {
-  const DriverRegistrationPage({super.key});
+class RegistrationPage extends StatelessWidget {
+  const RegistrationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +221,8 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
                   SizedBox(height: 24.h),
                   const AuthHeader(
                     title: 'تسجيل حساب سائق',
-                    subtitle: 'أكمل بياناتك الشخصية أولاً',
+                    subtitle:
+                        'أكمل بياناتك الشخصية أولاً',
                     align: TextAlign.start,
                   ),
                   SizedBox(height: 24.h),
@@ -241,7 +242,10 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
                   SizedBox(height: 16.h),
                   _buildCityDropdown(),
                   SizedBox(height: 16.h),
-                  UsernameField(controller: _locationController, label: 'العنوان بالتفصيل',),
+                  UsernameField(
+                    controller: _locationController,
+                    label: 'العنوان بالتفصيل',
+                  ),
                   SizedBox(height: 16.h),
                   IdentityNumberField(controller: _identityNumberController),
                   SizedBox(height: 16.h),
@@ -265,7 +269,7 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
           AuthActionRow(
             label: ' لديك حساب بالفعل ؟',
             actionLabel: 'تسجيل الدخول',
-            onActionTap: () => context.goLogin(),
+            onActionTap: () => context.goLogin('driver'),
           ),
           SizedBox(height: 16.h),
         ],
@@ -315,7 +319,8 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
                       SizedBox(height: 24.h),
                       const AuthHeader(
                         title: 'بيانات المركبة',
-                        subtitle: 'أدخل معلومات المركبة والمستندات المطلوبة',
+                        subtitle:
+                            'أدخل معلومات المركبة والمستندات المطلوبة',
                         align: TextAlign.start,
                       ),
                       SizedBox(height: 24.h),
@@ -441,7 +446,7 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
               AuthActionRow(
                 label: ' لديك حساب بالفعل ؟',
                 actionLabel: 'تسجيل الدخول',
-                onActionTap: () => context.goLogin(),
+                onActionTap: () => context.goLogin('driver'),
               ),
               SizedBox(height: 16.h),
             ],
@@ -481,7 +486,8 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
       onChanged: (val) => setState(() => _selectedCityId = val),
       validator: (val) {
         if (_isLoadingCities) return null;
-        if (val == null || val.isEmpty) return 'يرجى اختيار المدينة';
+        if (val == null || val.isEmpty)
+          return 'يرجى اختيار المدينة';
         return null;
       },
     );
@@ -495,21 +501,21 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
           decoration: InputDecoration(
             hintText: 'موديل السيارة',
             prefixIcon: const Icon(Icons.directions_car_outlined),
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
           ),
           items: state.carModels
               .map(
-                (model) => DropdownMenuItem(
-                  value: model.id,
-                  child: Text(model.name),
-                ),
+                (model) =>
+                    DropdownMenuItem(value: model.id, child: Text(model.name)),
               )
               .toList(),
           onChanged: (val) => setState(() => _selectedModelId = val),
           validator: (val) {
             if (state.isLoading) return null;
-            if (val == null || val.isEmpty) return 'يرجى اختيار الموديل';
+            if (val == null || val.isEmpty)
+              return 'يرجى اختيار الموديل';
             return null;
           },
         );
@@ -517,3 +523,4 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
     );
   }
 }
+

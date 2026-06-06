@@ -1,6 +1,5 @@
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_state.dart';
 
 abstract class OrdersEvent extends Equatable {

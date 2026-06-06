@@ -1,7 +1,6 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/models/user_role.dart';
-import 'package:thimar/core/services/role_service.dart';
 import 'package:thimar/core/injection/injection.dart';
+import 'package:thimar/core/models/user_role.dart';
 
 class RoleSelectionPage extends StatefulWidget {
   const RoleSelectionPage({super.key});
@@ -25,10 +24,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _fadeAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    );
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOutBack,
@@ -36,10 +32,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller.forward();
   }
@@ -55,12 +48,9 @@ class _RoleSelectionPageState extends State<RoleSelectionPage>
       _selectedRole = role;
     });
 
-    final roleService = sl<RoleService>();
-    await roleService.saveOnboardingRole(role);
-
     if (mounted) {
-      if (role.isUser) {
-        context.goLogin();
+      if (!role.isDriver) {
+        context.goLogin(role.apiValue);
       } else {
         context.goDriverRegistration();
       }
@@ -189,7 +179,8 @@ class _RoleSelectionPageState extends State<RoleSelectionPage>
                                       role: UserRole.driver,
                                       label: 'سائق',
                                       icon: Icons.drive_eta_outlined,
-                                      isSelected: _selectedRole == UserRole.driver,
+                                      isSelected:
+                                          _selectedRole == UserRole.driver,
                                       cs: cs,
                                       tt: tt,
                                       onTap: () => _selectRole(UserRole.driver),
@@ -257,7 +248,9 @@ class _RoleCard extends StatelessWidget {
           color: isSelected ? cs.primary : cs.surface,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: isSelected ? Colors.transparent : cs.primary.withValues(alpha: 0.3),
+            color: isSelected
+                ? Colors.transparent
+                : cs.primary.withValues(alpha: 0.3),
             width: 2.w,
           ),
           boxShadow: [

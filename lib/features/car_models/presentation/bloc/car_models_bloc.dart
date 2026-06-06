@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/car_models/domain/usecases/get_car_models_use_case.dart';
 import 'car_models_event.dart';
 import 'car_models_state.dart';

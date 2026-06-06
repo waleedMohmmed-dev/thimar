@@ -1,4 +1,3 @@
-import 'package:thimar/core/imports/core_imports.dart';
 
 abstract class AppAssets {
   // ── Images ──────────────────────────────────────────────────────────────────

@@ -4,8 +4,7 @@ import 'package:thimar/features/transaction_history/domain/entities/transaction_
 class TransactionItemWidget extends StatelessWidget {
   final TransactionEntity transaction;
 
-  const TransactionItemWidget({Key? key, required this.transaction})
-    : super(key: key);
+  const TransactionItemWidget({super.key, required this.transaction});
 
   @override
   Widget build(BuildContext context) {

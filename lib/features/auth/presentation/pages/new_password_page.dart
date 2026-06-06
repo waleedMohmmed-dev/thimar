@@ -63,7 +63,7 @@ class _NewPasswordViewState extends State<_NewPasswordView> {
         listener: (context, state) {
           if (state.successMessage != null) {
             context.showSnackBar(state.successMessage!);
-            context.goLogin();
+            context.goLogin('user');
           }
           if (state.errorMessage != null) {
             context.showErrorSnackBar(state.errorMessage!);
@@ -109,7 +109,7 @@ class _NewPasswordViewState extends State<_NewPasswordView> {
                 AuthActionRow(
                   label: ' لديك حساب بالفعل ؟',
                   actionLabel: 'تسجيل الدخول',
-                  onActionTap: () => context.goLogin(),
+                  onActionTap: () => context.goLogin('user'),
                 ),
                 SizedBox(height: 16.h),
               ],

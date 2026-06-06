@@ -5,6 +5,7 @@ abstract class AuthRepository {
   Future<Either<Failure, UserEntity>> login({
     required String phone,
     required String password,
+    required String userType,
     required double lat,
     required double lng,
   });

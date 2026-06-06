@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/features/wallet/domain/entities/transaction_entity.dart';
 
 class TransactionTile extends StatelessWidget {

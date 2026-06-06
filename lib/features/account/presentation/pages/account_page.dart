@@ -32,8 +32,7 @@ class _AccountViewState extends State<_AccountView> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: BlocListener<AccountBloc, AccountState>(
-        listenWhen: (prev, curr) =>
-            prev.status != curr.status,
+        listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
           if (state.status == AccountStatus.logoutSuccess) {
             context.goRoleSelection();
@@ -88,8 +87,8 @@ class _AccountViewState extends State<_AccountView> {
                   SizedBox(height: 24.h),
                   // Menu Items
                   MenuItemsSection(
+                    isDriver: state.user?.isDriver ?? false,
                     onLogout: () => showLogoutDialog(context),
-                    user: state.user,
                   ),
                 ],
               ),
@@ -103,10 +102,10 @@ class _AccountViewState extends State<_AccountView> {
   Future<void> _pickImage(BuildContext context) async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null && mounted) {
-      context.read<AccountBloc>().add(
-        AccountProfileImagePicked(imagePath: picked.path),
-      );
-    }
+    if (picked == null || !context.mounted) return;
+
+    context.read<AccountBloc>().add(
+      AccountProfileImagePicked(imagePath: picked.path),
+    );
   }
 }

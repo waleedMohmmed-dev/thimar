@@ -1,18 +1,11 @@
-import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
-import 'package:thimar/features/wallet/domain/entities/transaction_entity.dart';
 import 'package:thimar/features/wallet/domain/entities/wallet_entity.dart';
 import 'package:thimar/features/wallet/data/models/transaction_model.dart';
 
 class WalletModel extends WalletEntity {
   const WalletModel({
-    required double balance,
-    required List<TransactionEntity> transactions,
-  }) : super(
-          balance: balance,
-          transactions: transactions,
-        );
+    required super.balance,
+    required super.transactions,
+  });
 
   factory WalletModel.fromJson(Map<String, dynamic> json) {
     final List transactionsData = json['transactions'] ?? [];

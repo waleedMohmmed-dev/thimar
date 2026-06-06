@@ -1,7 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
-import 'package:thimar/core/shared/widgets/app_button.dart';
-import 'package:thimar/core/shared/widgets/app_text_field.dart';
 
 class PaymentConfirmationDialog extends StatefulWidget {
   final double totalAmount;
