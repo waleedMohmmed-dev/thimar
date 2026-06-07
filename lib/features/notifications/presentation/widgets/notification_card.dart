@@ -49,7 +49,7 @@ class NotificationCard extends StatelessWidget {
                   ),
                   SizedBox(height: 6.h),
                   Text(
-                    'notification_body_sample'.tr(),
+                    notification.bodyKey.tr(),
                     style: tt.bodyMedium?.copyWith(
                       color: cs.onSurfaceVariant.withValues(alpha: 0.46),
                       fontSize: 13.5.sp,
@@ -62,7 +62,7 @@ class NotificationCard extends StatelessWidget {
                   ),
                   SizedBox(height: 6.h),
                   Text(
-                    'notification_time_two_hours_ago'.tr(),
+                    notification.timeKey.tr(),
                     style: tt.bodyMedium?.copyWith(
                       color: cs.onSurface,
                       fontSize: 13.5.sp,

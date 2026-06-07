@@ -18,6 +18,8 @@ class NotificationsRemoteDataSourceImpl implements NotificationsRemoteDataSource
     return data.map((json) => NotificationEntity(
       id: json['id']?.toString() ?? '',
       titleKey: json['title']?.toString() ?? json['body']?.toString() ?? '',
+      bodyKey: json['body']?.toString() ?? 'notification_body_sample',
+      timeKey: json['created_at']?.toString() ?? 'notification_time_two_hours_ago',
       visual: _parseVisual(json['type']?.toString()),
     )).toList();
   }

@@ -80,6 +80,7 @@ import 'package:thimar/features/account/data/datasources/account_remote_data_sou
 import 'package:thimar/features/account/data/repositories/account_repository_impl.dart';
 import 'package:thimar/features/account/domain/repositories/account_repository.dart';
 import 'package:thimar/features/account/domain/usecases/get_user_profile_usecase.dart';
+import 'package:thimar/features/notifications/data/datasources/notifications_local_data_source.dart';
 import 'package:thimar/features/notifications/data/datasources/notifications_remote_data_source.dart';
 import 'package:thimar/features/notifications/data/repositories/notifications_repository_impl.dart';
 import 'package:thimar/features/notifications/domain/repositories/notifications_repository.dart';
@@ -332,8 +333,14 @@ Future<void> initInjection() async {
   sl.registerLazySingleton<NotificationsRemoteDataSource>(
     () => NotificationsRemoteDataSourceImpl(sl<ApiService>()),
   );
+  sl.registerLazySingleton<NotificationsLocalDataSource>(
+    () => NotificationsLocalDataSource(),
+  );
   sl.registerLazySingleton<NotificationsRepository>(
-    () => NotificationsRepositoryImpl(sl<NotificationsRemoteDataSource>()),
+    () => NotificationsRepositoryImpl(
+      sl<NotificationsRemoteDataSource>(),
+      sl<NotificationsLocalDataSource>(),
+    ),
   );
   sl.registerFactory<NotificationsBloc>(
     () => NotificationsBloc(
