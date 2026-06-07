@@ -3,6 +3,7 @@ import 'package:thimar/features/account/presentation/bloc/account_bloc.dart';
 import 'package:thimar/features/account/presentation/bloc/account_event.dart';
 
 void showLogoutDialog(BuildContext context) {
+  final accountBloc = context.read<AccountBloc>();
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
@@ -16,7 +17,7 @@ void showLogoutDialog(BuildContext context) {
         TextButton(
           onPressed: () {
             context.pop();
-            context.read<AccountBloc>().add(const AccountLogoutRequested());
+            accountBloc.add(const AccountLogoutRequested());
           },
           child: Text(
             'logout'.tr(),

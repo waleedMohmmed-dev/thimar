@@ -1,6 +1,5 @@
 import 'package:thimar/core/networking/api_service.dart';
 import 'package:thimar/core/networking/driver_endpoints.dart';
-import 'package:thimar/core/networking/endpoints.dart';
 import 'package:thimar/features/orders/data/models/order_model.dart';
 import 'package:thimar/features/orders/data/models/order_details_model.dart';
 import 'package:thimar/features/orders/data/models/current_order_search_model.dart';
@@ -82,7 +81,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
 
   @override
   Future<String> refuseOrder(String orderId) async {
-    final response = await _apiService.post(
+    final response = await _apiService.get(
       '${DriverEndpoints.refuseOrder}/$orderId',
     );
     return response['message']?.toString() ?? '';
@@ -91,7 +90,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   @override
   Future<OrderDetailsModel> getOrderDetails(String orderId) async {
     final response = await _apiService.get(
-      '${Endpoints.orderDetails}/$orderId',
+      '${DriverEndpoints.orders}/$orderId',
     );
     final data = response['data'];
     if (data == null || data is! Map<String, dynamic>) {

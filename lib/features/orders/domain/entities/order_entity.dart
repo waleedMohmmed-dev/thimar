@@ -15,6 +15,7 @@ class OrderEntity extends Equatable {
   final double total;
   final OrderStatus status;
   final List<String> productImagePaths;
+  final List<String> productNames;
   final int extraProductsCount;
 
   // Form data (used when completing an order)
@@ -23,6 +24,7 @@ class OrderEntity extends Equatable {
   final String? address;
   final String? deliveryDate;
   final String? deliveryTime;
+  final String? clientImage;
   final String? notes;
   final String? paymentMethod;
   final String? productsTotal;
@@ -36,8 +38,10 @@ class OrderEntity extends Equatable {
     required this.status,
     required this.productImagePaths,
     this.extraProductsCount = 0,
+    this.productNames = const [],
     this.customerName,
     this.phoneNumber,
+    this.clientImage,
     this.address,
     this.deliveryDate,
     this.deliveryTime,
@@ -54,9 +58,11 @@ class OrderEntity extends Equatable {
     double? total,
     OrderStatus? status,
     List<String>? productImagePaths,
+    List<String>? productNames,
     int? extraProductsCount,
     String? customerName,
     String? phoneNumber,
+    String? clientImage,
     String? address,
     String? deliveryDate,
     String? deliveryTime,
@@ -72,9 +78,11 @@ class OrderEntity extends Equatable {
       total: total ?? this.total,
       status: status ?? this.status,
       productImagePaths: productImagePaths ?? this.productImagePaths,
+      productNames: productNames ?? this.productNames,
       extraProductsCount: extraProductsCount ?? this.extraProductsCount,
       customerName: customerName ?? this.customerName,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      clientImage: clientImage ?? this.clientImage,
       address: address ?? this.address,
       deliveryDate: deliveryDate ?? this.deliveryDate,
       deliveryTime: deliveryTime ?? this.deliveryTime,
@@ -93,9 +101,11 @@ class OrderEntity extends Equatable {
         total,
         status,
         productImagePaths,
+        productNames,
         extraProductsCount,
         customerName,
         phoneNumber,
+        clientImage,
         address,
         deliveryDate,
         deliveryTime,

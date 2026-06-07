@@ -97,6 +97,12 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
 
   @override
   Future<void> logout() async {
-    await _apiService.post(Endpoints.logout);
+    await _apiService.post(
+      Endpoints.logout,
+      body: {
+        'device_token': 'test',
+        'type': 'ios',
+      },
+    );
   }
 }

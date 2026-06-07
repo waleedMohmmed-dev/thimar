@@ -78,6 +78,7 @@
   "coming_soon": "قريباً",
   "delivery_to": "التوصيل إلى",
   "search_hint": "ابحث عن ماتريد؟",
+  "search_order_hint": "ابحث عن طلب",
   "categories": "الأقسام",
   "vegetables": "الخضار",
   "fruits": "الفواكه",
@@ -185,5 +186,11 @@
   "refund": "استرجاع",
   "bonus": "مكافأة",
   "hello": "مرحباً",
-  "change_language": "تغيير اللغة"
+  "change_language": "تغيير اللغة",
+  "order_number": "طلب رقم",
+  "payment_method": "طريقة الدفع",
+  "confirm_logout": "تأكيد تسجيل الخروج",
+  "logout_message": "هل أنت متأكد من تسجيل الخروج؟",
+  "cancel": "إلغاء",
+  "logout": "تسجيل الخروج"
 }

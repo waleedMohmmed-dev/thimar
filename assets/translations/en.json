@@ -78,6 +78,7 @@
   "coming_soon": "Coming soon",
   "delivery_to": "Delivery to",
   "search_hint": "Search for what you need?",
+  "search_order_hint": "Search for an order",
   "categories": "Categories",
   "vegetables": "Vegetables",
   "fruits": "Fruits",
@@ -182,5 +183,11 @@
   "refund": "Refund",
   "bonus": "Bonus",
   "hello": "Hello",
-  "change_language": "Change Language"
+  "change_language": "Change Language",
+  "order_number": "Order No.",
+  "payment_method": "Payment Method",
+  "confirm_logout": "Confirm Logout",
+  "logout_message": "Are you sure you want to log out?",
+  "cancel": "Cancel",
+  "logout": "Logout"
 }

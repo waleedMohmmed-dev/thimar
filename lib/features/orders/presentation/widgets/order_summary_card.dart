@@ -13,7 +13,7 @@ class OrderSummaryCard extends StatelessWidget {
     final tt = context.textTheme;
 
     return AppCard(
-      backgroundColor: cs.primary.withAlpha(20),
+      backgroundColor: cs.primary.withAlpha(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

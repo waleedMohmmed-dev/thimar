@@ -1,6 +1,5 @@
 import 'package:image_picker/image_picker.dart';
-import 'package:thimar/core/extensions/context_extensions.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
+import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/features/account/presentation/bloc/account_bloc.dart';
 import 'package:thimar/features/account/presentation/bloc/account_event.dart';
 import 'package:thimar/features/account/presentation/bloc/account_state.dart';
@@ -31,7 +30,7 @@ class _AccountViewState extends State<_AccountView> {
         listenWhen: (prev, curr) => prev.status != curr.status,
         listener: (context, state) {
           if (state.status == AccountStatus.logoutSuccess) {
-            context.goRoleSelection();
+            context.go('${AppRoutes.login}/user');
           }
         },
         child: BlocBuilder<AccountBloc, AccountState>(

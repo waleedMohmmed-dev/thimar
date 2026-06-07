@@ -16,6 +16,7 @@ class OrderDetailsModel extends Equatable {
   final String? notes;
   final String? paymentMethod;
   final List<String> productImages;
+  final List<String> productNames;
 
   const OrderDetailsModel({
     required this.id,
@@ -32,13 +33,18 @@ class OrderDetailsModel extends Equatable {
     this.notes,
     this.paymentMethod,
     this.productImages = const [],
+    this.productNames = const [],
   });
 
   factory OrderDetailsModel.fromJson(Map<String, dynamic> json) {
-    final products = json['products'] as List? ?? [];
-    final imagePaths = products
-        .map((p) => p['url']?.toString() ?? p['image']?.toString() ?? '')
+    final rawImages = json['images'] as List? ?? [];
+    final imagePaths = rawImages
+        .map((p) => p['url']?.toString() ?? '')
         .where((url) => url.isNotEmpty)
+        .toList();
+    final names = rawImages
+        .map((p) => p['name']?.toString() ?? '')
+        .where((n) => n.isNotEmpty)
         .toList();
 
     return OrderDetailsModel(
@@ -54,8 +60,9 @@ class OrderDetailsModel extends Equatable {
       clientImage: json['client_image']?.toString() ?? '',
       address: json['address']?.toString() ?? '',
       notes: json['notes']?.toString(),
-      paymentMethod: json['payment_method']?.toString(),
+      paymentMethod: json['pay_type']?.toString(),
       productImages: imagePaths,
+      productNames: names,
     );
   }
 
@@ -69,11 +76,13 @@ class OrderDetailsModel extends Equatable {
       extraProductsCount: 0,
       customerName: clientName,
       phoneNumber: clientPhone,
+      clientImage: clientImage,
       address: address,
       notes: notes,
       paymentMethod: paymentMethod,
       productsTotal: orderPrice.toStringAsFixed(0),
       deliveryPrice: deliveryPrice.toStringAsFixed(0),
+      productNames: productNames,
     );
   }
 
@@ -82,8 +91,8 @@ class OrderDetailsModel extends Equatable {
       'pending' => OrderStatus.pendingApproval,
       'preparing' => OrderStatus.preparing,
       'on_way' => OrderStatus.onWay,
-      'delivered' => OrderStatus.delivered,
-      'canceled' => OrderStatus.cancelled,
+      'delivered' || 'finished' => OrderStatus.delivered,
+      'canceled' || 'cancelled' => OrderStatus.cancelled,
       _ => OrderStatus.pendingApproval,
     };
   }

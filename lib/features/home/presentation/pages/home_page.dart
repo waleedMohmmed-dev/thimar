@@ -17,6 +17,7 @@ import 'package:thimar/features/home/presentation/widgets/search_field.dart'
     as home_search;
 import 'package:thimar/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_event.dart';
+import 'package:thimar/features/orders/presentation/bloc/orders_state.dart';
 import 'package:thimar/features/account/presentation/bloc/account_bloc.dart';
 import 'package:thimar/features/account/presentation/bloc/account_event.dart';
 import 'package:thimar/features/notifications/presentation/bloc/notifications_bloc.dart';
@@ -93,36 +94,46 @@ class _HomeShellState extends State<_HomeShell> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: IndexedStack(
-          key: ValueKey(_currentIndex),
-          index: _currentIndex,
-          children: [
-            widget.role.isDriver
-                ? const DriverHomeTab()
-                : const _ClientHomeTab(),
-            OrdersPage(role: widget.role),
-            const NotificationsPage(),
-            const AccountPage(),
+    return BlocListener<OrdersBloc, OrdersState>(
+      listenWhen: (prev, curr) =>
+          prev.homeTabIndex != curr.homeTabIndex,
+      listener: (context, state) {
+        if (state.homeTabIndex != null) {
+          _onTabTapped(state.homeTabIndex!);
+          context.read<OrdersBloc>().add(const ClearHomeTabIndex());
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: IndexedStack(
+            key: ValueKey(_currentIndex),
+            index: _currentIndex,
+            children: [
+              widget.role.isDriver
+                  ? const DriverHomeTab()
+                  : const _ClientHomeTab(),
+              OrdersPage(role: widget.role),
+              const NotificationsPage(),
+              const AccountPage(),
+            ],
+          ),
+        ),
+        bottomNavigationBar: AppNavBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabTapped,
+          items: const [
+            AppNavBarItem(labelKey: 'nav_home', icon: Icons.home_outlined),
+            AppNavBarItem(
+              labelKey: 'nav_orders',
+              icon: Icons.receipt_long_outlined,
+            ),
+            AppNavBarItem(
+              labelKey: 'nav_notifications',
+              icon: Icons.notifications_none_outlined,
+            ),
+            AppNavBarItem(labelKey: 'nav_account', icon: Icons.person_outline),
           ],
         ),
-      ),
-      bottomNavigationBar: AppNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        items: const [
-          AppNavBarItem(labelKey: 'nav_home', icon: Icons.home_outlined),
-          AppNavBarItem(
-            labelKey: 'nav_orders',
-            icon: Icons.receipt_long_outlined,
-          ),
-          AppNavBarItem(
-            labelKey: 'nav_notifications',
-            icon: Icons.notifications_none_outlined,
-          ),
-          AppNavBarItem(labelKey: 'nav_account', icon: Icons.person_outline),
-        ],
       ),
     );
   }

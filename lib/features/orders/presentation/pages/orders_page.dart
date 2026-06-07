@@ -64,7 +64,6 @@ class _OrdersViewState extends State<_OrdersView> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: OrdersTab.current.pageIndex);
-    // Removed eager fetch
   }
 
   @override
@@ -79,8 +78,17 @@ class _OrdersViewState extends State<_OrdersView> {
     final tt = context.textTheme;
 
     return BlocListener<OrdersBloc, OrdersState>(
-      listenWhen: (prev, curr) => prev.selectedTab != curr.selectedTab,
+      listenWhen: (prev, curr) =>
+          prev.selectedTab != curr.selectedTab ||
+          prev.deliveringStartedMessage != curr.deliveringStartedMessage,
       listener: (context, state) {
+        if (state.deliveringStartedMessage != null &&
+            state.deliveringStartedMessage!.isNotEmpty) {
+          context.showSnackBar(state.deliveringStartedMessage!);
+          context.read<OrdersBloc>().add(
+                const ClearDeliveringStartedMessage(),
+              );
+        }
         _pageController.animateToPage(
           state.selectedTab.pageIndex,
           duration: const Duration(milliseconds: 260),

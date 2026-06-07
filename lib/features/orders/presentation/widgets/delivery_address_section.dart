@@ -32,10 +32,6 @@ class DeliveryAddressSection extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.r),
                 color: Colors.grey[400],
-                image: const DecorationImage(
-                  image: AssetImage('assets/images/map_placeholder.png'),
-                  fit: BoxFit.cover,
-                ),
               ),
               child: Stack(
                 children: [
@@ -83,15 +79,7 @@ class DeliveryAddressSection extends StatelessWidget {
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ] else ...[
-                    Text(
-                      'no_address'.tr(),
-                      style: tt.bodySmall?.copyWith(
-                        color: cs.outline,
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
+                  ]
                 ],
               ),
             ),

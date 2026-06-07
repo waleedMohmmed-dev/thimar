@@ -1,5 +1,6 @@
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/imports/packages_imports.dart';
+import 'package:thimar/features/orders/domain/entities/order_entity.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_state.dart';
 
 abstract class OrdersEvent extends Equatable {
@@ -50,4 +51,21 @@ class OrderRefused extends OrdersEvent {
 
   @override
   List<Object?> get props => [orderId];
+}
+
+class OrderDeliveringStarted extends OrdersEvent {
+  final OrderEntity order;
+
+  const OrderDeliveringStarted(this.order);
+
+  @override
+  List<Object?> get props => [order];
+}
+
+class ClearDeliveringStartedMessage extends OrdersEvent {
+  const ClearDeliveringStartedMessage();
+}
+
+class ClearHomeTabIndex extends OrdersEvent {
+  const ClearHomeTabIndex();
 }

@@ -17,8 +17,16 @@ class _DriverHomeTabState extends State<DriverHomeTab> {
     return BlocListener<OrdersBloc, OrdersState>(
       listenWhen: (prev, curr) =>
           prev.refuseSuccessMessage != curr.refuseSuccessMessage ||
-          prev.refuseError != curr.refuseError,
+          prev.refuseError != curr.refuseError ||
+          prev.deliveringStartedMessage != curr.deliveringStartedMessage,
       listener: (context, state) {
+        if (state.deliveringStartedMessage != null &&
+            state.deliveringStartedMessage!.isNotEmpty) {
+          context.showSnackBar(state.deliveringStartedMessage!);
+          context.read<OrdersBloc>().add(
+                const ClearDeliveringStartedMessage(),
+              );
+        }
         if (state.refuseSuccessMessage != null &&
             state.refuseSuccessMessage!.isNotEmpty) {
           context.showSnackBar(state.refuseSuccessMessage!);
@@ -52,21 +60,38 @@ class _DriverHomeTabState extends State<DriverHomeTab> {
         }
 
         if (state.pendingOrders.isEmpty) {
-          return AppEmptyState(
-            icon: Icons.local_shipping_outlined,
-            title: 'لا يوجد طلبات متاحة',
-            subtitle: 'سيتم عرض الطلبات المتاحة للتوصيل هنا',
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<OrdersBloc>().add(const PendingOrdersRequested());
+            },
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 100.h),
+              children: [
+                SizedBox(height: 200.h),
+                AppEmptyState(
+                  icon: Icons.local_shipping_outlined,
+                  title: 'لا يوجد طلبات متاحة',
+                  subtitle: 'سيتم عرض الطلبات المتاحة للتوصيل هنا',
+                ),
+              ],
+            ),
           );
         }
 
-        return ListView.separated(
-          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 100.h),
-          itemCount: state.pendingOrders.length,
-          separatorBuilder: (context, index) => SizedBox(height: 16.h),
-          itemBuilder: (context, index) {
-            final order = state.pendingOrders[index];
-            return DriverOrderCard(order: order);
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<OrdersBloc>().add(const PendingOrdersRequested());
           },
+          child: ListView.separated(
+            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 100.h),
+            itemCount: state.pendingOrders.length,
+            separatorBuilder: (context, index) => SizedBox(height: 16.h),
+            itemBuilder: (context, index) {
+              final order = state.pendingOrders[index];
+              return DriverOrderCard(order: order);
+            },
+          ),
         );
       },
     );

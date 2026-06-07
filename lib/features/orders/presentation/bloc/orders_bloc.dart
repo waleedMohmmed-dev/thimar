@@ -1,4 +1,5 @@
 import 'package:thimar/core/imports/core_imports.dart';
+import 'package:thimar/features/orders/domain/entities/order_entity.dart';
 import 'package:thimar/features/orders/domain/usecases/get_pending_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/get_current_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/get_finished_orders_use_case.dart';
@@ -37,6 +38,9 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     on<OrdersSearched>(_onOrdersSearched);
     on<FinishedOrdersLoadMore>(_onFinishedOrdersLoadMore);
     on<OrderRefused>(_onOrderRefused);
+    on<OrderDeliveringStarted>(_onOrderDeliveringStarted);
+    on<ClearDeliveringStartedMessage>(_onClearDeliveringStartedMessage);
+    on<ClearHomeTabIndex>(_onClearHomeTabIndex);
   }
 
   Future<void> _onPendingOrdersRequested(
@@ -198,5 +202,44 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         );
       },
     );
+  }
+
+  void _onOrderDeliveringStarted(
+    OrderDeliveringStarted event,
+    Emitter<OrdersState> emit,
+  ) {
+    final updatedOrder = event.order.copyWith(
+      status: OrderStatus.onWay,
+    );
+    final pendingOrders = List<OrderEntity>.from(state.pendingOrders)
+      ..removeWhere((o) => o.id == updatedOrder.id);
+    final currentOrders = List<OrderEntity>.from(state.currentOrders);
+    final idx = currentOrders.indexWhere((o) => o.id == updatedOrder.id);
+    if (idx >= 0) {
+      currentOrders[idx] = updatedOrder;
+    } else {
+      currentOrders.add(updatedOrder);
+    }
+    emit(state.copyWith(
+      selectedTab: OrdersTab.current,
+      pendingOrders: pendingOrders,
+      currentOrders: currentOrders,
+      deliveringStartedMessage: 'تم اضافة الطلب الى الطلبات الجارية',
+      homeTabIndex: 1,
+    ));
+  }
+
+  void _onClearDeliveringStartedMessage(
+    ClearDeliveringStartedMessage event,
+    Emitter<OrdersState> emit,
+  ) {
+    emit(state.copyWith(clearDeliveringStartedMessage: true));
+  }
+
+  void _onClearHomeTabIndex(
+    ClearHomeTabIndex event,
+    Emitter<OrdersState> emit,
+  ) {
+    emit(state.copyWith(clearHomeTabIndex: true));
   }
 }

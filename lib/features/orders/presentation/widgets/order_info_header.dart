@@ -60,7 +60,7 @@ class OrderInfoHeader extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  order.dateKey.tr(),
+                  order.dateKey,
                   style: tt.bodyMedium?.copyWith(
                     color: cs.outline,
                     fontSize: 13.sp,

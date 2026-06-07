@@ -36,16 +36,19 @@ class _CurrentOrdersPageState extends State<CurrentOrdersPage>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return Column(
-      children: [
-        SearchField(
-          controller: _searchController,
-          onChanged: _onSearchChanged,
-        ),
-        Expanded(
-          child: _isSearchActive ? _buildSearchResults() : _buildOrdersList(),
-        ),
-      ],
+    return Material(
+      type: MaterialType.transparency,
+      child: Column(
+        children: [
+          SearchField(
+            controller: _searchController,
+            onChanged: _onSearchChanged,
+          ),
+          Expanded(
+            child: _isSearchActive ? _buildSearchResults() : _buildOrdersList(),
+          ),
+        ],
+      ),
     );
   }
 

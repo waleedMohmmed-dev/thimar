@@ -18,6 +18,8 @@ class OrdersState extends Equatable {
   final bool isRefusingOrder;
   final String? refuseError;
   final String? refuseSuccessMessage;
+  final String? deliveringStartedMessage;
+  final int? homeTabIndex;
 
   const OrdersState({
     this.selectedTab = OrdersTab.current,
@@ -35,6 +37,8 @@ class OrdersState extends Equatable {
     this.isRefusingOrder = false,
     this.refuseError,
     this.refuseSuccessMessage,
+    this.deliveringStartedMessage,
+    this.homeTabIndex,
   });
 
   OrdersState copyWith({
@@ -58,6 +62,10 @@ class OrdersState extends Equatable {
     bool clearRefuseError = false,
     String? refuseSuccessMessage,
     bool clearRefuseSuccess = false,
+    String? deliveringStartedMessage,
+    bool clearDeliveringStartedMessage = false,
+    int? homeTabIndex,
+    bool clearHomeTabIndex = false,
   }) {
     return OrdersState(
       selectedTab: selectedTab ?? this.selectedTab,
@@ -83,6 +91,12 @@ class OrdersState extends Equatable {
       refuseSuccessMessage: clearRefuseSuccess
           ? null
           : refuseSuccessMessage ?? this.refuseSuccessMessage,
+      deliveringStartedMessage: clearDeliveringStartedMessage
+          ? null
+          : deliveringStartedMessage ?? this.deliveringStartedMessage,
+      homeTabIndex: clearHomeTabIndex
+          ? null
+          : homeTabIndex ?? this.homeTabIndex,
     );
   }
 
@@ -103,6 +117,8 @@ class OrdersState extends Equatable {
     isRefusingOrder,
     refuseError,
     refuseSuccessMessage,
+    deliveringStartedMessage,
+    homeTabIndex,
   ];
 }
 
