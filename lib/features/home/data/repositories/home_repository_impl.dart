@@ -1,5 +1,6 @@
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/features/home/domain/entities/product_entity.dart';
+import 'package:thimar/features/home/domain/entities/rate_entity.dart';
 import 'package:thimar/features/home/domain/repositories/home_repository.dart';
 import 'package:thimar/features/home/data/datasources/home_remote_data_source.dart';
 
@@ -83,12 +84,60 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
+  Future<Either<Failure, ProductEntity>> getProductById(String id) async {
+    try {
+      final model = await remoteDataSource.getProductById(id);
+      return Right(model.toEntity());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> toggleFavorite(
     String productId,
     bool isAdding,
   ) async {
     try {
       await remoteDataSource.toggleFavorite(productId, isAdding);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<RateEntity>>> getProductRates(
+    String productId,
+  ) async {
+    try {
+      final models = await remoteDataSource.getProductRates(productId);
+      return Right(models.map((m) => m.toEntity()).toList());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> addProductRate(
+    String productId,
+    int value,
+    String comment,
+  ) async {
+    try {
+      await remoteDataSource.addProductRate(productId, value, comment);
       return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));

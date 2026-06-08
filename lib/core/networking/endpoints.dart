@@ -22,6 +22,9 @@ class Endpoints {
       "client/products/$id/add_to_favorite";
   static String removeFromFavorite(String id) =>
       "client/products/$id/remove_from_favorite";
+  static String productDetails(String id) => "products/$id";
+  static String productRates(String id) => "products/$id/rates";
+  static String addProductRate(String id) => "client/products/$id/rate";
 
   // Orders
   static const String orderDetails = "orders";

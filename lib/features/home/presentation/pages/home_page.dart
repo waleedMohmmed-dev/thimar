@@ -250,6 +250,11 @@ class _ClientHomeTabState extends State<_ClientHomeTab> {
                       return ProductCard(
                         product: product,
                         isFavorite: state.favoriteIds.contains(product.id),
+                        onTap: () {
+                          context.push(
+                            '${AppRoutes.productDetails}/${product.id}',
+                          );
+                        },
                         onFavoriteToggle: () {
                           context.read<HomeBloc>().add(
                             ProductFavoriteToggled(product.id),

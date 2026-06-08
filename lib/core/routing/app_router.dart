@@ -29,6 +29,9 @@ import 'package:thimar/features/account/presentation/pages/account_page.dart';
 import 'package:thimar/features/account/presentation/pages/language_page.dart';
 import 'package:thimar/features/notifications/presentation/pages/notifications_page.dart';
 
+// Products Pages
+import 'package:thimar/features/products/presentation/pages/product_details_page.dart';
+
 // Orders Pages
 import 'package:thimar/features/orders/domain/entities/order_entity.dart';
 import 'package:thimar/features/orders/presentation/pages/orders_page.dart';
@@ -71,6 +74,9 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String account = '/account';
   static const String notifications = '/notifications';
+
+  // =========== PRODUCTS FLOW ===========
+  static const String productDetails = '/product-details';
 
   // =========== ORDERS FLOW ===========
   static const String orders = '/orders';
@@ -122,6 +128,7 @@ const _protectedRoutes = {
   AppRoutes.profile,
   AppRoutes.account,
   AppRoutes.notifications,
+  AppRoutes.productDetails,
   AppRoutes.orders,
   AppRoutes.currentOrders,
   AppRoutes.finishedOrders,
@@ -362,6 +369,23 @@ final goRouter = GoRouter(
       name: 'Home',
       pageBuilder: (context, state) =>
           NoTransitionPage<void>(key: state.pageKey, child: const HomePage()),
+    ),
+
+    // =========== PRODUCTS ROUTES ===========
+    GoRoute(
+      path: '${AppRoutes.productDetails}/:id',
+      name: 'Product Details',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: ProductDetailsPage(productId: state.pathParameters['id'] ?? ''),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            _rtlAwareSlideTransition(
+              context: context,
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+      ),
     ),
 
     // =========== ORDERS ROUTES ===========
