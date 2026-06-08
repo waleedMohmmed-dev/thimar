@@ -45,33 +45,28 @@ class AppButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           child: Center(
             child: isLoading
-              ? SizedBox(
-                  height: _getIconSize(),
-                  width: _getIconSize(),
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation(
-                      _getTextColor(cs),
+                ? SizedBox(
+                    height: _getIconSize(),
+                    width: _getIconSize(),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(_getTextColor(cs)),
                     ),
-                  ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (icon != null) ...[
-                      Icon(
-                        icon,
-                        color: _getTextColor(cs),
-                        size: _getIconSize(),
-                      ),
-                      SizedBox(width: 8.w),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (icon != null) ...[
+                        Icon(
+                          icon,
+                          color: _getTextColor(cs),
+                          size: _getIconSize(),
+                        ),
+                        SizedBox(width: 8.w),
+                      ],
+                      Text(label, style: _getTextStyle(context)),
                     ],
-                    Text(
-                      label,
-                      style: _getTextStyle(context),
-                    ),
-                  ],
-                ),
+                  ),
           ),
         ),
       ),
@@ -121,4 +116,5 @@ class AppButton extends StatelessWidget {
 }
 
 enum ButtonVariant { primary, secondary, outline, error }
+
 enum ButtonSize { small, medium, large }

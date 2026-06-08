@@ -19,10 +19,7 @@ class VerifyAccountParams extends Equatable {
   final String code;
   final String phone;
 
-  const VerifyAccountParams({
-    required this.code,
-    required this.phone,
-  });
+  const VerifyAccountParams({required this.code, required this.phone});
 
   @override
   List<Object?> get props => [code, phone];

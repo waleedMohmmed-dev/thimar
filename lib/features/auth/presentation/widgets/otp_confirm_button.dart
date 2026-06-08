@@ -31,10 +31,7 @@ class OtpConfirmButton extends StatelessWidget {
                 context.go('${AppRoutes.newPassword}/$phoneNumber/$otp');
               } else {
                 context.read<AuthBloc>().add(
-                  VerifyOtpSubmitted(
-                    code: otp,
-                    phone: phoneNumber,
-                  ),
+                  VerifyOtpSubmitted(code: otp, phone: phoneNumber),
                 );
               }
             } else {

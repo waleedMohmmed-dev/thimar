@@ -21,7 +21,9 @@ class SearchField extends StatelessWidget {
         onChanged: onChanged,
         hintText: hintText ?? 'search_order_hint'.tr(),
         prefixIcon: Icons.search,
-        fillColor: context.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        fillColor: context.colorScheme.surfaceContainerHighest.withValues(
+          alpha: 0.3,
+        ),
       ),
     );
   }

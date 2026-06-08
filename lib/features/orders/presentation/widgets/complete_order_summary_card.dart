@@ -36,7 +36,12 @@ class CompleteOrderSummaryWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(BuildContext context, String label, String value, {bool isDiscount = false}) {
+  Widget _buildRow(
+    BuildContext context,
+    String label,
+    String value, {
+    bool isDiscount = false,
+  }) {
     final cs = context.colorScheme;
     final tt = context.textTheme;
 

@@ -17,7 +17,8 @@ class PrivacyBloc extends Bloc<PrivacyEvent, PrivacyState> {
     emit(state.copyWith(isLoading: true));
     final result = await _getPrivacyUseCase(const NoParams());
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
       (privacy) => emit(state.copyWith(isLoading: false, privacy: privacy)),
     );
   }

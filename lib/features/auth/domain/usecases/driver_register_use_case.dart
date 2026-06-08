@@ -2,7 +2,8 @@ import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/features/auth/domain/entities/user_entity.dart';
 import 'package:thimar/features/auth/domain/repositories/auth_repository.dart';
 
-class DriverRegisterUseCase implements UseCase<UserEntity?, DriverRegisterParams> {
+class DriverRegisterUseCase
+    implements UseCase<UserEntity?, DriverRegisterParams> {
   final AuthRepository repository;
 
   DriverRegisterUseCase(this.repository);
@@ -75,23 +76,23 @@ class DriverRegisterParams extends Equatable {
 
   @override
   List<Object?> get props => [
-        name,
-        email,
-        phone,
-        cityId,
-        password,
-        identityNumber,
-        lat,
-        lng,
-        locationDescription,
-        vehicleType,
-        modelId,
-        iban,
-        bankName,
-        driverLicensePath,
-        vehicleRegistrationPath,
-        vehicleInsurancePath,
-        vehicleFrontPath,
-        vehicleRearPath,
-      ];
+    name,
+    email,
+    phone,
+    cityId,
+    password,
+    identityNumber,
+    lat,
+    lng,
+    locationDescription,
+    vehicleType,
+    modelId,
+    iban,
+    bankName,
+    driverLicensePath,
+    vehicleRegistrationPath,
+    vehicleInsurancePath,
+    vehicleFrontPath,
+    vehicleRearPath,
+  ];
 }

@@ -14,10 +14,7 @@ class HiveCacheService {
     await _hiveService.write<T>(boxName, key, value);
   }
 
-  T? get<T>({
-    required String key,
-    String boxName = CacheConstants.appBox,
-  }) {
+  T? get<T>({required String key, String boxName = CacheConstants.appBox}) {
     return _hiveService.read<T>(boxName, key);
   }
 

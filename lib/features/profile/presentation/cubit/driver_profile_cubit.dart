@@ -81,7 +81,12 @@ class DriverProfileCubit extends Cubit<DriverProfileState> {
       }
       emit(state.copyWith(status: DriverProfileStatus.success, user: user));
     } catch (e) {
-      emit(state.copyWith(status: DriverProfileStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: DriverProfileStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -99,20 +104,33 @@ class DriverProfileCubit extends Cubit<DriverProfileState> {
       };
 
       if (params.imagePath != null) {
-        formDataMap['image'] = await MultipartFile.fromFile(params.imagePath!, filename: 'image.jpg');
+        formDataMap['image'] = await MultipartFile.fromFile(
+          params.imagePath!,
+          filename: 'image.jpg',
+        );
       }
       // ... Add other file fields here ...
 
       final formData = FormData.fromMap(formDataMap);
-      final response = await _apiService.post(DriverEndpoints.profile, body: formData);
+      final response = await _apiService.post(
+        DriverEndpoints.profile,
+        body: formData,
+      );
       final user = UserModel.fromJson(response['data']).toEntity();
-      emit(state.copyWith(
-        status: DriverProfileStatus.success, 
-        user: user, 
-        successMessage: response['message'] ?? 'تم تحديث البيانات بنجاح'
-      ));
+      emit(
+        state.copyWith(
+          status: DriverProfileStatus.success,
+          user: user,
+          successMessage: response['message'] ?? 'تم تحديث البيانات بنجاح',
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(status: DriverProfileStatus.failure, errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: DriverProfileStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

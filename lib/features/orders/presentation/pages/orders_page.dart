@@ -85,9 +85,7 @@ class _OrdersViewState extends State<_OrdersView> {
         if (state.deliveringStartedMessage != null &&
             state.deliveringStartedMessage!.isNotEmpty) {
           context.showSnackBar(state.deliveringStartedMessage!);
-          context.read<OrdersBloc>().add(
-                const ClearDeliveringStartedMessage(),
-              );
+          context.read<OrdersBloc>().add(const ClearDeliveringStartedMessage());
         }
         _pageController.animateToPage(
           state.selectedTab.pageIndex,

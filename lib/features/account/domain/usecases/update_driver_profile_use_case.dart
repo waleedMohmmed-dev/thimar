@@ -47,19 +47,19 @@ class DriverProfileParams extends Equatable {
 
   @override
   List<Object?> get props => [
-        fullname,
-        phone,
-        identityNumber,
-        password,
-        iban,
-        carType,
-        carModel,
-        cityId,
-        imagePath,
-        carLicenceImagePath,
-        carFormImagePath,
-        carInsuranceImagePath,
-        carFrontImagePath,
-        carBackImagePath,
-      ];
+    fullname,
+    phone,
+    identityNumber,
+    password,
+    iban,
+    carType,
+    carModel,
+    cityId,
+    imagePath,
+    carLicenceImagePath,
+    carFormImagePath,
+    carInsuranceImagePath,
+    carFrontImagePath,
+    carBackImagePath,
+  ];
 }

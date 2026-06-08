@@ -10,8 +10,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   final HiveCacheService _cacheService;
 
   SplashBloc({required HiveCacheService cacheService})
-      : _cacheService = cacheService,
-        super(const SplashState()) {
+    : _cacheService = cacheService,
+      super(const SplashState()) {
     on<SplashStarted>(_onStarted);
   }
 
@@ -25,7 +25,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       boxName: CacheConstants.userBox,
     );
     final isLoggedIn = token != null && token.isNotEmpty;
-    
+
     final destination = isLoggedIn
         ? SplashDestination.home
         : SplashDestination.roleSelection;

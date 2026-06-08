@@ -99,19 +99,19 @@ class OrderDetailsModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        status,
-        date,
-        time,
-        orderPrice,
-        deliveryPrice,
-        totalPrice,
-        clientName,
-        clientPhone,
-        clientImage,
-        address,
-        notes,
-        paymentMethod,
-        productImages,
-      ];
+    id,
+    status,
+    date,
+    time,
+    orderPrice,
+    deliveryPrice,
+    totalPrice,
+    clientName,
+    clientPhone,
+    clientImage,
+    address,
+    notes,
+    paymentMethod,
+    productImages,
+  ];
 }

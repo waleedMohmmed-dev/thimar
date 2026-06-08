@@ -54,10 +54,7 @@ class _FinishedOrdersPageState extends State<FinishedOrdersPage>
 
     return Column(
       children: [
-        SearchField(
-          controller: _searchController,
-          onChanged: _onSearchChanged,
-        ),
+        SearchField(controller: _searchController, onChanged: _onSearchChanged),
         Expanded(
           child: _isSearchActive ? _buildSearchResults() : _buildOrdersList(),
         ),
@@ -81,8 +78,8 @@ class _FinishedOrdersPageState extends State<FinishedOrdersPage>
             message: state.searchError!,
             onRetry: () {
               context.read<OrdersBloc>().add(
-                    OrdersSearched(_searchController.text),
-                  );
+                OrdersSearched(_searchController.text),
+              );
             },
           );
         }
@@ -141,8 +138,8 @@ class _FinishedOrdersPageState extends State<FinishedOrdersPage>
         return ListView.separated(
           controller: _scrollController,
           padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 20.h),
-          itemCount: state.finishedOrders.length +
-              (state.finishedHasMore ? 1 : 0),
+          itemCount:
+              state.finishedOrders.length + (state.finishedHasMore ? 1 : 0),
           separatorBuilder: (context, index) => SizedBox(height: 14.h),
           itemBuilder: (context, index) {
             if (index == state.finishedOrders.length) {

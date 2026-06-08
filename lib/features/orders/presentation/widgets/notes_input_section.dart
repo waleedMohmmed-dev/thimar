@@ -3,10 +3,7 @@ import 'package:thimar/core/imports/core_imports.dart';
 class NotesInputSection extends StatelessWidget {
   final TextEditingController controller;
 
-  const NotesInputSection({
-    super.key,
-    required this.controller,
-  });
+  const NotesInputSection({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {

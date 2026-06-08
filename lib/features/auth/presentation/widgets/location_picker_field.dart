@@ -4,11 +4,7 @@ class LocationPickerField extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback? onTap;
 
-  const LocationPickerField({
-    super.key,
-    required this.controller,
-    this.onTap,
-  });
+  const LocationPickerField({super.key, required this.controller, this.onTap});
 
   @override
   Widget build(BuildContext context) {

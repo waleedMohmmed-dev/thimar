@@ -77,9 +77,7 @@ class AboutAppPage extends StatelessWidget {
                   Center(
                     child: Text(
                       'جميع الحقوق محفوظة © 2026 تطبيق ثمّار',
-                      style: tt.bodySmall?.copyWith(
-                        color: cs.onSurfaceVariant,
-                      ),
+                      style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                       textAlign: TextAlign.center,
                     ),
                   ),

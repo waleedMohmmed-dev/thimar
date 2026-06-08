@@ -11,10 +11,7 @@ class SplashState extends Equatable {
     this.destination = SplashDestination.roleSelection,
   });
 
-  SplashState copyWith({
-    bool? isNavigating,
-    SplashDestination? destination,
-  }) {
+  SplashState copyWith({bool? isNavigating, SplashDestination? destination}) {
     return SplashState(
       isNavigating: isNavigating ?? this.isNavigating,
       destination: destination ?? this.destination,

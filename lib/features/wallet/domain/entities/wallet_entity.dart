@@ -6,10 +6,7 @@ class WalletEntity extends Equatable {
   final double balance;
   final List<TransactionEntity> transactions;
 
-  const WalletEntity({
-    this.balance = 0.0,
-    this.transactions = const [],
-  });
+  const WalletEntity({this.balance = 0.0, this.transactions = const []});
 
   @override
   List<Object?> get props => [balance, transactions];

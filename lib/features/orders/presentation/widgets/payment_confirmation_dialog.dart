@@ -10,7 +10,11 @@ class PaymentConfirmationDialog extends StatefulWidget {
     required this.onConfirm,
   });
 
-  static void show(BuildContext context, {required double totalAmount, required ValueChanged<double> onConfirm}) {
+  static void show(
+    BuildContext context, {
+    required double totalAmount,
+    required ValueChanged<double> onConfirm,
+  }) {
     showDialog(
       context: context,
       builder: (context) => PaymentConfirmationDialog(
@@ -21,7 +25,8 @@ class PaymentConfirmationDialog extends StatefulWidget {
   }
 
   @override
-  State<PaymentConfirmationDialog> createState() => _PaymentConfirmationDialogState();
+  State<PaymentConfirmationDialog> createState() =>
+      _PaymentConfirmationDialogState();
 }
 
 class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog> {
@@ -97,7 +102,9 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog> {
                       variant: ButtonVariant.primary,
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
-                          final amount = double.parse(_amountController.text.trim());
+                          final amount = double.parse(
+                            _amountController.text.trim(),
+                          );
                           Navigator.pop(context);
                           widget.onConfirm(amount);
                         }

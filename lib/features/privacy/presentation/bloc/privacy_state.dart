@@ -6,11 +6,7 @@ class PrivacyState extends Equatable {
   final bool isLoading;
   final String? errorMessage;
 
-  const PrivacyState({
-    this.privacy,
-    this.isLoading = false,
-    this.errorMessage,
-  });
+  const PrivacyState({this.privacy, this.isLoading = false, this.errorMessage});
 
   PrivacyState copyWith({
     PrivacyEntity? privacy,

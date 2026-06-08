@@ -23,9 +23,7 @@ class _DriverHomeTabState extends State<DriverHomeTab> {
         if (state.deliveringStartedMessage != null &&
             state.deliveringStartedMessage!.isNotEmpty) {
           context.showSnackBar(state.deliveringStartedMessage!);
-          context.read<OrdersBloc>().add(
-                const ClearDeliveringStartedMessage(),
-              );
+          context.read<OrdersBloc>().add(const ClearDeliveringStartedMessage());
         }
         if (state.refuseSuccessMessage != null &&
             state.refuseSuccessMessage!.isNotEmpty) {

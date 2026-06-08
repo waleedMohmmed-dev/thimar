@@ -7,7 +7,7 @@ abstract class OrdersRepository {
   Future<Either<Failure, List<OrderEntity>>> getCurrentOrders();
 
   Future<Either<Failure, ({List<OrderEntity> orders, bool hasMore})>>
-      getFinishedOrders({int page = 1});
+  getFinishedOrders({int page = 1});
 
   Future<Either<Failure, List<OrderEntity>>> searchCurrentOrders(
     String keyword,

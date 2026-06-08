@@ -99,18 +99,18 @@ class CurrentOrderSearchModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        status,
-        date,
-        time,
-        orderPrice,
-        deliveryPrice,
-        totalPrice,
-        clientName,
-        clientImage,
-        phone,
-        location,
-        images,
-        addressFull,
-      ];
+    id,
+    status,
+    date,
+    time,
+    orderPrice,
+    deliveryPrice,
+    totalPrice,
+    clientName,
+    clientImage,
+    phone,
+    location,
+    images,
+    addressFull,
+  ];
 }

@@ -29,7 +29,8 @@ class OrderModel extends Equatable {
     return OrderModel(
       id: json['id']?.toString() ?? '',
       dateKey: json['date']?.toString() ?? '',
-      total: (json['total_price'] as num?)?.toDouble() ??
+      total:
+          (json['total_price'] as num?)?.toDouble() ??
           (json['order_price'] as num?)?.toDouble() ??
           0.0,
       status: _parseStatus(json['status']?.toString() ?? ''),

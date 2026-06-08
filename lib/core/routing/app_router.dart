@@ -4,6 +4,7 @@ import 'package:thimar/core/cache/cache_keys.dart';
 import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/imports/packages_imports.dart';
 import 'package:thimar/core/injection/injection.dart';
+import 'package:thimar/core/models/user_role.dart';
 
 import 'package:thimar/core/networking/dio_client.dart';
 import 'package:thimar/core/services/screen_tracker_service.dart';
@@ -60,6 +61,7 @@ class AppRoutes {
   // =========== AUTH FLOW ===========
   static const String login = '/login';
   static const String driverRegistration = '/driver-registration';
+  static const String clientRegistration = '/client-registration';
   static const String forgotPassword = '/forgot-password';
   static const String verifyOtp = '/verify-otp';
   static const String newPassword = '/new-password';
@@ -142,6 +144,7 @@ const _publicRoutes = {
   AppRoutes.splash,
   AppRoutes.login,
   AppRoutes.driverRegistration,
+  AppRoutes.clientRegistration,
   AppRoutes.forgotPassword,
 };
 
@@ -277,6 +280,21 @@ final goRouter = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage<void>(
         key: state.pageKey,
         child: const RegistrationPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            _rtlAwareSlideTransition(
+              context: context,
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.clientRegistration,
+      name: 'Client Registration',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: const RegistrationPage(userRole: UserRole.client),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             _rtlAwareSlideTransition(
               context: context,

@@ -14,8 +14,10 @@ class PrivacyRemoteDataSourceImpl implements PrivacyRemoteDataSource {
   @override
   Future<PrivacyEntity> getPrivacy() async {
     final response = await _apiService.get(Endpoints.policy);
-    final content = response['data']?['content']?.toString() ??
-        response['data']?.toString() ?? '';
+    final content =
+        response['data']?['content']?.toString() ??
+        response['data']?.toString() ??
+        '';
     return PrivacyEntity(content: content);
   }
 }

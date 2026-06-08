@@ -45,6 +45,7 @@ class LoginButton extends StatelessWidget {
           label: 'تسجيل الدخول',
           size: ButtonSize.large,
           isLoading: isLoading,
+          isDisabled: isLoading,
           onPressed: () {
             if (formKey.currentState?.validate() ?? false) {
               _getCurrentPosition().then((position) {

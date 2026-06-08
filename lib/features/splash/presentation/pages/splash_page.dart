@@ -69,15 +69,13 @@ class _SplashBodyState extends State<_SplashBody>
       ),
     );
 
-    _textSlide = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.4, 0.65, curve: Curves.easeOutCubic),
-      ),
-    );
+    _textSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.4, 0.65, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _textFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -126,10 +124,7 @@ class _SplashBodyState extends State<_SplashBody>
           gradient: RadialGradient(
             center: Alignment.center,
             radius: 0.9,
-            colors: [
-              cs.primary.withValues(alpha: 0.07),
-              cs.surface,
-            ],
+            colors: [cs.primary.withValues(alpha: 0.07), cs.surface],
           ),
         ),
         child: Column(
@@ -156,10 +151,8 @@ class _SplashBodyState extends State<_SplashBody>
         scale: _logoScale,
         child: AnimatedBuilder(
           animation: _logoPulse,
-          builder: (context, child) => Transform.scale(
-            scale: _logoPulse.value,
-            child: child,
-          ),
+          builder: (context, child) =>
+              Transform.scale(scale: _logoPulse.value, child: child),
           child: Container(
             width: 120.w,
             height: 120.w,
@@ -179,10 +172,7 @@ class _SplashBodyState extends State<_SplashBody>
               ],
             ),
             child: ClipOval(
-              child: Image.asset(
-                AppAssets.logo,
-                fit: BoxFit.contain,
-              ),
+              child: Image.asset(AppAssets.logo, fit: BoxFit.contain),
             ),
           ),
         ),

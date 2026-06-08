@@ -25,7 +25,8 @@ class PhoneField extends StatelessWidget {
             hintTextDirection: TextDirection.rtl,
             prefixIcon: Icons.phone_outlined,
             validator: (val) {
-              if (val == null || val.isEmpty) return 'رقم الجوال لا يمكن أن يكون فارغاً';
+              if (val == null || val.isEmpty)
+                return 'رقم الجوال لا يمكن أن يكون فارغاً';
               if (val.length < 9) return 'رقم الجوال غير صحيح';
               return null;
             },

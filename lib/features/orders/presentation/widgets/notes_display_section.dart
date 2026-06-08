@@ -31,10 +31,7 @@ class NotesDisplaySection extends StatelessWidget {
           ),
           child: Text(
             notes,
-            style: tt.bodyMedium?.copyWith(
-              color: cs.primary,
-              fontSize: 14.sp,
-            ),
+            style: tt.bodyMedium?.copyWith(color: cs.primary, fontSize: 14.sp),
           ),
         ),
       ],

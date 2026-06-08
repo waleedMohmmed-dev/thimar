@@ -68,8 +68,8 @@ class _CurrentOrdersPageState extends State<CurrentOrdersPage>
             message: state.searchError!,
             onRetry: () {
               context.read<OrdersBloc>().add(
-                    OrdersSearched(_searchController.text),
-                  );
+                OrdersSearched(_searchController.text),
+              );
             },
           );
         }

@@ -6,10 +6,9 @@ import 'package:thimar/features/wallet/presentation/bloc/wallet_state.dart';
 class WalletBloc extends Bloc<WalletEvent, WalletState> {
   final GetWalletUseCase _getWalletUseCase;
 
-  WalletBloc({
-    required GetWalletUseCase getWalletUseCase,
-  })  : _getWalletUseCase = getWalletUseCase,
-        super(const WalletState()) {
+  WalletBloc({required GetWalletUseCase getWalletUseCase})
+    : _getWalletUseCase = getWalletUseCase,
+      super(const WalletState()) {
     on<WalletFetched>(_onWalletFetched);
   }
 
@@ -22,14 +21,9 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
     final result = await _getWalletUseCase(const NoParams());
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (wallet) => emit(state.copyWith(
-        isLoading: false,
-        wallet: wallet,
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (wallet) => emit(state.copyWith(isLoading: false, wallet: wallet)),
     );
   }
 }

@@ -76,16 +76,15 @@ class OrdersState extends Equatable {
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
       searchResults: searchResults ?? this.searchResults,
       isSearching: isSearching ?? this.isSearching,
-      searchError: clearSearchError
-          ? null
-          : searchError ?? this.searchError,
+      searchError: clearSearchError ? null : searchError ?? this.searchError,
       finishedHasMore: clearFinishedPagination
           ? false
           : finishedHasMore ?? this.finishedHasMore,
       finishedCurrentPage: clearFinishedPagination
           ? 1
           : finishedCurrentPage ?? this.finishedCurrentPage,
-      isFinishedLoadingMore: isFinishedLoadingMore ?? this.isFinishedLoadingMore,
+      isFinishedLoadingMore:
+          isFinishedLoadingMore ?? this.isFinishedLoadingMore,
       isRefusingOrder: isRefusingOrder ?? this.isRefusingOrder,
       refuseError: clearRefuseError ? null : refuseError ?? this.refuseError,
       refuseSuccessMessage: clearRefuseSuccess

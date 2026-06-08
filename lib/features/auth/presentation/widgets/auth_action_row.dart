@@ -30,10 +30,7 @@ class AuthActionRow extends StatelessWidget {
             ),
           ),
         ),
-        Text(
-          label,
-          style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
-        ),
+        Text(label, style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
       ],
     );
   }

@@ -15,9 +15,13 @@ class CarModelsRemoteDataSourceImpl implements CarModelsRemoteDataSource {
   Future<List<CarModelEntity>> getCarModels() async {
     final response = await _apiService.get(Endpoints.carModels);
     final List data = response['data'] ?? [];
-    return data.map((json) => CarModelEntity(
-      id: json['id'].toString(),
-      name: json['name'].toString(),
-    )).toList();
+    return data
+        .map(
+          (json) => CarModelEntity(
+            id: json['id'].toString(),
+            name: json['name'].toString(),
+          ),
+        )
+        .toList();
   }
 }

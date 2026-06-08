@@ -1,6 +1,10 @@
-﻿import 'dart:io';
+import 'dart:io';
+import 'package:thimar/core/cache/cache_constants.dart';
+import 'package:thimar/core/cache/cache_keys.dart';
+import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/injection/injection.dart';
+import 'package:thimar/core/models/user_role.dart';
 import 'package:thimar/core/networking/api_service.dart';
 import 'package:thimar/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:thimar/features/auth/presentation/bloc/auth_event.dart';
@@ -11,22 +15,27 @@ import 'package:thimar/features/car_models/presentation/bloc/car_models_event.da
 import 'package:thimar/features/car_models/presentation/bloc/car_models_state.dart';
 
 class RegistrationPage extends StatelessWidget {
-  const RegistrationPage({super.key});
+  final UserRole userRole;
+
+  const RegistrationPage({super.key, this.userRole = UserRole.driver});
 
   @override
   Widget build(BuildContext context) {
+    final isClient = userRole == UserRole.client;
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => sl<AuthBloc>()),
-        BlocProvider(create: (_) => sl<CarModelsBloc>()),
+        if (!isClient) BlocProvider(create: (_) => sl<CarModelsBloc>()),
       ],
-      child: const _DriverRegistrationView(),
+      child: _DriverRegistrationView(userRole: userRole),
     );
   }
 }
 
 class _DriverRegistrationView extends StatefulWidget {
-  const _DriverRegistrationView();
+  final UserRole userRole;
+
+  const _DriverRegistrationView({required this.userRole});
 
   @override
   State<_DriverRegistrationView> createState() =>
@@ -71,6 +80,8 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
   // Terms
   bool _agreedToTerms = false;
 
+  bool get _isClient => widget.userRole == UserRole.client;
+
   @override
   void initState() {
     super.initState();
@@ -88,7 +99,9 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
     _bankNameController = TextEditingController();
 
     _fetchCities();
-    context.read<CarModelsBloc>().add(const CarModelsFetched());
+    if (!_isClient) {
+      context.read<CarModelsBloc>().add(const CarModelsFetched());
+    }
   }
 
   Future<void> _fetchCities() async {
@@ -138,6 +151,23 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
       curve: Curves.easeInOut,
     );
     setState(() => _currentStep = step);
+  }
+
+  void _onClientSubmit() {
+    if (!(_step1FormKey.currentState?.validate() ?? false)) return;
+    if (_selectedCityId == null || _selectedCityId!.isEmpty) {
+      context.showErrorSnackBar('يرجى اختيار المدينة');
+      return;
+    }
+
+    // Save user type locally since register API is disabled
+    sl<HiveCacheService>().save(
+      key: CacheKeys.userType,
+      value: UserRole.client.apiValue,
+      boxName: CacheConstants.userBox,
+    );
+    context.showSnackBar('تم التسجيل بنجاح');
+    context.goVerifyOtp(_phoneController.text.trim());
   }
 
   void _onSubmit() {
@@ -194,13 +224,75 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
           }
         },
         child: SafeArea(
-          child: PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            onPageChanged: (index) => setState(() => _currentStep = index + 1),
-            children: [_buildStep1(), _buildStep2()],
-          ),
+          child: _isClient
+              ? _buildClientForm()
+              : PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  onPageChanged: (index) =>
+                      setState(() => _currentStep = index + 1),
+                  children: [_buildStep1(), _buildStep2()],
+                ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildClientForm() {
+    return Form(
+      key: _step1FormKey,
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 24.h),
+                  const AuthLogo(),
+                  SizedBox(height: 24.h),
+                  const AuthHeader(
+                    title: 'تسجيل حساب مستخدم',
+                    subtitle: 'أكمل بياناتك للتسجيل',
+                    align: TextAlign.start,
+                  ),
+                  SizedBox(height: 24.h),
+                  UsernameField(controller: _usernameController),
+                  SizedBox(height: 16.h),
+                  PhoneField(
+                    controller: _phoneController,
+                    selectedCountryCode: _selectedCountryCode,
+                    onCountryCodeChanged: (val) =>
+                        setState(() => _selectedCountryCode = val),
+                  ),
+                  SizedBox(height: 16.h),
+                  _buildCityDropdown(),
+                  SizedBox(height: 16.h),
+                  PasswordField(controller: _passwordController),
+                  SizedBox(height: 16.h),
+                  ConfirmPasswordField(
+                    controller: _confirmPasswordController,
+                    passwordController: _passwordController,
+                  ),
+                  SizedBox(height: 32.h),
+                  AppButton(
+                    label: 'تسجيل',
+                    size: ButtonSize.large,
+                    onPressed: _onClientSubmit,
+                  ),
+                  SizedBox(height: 24.h),
+                ],
+              ),
+            ),
+          ),
+          AuthActionRow(
+            label: ' لديك حساب بالفعل ؟',
+            actionLabel: 'تسجيل الدخول',
+            onActionTap: () => context.goLogin('user'),
+          ),
+          SizedBox(height: 16.h),
+        ],
       ),
     );
   }
@@ -221,8 +313,7 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
                   SizedBox(height: 24.h),
                   const AuthHeader(
                     title: 'تسجيل حساب سائق',
-                    subtitle:
-                        'أكمل بياناتك الشخصية أولاً',
+                    subtitle: 'أكمل بياناتك الشخصية أولاً',
                     align: TextAlign.start,
                   ),
                   SizedBox(height: 24.h),
@@ -319,8 +410,7 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
                       SizedBox(height: 24.h),
                       const AuthHeader(
                         title: 'بيانات المركبة',
-                        subtitle:
-                            'أدخل معلومات المركبة والمستندات المطلوبة',
+                        subtitle: 'أدخل معلومات المركبة والمستندات المطلوبة',
                         align: TextAlign.start,
                       ),
                       SizedBox(height: 24.h),
@@ -486,8 +576,7 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
       onChanged: (val) => setState(() => _selectedCityId = val),
       validator: (val) {
         if (_isLoadingCities) return null;
-        if (val == null || val.isEmpty)
-          return 'يرجى اختيار المدينة';
+        if (val == null || val.isEmpty) return 'يرجى اختيار المدينة';
         return null;
       },
     );
@@ -514,8 +603,7 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
           onChanged: (val) => setState(() => _selectedModelId = val),
           validator: (val) {
             if (state.isLoading) return null;
-            if (val == null || val.isEmpty)
-              return 'يرجى اختيار الموديل';
+            if (val == null || val.isEmpty) return 'يرجى اختيار الموديل';
             return null;
           },
         );
@@ -523,4 +611,3 @@ class _DriverRegistrationViewState extends State<_DriverRegistrationView> {
     );
   }
 }
-

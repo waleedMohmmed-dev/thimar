@@ -10,19 +10,13 @@ void showLogoutDialog(BuildContext context) {
       title: Text('confirm_logout'.tr()),
       content: Text('logout_message'.tr()),
       actions: [
-        TextButton(
-          onPressed: () => context.pop(),
-          child: Text('cancel'.tr()),
-        ),
+        TextButton(onPressed: () => context.pop(), child: Text('cancel'.tr())),
         TextButton(
           onPressed: () {
             context.pop();
             accountBloc.add(const AccountLogoutRequested());
           },
-          child: Text(
-            'logout'.tr(),
-            style: const TextStyle(color: Colors.red),
-          ),
+          child: Text('logout'.tr(), style: const TextStyle(color: Colors.red)),
         ),
       ],
     ),

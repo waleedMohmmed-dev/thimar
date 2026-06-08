@@ -38,9 +38,7 @@ class TermsCheckbox extends StatelessWidget {
             Expanded(
               child: Text(
                 'أوافق على الشروط والأحكام',
-                style: tt.bodyMedium?.copyWith(
-                  color: cs.onSurface,
-                ),
+                style: tt.bodyMedium?.copyWith(color: cs.onSurface),
               ),
             ),
           ],

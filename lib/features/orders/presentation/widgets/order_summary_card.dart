@@ -28,7 +28,8 @@ class OrderSummaryCard extends StatelessWidget {
           SizedBox(height: 16.h),
           SummaryItemRow(
             label: 'total_products'.tr(),
-            value: order.productsTotal ??
+            value:
+                order.productsTotal ??
                 '${order.total.toStringAsFixed(0)} ${'sar'.tr()}',
           ),
           SizedBox(height: 12.h),

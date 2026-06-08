@@ -54,10 +54,7 @@ class ContactFormSection extends StatelessWidget {
           minLines: 3,
         ),
         SizedBox(height: 24.h),
-        AppButton(
-          label: 'إرسال',
-          onPressed: onSubmit,
-        ),
+        AppButton(label: 'إرسال', onPressed: onSubmit),
       ],
     );
   }

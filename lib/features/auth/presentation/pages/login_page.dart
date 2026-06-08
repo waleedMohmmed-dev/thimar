@@ -102,8 +102,12 @@ class _LoginViewState extends State<_LoginView> {
                 ),
                 AuthActionRow(
                   label: ' ليس لديك حساب ؟',
-                  actionLabel: 'تسجيل كـ سائق',
-                  onActionTap: () => context.goDriverRegistration(),
+                  actionLabel: widget.userType == 'user'
+                      ? 'تسجيل كـ مستخدم'
+                      : 'تسجيل كـ سائق',
+                  onActionTap: widget.userType == 'user'
+                      ? () => context.goClientRegistration()
+                      : () => context.goDriverRegistration(),
                 ),
                 SizedBox(height: 16.h),
               ],
@@ -113,4 +117,4 @@ class _LoginViewState extends State<_LoginView> {
       ),
     );
   }
-} 
+}

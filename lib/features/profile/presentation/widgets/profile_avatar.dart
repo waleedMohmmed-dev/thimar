@@ -61,11 +61,7 @@ class _DefaultAvatar extends StatelessWidget {
       width: 120.w,
       height: 120.w,
       color: cs.surfaceContainerHighest,
-      child: Icon(
-        Icons.person,
-        size: 60.r,
-        color: cs.onSurface,
-      ),
+      child: Icon(Icons.person, size: 60.r, color: cs.onSurface),
     );
   }
 }

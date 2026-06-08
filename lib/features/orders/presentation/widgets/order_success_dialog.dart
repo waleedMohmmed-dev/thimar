@@ -18,10 +18,7 @@ class OrderSuccessDialog extends StatelessWidget {
         duration: const Duration(milliseconds: 500),
         curve: Curves.fastEaseInToSlowEaseOut,
         builder: (context, scale, child) {
-          return Transform.scale(
-            scale: scale,
-            child: child,
-          );
+          return Transform.scale(scale: scale, child: child);
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 40.h),

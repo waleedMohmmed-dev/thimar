@@ -33,13 +33,15 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
     super.dispose();
   }
 
-  OrderEntity get _order => widget.order ?? const OrderEntity(
-    id: '',
-    dateKey: '',
-    total: 0,
-    status: OrderStatus.delivered,
-    productImagePaths: [],
-  );
+  OrderEntity get _order =>
+      widget.order ??
+      const OrderEntity(
+        id: '',
+        dateKey: '',
+        total: 0,
+        status: OrderStatus.delivered,
+        productImagePaths: [],
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +87,7 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
               ),
               SizedBox(height: 24.h),
 
-              NotesInputSection(
-                controller: _notesController,
-              ),
+              NotesInputSection(controller: _notesController),
               SizedBox(height: 24.h),
 
               PaymentMethodSection(
@@ -101,7 +101,9 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
               SizedBox(height: 50.h),
 
               CompleteOrderSummaryWidget(
-                productsTotal: _order.productsTotal ?? '${_order.total.toStringAsFixed(0)} ${'sar'.tr()}',
+                productsTotal:
+                    _order.productsTotal ??
+                    '${_order.total.toStringAsFixed(0)} ${'sar'.tr()}',
                 deliveryPrice: _order.deliveryPrice ?? '0 ${'sar'.tr()}',
                 discount: _order.discount ?? '0 ${'sar'.tr()}',
               ),
@@ -167,14 +169,17 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
     final dateStr = _selectedDate != null
         ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
         : _order.deliveryDate;
-    final timeStr =
-        _selectedTime != null ? _selectedTime!.format(context) : _order.deliveryTime;
+    final timeStr = _selectedTime != null
+        ? _selectedTime!.format(context)
+        : _order.deliveryTime;
 
     return _order.copyWith(
       address: _selectedAddress ?? _order.address,
       deliveryDate: dateStr,
       deliveryTime: timeStr,
-      notes: _notesController.text.isNotEmpty ? _notesController.text : _order.notes,
+      notes: _notesController.text.isNotEmpty
+          ? _notesController.text
+          : _order.notes,
       paymentMethod: paymentLabel,
     );
   }

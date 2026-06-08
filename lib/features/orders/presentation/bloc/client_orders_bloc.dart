@@ -7,10 +7,9 @@ part 'client_orders_state.dart';
 class ClientOrdersBloc extends Bloc<ClientOrdersEvent, ClientOrdersState> {
   final GetClientOrdersUseCase _getClientOrdersUseCase;
 
-  ClientOrdersBloc({
-    required GetClientOrdersUseCase getClientOrdersUseCase,
-  })  : _getClientOrdersUseCase = getClientOrdersUseCase,
-        super(const ClientOrdersState()) {
+  ClientOrdersBloc({required GetClientOrdersUseCase getClientOrdersUseCase})
+    : _getClientOrdersUseCase = getClientOrdersUseCase,
+      super(const ClientOrdersState()) {
     on<ClientOrdersStarted>(_onClientOrdersStarted);
   }
 
@@ -18,25 +17,26 @@ class ClientOrdersBloc extends Bloc<ClientOrdersEvent, ClientOrdersState> {
     ClientOrdersStarted event,
     Emitter<ClientOrdersState> emit,
   ) async {
-    emit(state.copyWith(
-      status: ClientOrdersStatus.loading,
-      clearError: true,
-    ));
+    emit(state.copyWith(status: ClientOrdersStatus.loading, clearError: true));
 
     final result = await _getClientOrdersUseCase(const NoParams());
 
     if (isClosed) return;
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: ClientOrdersStatus.failure,
-        errorMessage: failure.message,
-      )),
-      (orders) => emit(state.copyWith(
-        status: ClientOrdersStatus.success,
-        orders: orders,
-        clearError: true,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: ClientOrdersStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (orders) => emit(
+        state.copyWith(
+          status: ClientOrdersStatus.success,
+          orders: orders,
+          clearError: true,
+        ),
+      ),
     );
   }
 }

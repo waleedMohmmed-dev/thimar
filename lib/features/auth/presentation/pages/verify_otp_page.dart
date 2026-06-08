@@ -119,7 +119,6 @@ class _VerifyOtpViewState extends State<_VerifyOtpView> {
             context.showSnackBar(state.successMessage!);
             if (state.successMessage != 'تم إعادة إرسال الكود بنجاح') {
               context.goLogin('user');
-
             }
           }
           if (state.errorMessage != null) {

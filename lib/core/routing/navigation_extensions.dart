@@ -18,9 +18,12 @@ extension NavigationExtensions on BuildContext {
   // =========== AUTH NAVIGATION (go - no back stack) ===========
   void goLogin(String userType) => go('${AppRoutes.login}/$userType');
   void goDriverRegistration() => go(AppRoutes.driverRegistration);
+  void goClientRegistration() => go(AppRoutes.clientRegistration);
   void goForgotPassword() => go(AppRoutes.forgotPassword);
-  void goVerifyOtp(String phoneNumber, {VerifyPurpose purpose = VerifyPurpose.registration}) =>
-      go(RouteArguments.verifyOtpPath(phoneNumber), extra: purpose);
+  void goVerifyOtp(
+    String phoneNumber, {
+    VerifyPurpose purpose = VerifyPurpose.registration,
+  }) => go(RouteArguments.verifyOtpPath(phoneNumber), extra: purpose);
   void goNewPassword(String phoneNumber, String otp) =>
       go(RouteArguments.newPasswordPath(phoneNumber, otp));
 

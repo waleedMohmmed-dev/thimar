@@ -10,14 +10,12 @@ class FaqBloc extends Bloc<FaqEvent, FaqState> {
     on<FaqFetched>(_onFetched);
   }
 
-  Future<void> _onFetched(
-    FaqFetched event,
-    Emitter<FaqState> emit,
-  ) async {
+  Future<void> _onFetched(FaqFetched event, Emitter<FaqState> emit) async {
     emit(state.copyWith(isLoading: true));
     final result = await _getFaqsUseCase(const NoParams());
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
       (faqs) => emit(state.copyWith(isLoading: false, faqs: faqs)),
     );
   }

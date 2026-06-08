@@ -11,11 +11,7 @@ class EmptySearchState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.search_off,
-              size: 64.r,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.search_off, size: 64.r, color: Colors.grey[400]),
             SizedBox(height: 16.h),
             Text(
               'لا توجد نتائج',

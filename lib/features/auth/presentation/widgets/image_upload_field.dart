@@ -44,10 +44,7 @@ class ImageUploadField extends StatelessWidget {
             height: 85.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: cs.outline,
-                width: 1.5,
-              ),
+              border: Border.all(color: cs.outline, width: 1.5),
               color: cs.surface,
             ),
             child: selectedImage != null
@@ -74,11 +71,7 @@ class ImageUploadField extends StatelessWidget {
 
   Widget _buildPlaceholder(ColorScheme cs) {
     return Center(
-      child: Icon(
-        Icons.camera_alt_outlined,
-        size: 28.r,
-        color: cs.outline,
-      ),
+      child: Icon(Icons.camera_alt_outlined, size: 28.r, color: cs.outline),
     );
   }
 
@@ -105,11 +98,7 @@ class ImageUploadField extends StatelessWidget {
                 color: cs.error,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.close,
-                size: 14.r,
-                color: cs.onError,
-              ),
+              child: Icon(Icons.close, size: 14.r, color: cs.onError),
             ),
           ),
         ),

@@ -15,10 +15,14 @@ class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
   Future<List<FaqEntity>> getFaqs() async {
     final response = await _apiService.get(Endpoints.faqs);
     final List data = response['data'] ?? [];
-    return data.map((json) => FaqEntity(
-      id: json['id']?.toString() ?? '',
-      question: json['question']?.toString() ?? '',
-      answer: json['answer']?.toString() ?? '',
-    )).toList();
+    return data
+        .map(
+          (json) => FaqEntity(
+            id: json['id']?.toString() ?? '',
+            question: json['question']?.toString() ?? '',
+            answer: json['answer']?.toString() ?? '',
+          ),
+        )
+        .toList();
   }
 }

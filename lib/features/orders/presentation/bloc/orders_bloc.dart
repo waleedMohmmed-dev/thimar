@@ -24,13 +24,13 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     required SearchCurrentOrdersUseCase searchCurrentOrdersUseCase,
     required SearchFinishedOrdersUseCase searchFinishedOrdersUseCase,
     required RefuseOrderUseCase refuseOrderUseCase,
-  })  : _getPendingOrdersUseCase = getPendingOrdersUseCase,
-        _getCurrentOrdersUseCase = getCurrentOrdersUseCase,
-        _getFinishedOrdersUseCase = getFinishedOrdersUseCase,
-        _searchCurrentOrdersUseCase = searchCurrentOrdersUseCase,
-        _searchFinishedOrdersUseCase = searchFinishedOrdersUseCase,
-        _refuseOrderUseCase = refuseOrderUseCase,
-        super(const OrdersState()) {
+  }) : _getPendingOrdersUseCase = getPendingOrdersUseCase,
+       _getCurrentOrdersUseCase = getCurrentOrdersUseCase,
+       _getFinishedOrdersUseCase = getFinishedOrdersUseCase,
+       _searchCurrentOrdersUseCase = searchCurrentOrdersUseCase,
+       _searchFinishedOrdersUseCase = searchFinishedOrdersUseCase,
+       _refuseOrderUseCase = refuseOrderUseCase,
+       super(const OrdersState()) {
     on<PendingOrdersRequested>(_onPendingOrdersRequested);
     on<CurrentOrdersRequested>(_onCurrentOrdersRequested);
     on<FinishedOrdersRequested>(_onFinishedOrdersRequested);
@@ -50,10 +50,15 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     emit(state.copyWith(status: OrdersStatus.loading));
     final result = await _getPendingOrdersUseCase(const NoParams());
     result.fold(
-      (failure) => emit(state.copyWith(
-          status: OrdersStatus.failure, errorMessage: failure.message)),
-      (orders) => emit(state.copyWith(
-          status: OrdersStatus.success, pendingOrders: orders)),
+      (failure) => emit(
+        state.copyWith(
+          status: OrdersStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (orders) => emit(
+        state.copyWith(status: OrdersStatus.success, pendingOrders: orders),
+      ),
     );
   }
 
@@ -64,10 +69,15 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     emit(state.copyWith(status: OrdersStatus.loading));
     final result = await _getCurrentOrdersUseCase(const NoParams());
     result.fold(
-      (failure) => emit(state.copyWith(
-          status: OrdersStatus.failure, errorMessage: failure.message)),
-      (orders) => emit(state.copyWith(
-          status: OrdersStatus.success, currentOrders: orders)),
+      (failure) => emit(
+        state.copyWith(
+          status: OrdersStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (orders) => emit(
+        state.copyWith(status: OrdersStatus.success, currentOrders: orders),
+      ),
     );
   }
 
@@ -78,24 +88,33 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     emit(state.copyWith(status: OrdersStatus.loading));
     final result = await _getFinishedOrdersUseCase(1);
     result.fold(
-      (failure) => emit(state.copyWith(
-          status: OrdersStatus.failure, errorMessage: failure.message)),
-      (data) => emit(state.copyWith(
+      (failure) => emit(
+        state.copyWith(
+          status: OrdersStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (data) => emit(
+        state.copyWith(
           status: OrdersStatus.success,
           finishedOrders: data.orders,
           finishedHasMore: data.hasMore,
-          finishedCurrentPage: 1)),
+          finishedCurrentPage: 1,
+        ),
+      ),
     );
   }
 
   void _onOrdersTabChanged(OrdersTabChanged event, Emitter<OrdersState> emit) {
     if (event.tab == state.selectedTab) return;
-    emit(state.copyWith(
-      selectedTab: event.tab,
-      searchResults: [],
-      isSearching: false,
-      clearSearchError: true,
-    ));
+    emit(
+      state.copyWith(
+        selectedTab: event.tab,
+        searchResults: [],
+        isSearching: false,
+        clearSearchError: true,
+      ),
+    );
   }
 
   Future<void> _onOrdersSearched(
@@ -104,11 +123,13 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   ) async {
     final keyword = event.keyword.trim();
     if (keyword.isEmpty) {
-      emit(state.copyWith(
-        searchResults: [],
-        isSearching: false,
-        clearSearchError: true,
-      ));
+      emit(
+        state.copyWith(
+          searchResults: [],
+          isSearching: false,
+          clearSearchError: true,
+        ),
+      );
       return;
     }
 
@@ -125,17 +146,10 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     if (isClosed) return;
     result.fold(
       (failure) => emit(
-        state.copyWith(
-          isSearching: false,
-          searchError: failure.message,
-        ),
+        state.copyWith(isSearching: false, searchError: failure.message),
       ),
-      (orders) => emit(
-        state.copyWith(
-          isSearching: false,
-          searchResults: orders,
-        ),
-      ),
+      (orders) =>
+          emit(state.copyWith(isSearching: false, searchResults: orders)),
     );
   }
 
@@ -168,21 +182,20 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     OrderRefused event,
     Emitter<OrdersState> emit,
   ) async {
-    emit(state.copyWith(
-      isRefusingOrder: true,
-      clearRefuseError: true,
-      clearRefuseSuccess: true,
-    ));
+    emit(
+      state.copyWith(
+        isRefusingOrder: true,
+        clearRefuseError: true,
+        clearRefuseSuccess: true,
+      ),
+    );
 
     final result = await _refuseOrderUseCase(event.orderId);
 
     if (isClosed) return;
     result.fold(
       (failure) => emit(
-        state.copyWith(
-          isRefusingOrder: false,
-          refuseError: failure.message,
-        ),
+        state.copyWith(isRefusingOrder: false, refuseError: failure.message),
       ),
       (message) {
         final updatedPendingOrders = state.pendingOrders
@@ -208,9 +221,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     OrderDeliveringStarted event,
     Emitter<OrdersState> emit,
   ) {
-    final updatedOrder = event.order.copyWith(
-      status: OrderStatus.onWay,
-    );
+    final updatedOrder = event.order.copyWith(status: OrderStatus.onWay);
     final pendingOrders = List<OrderEntity>.from(state.pendingOrders)
       ..removeWhere((o) => o.id == updatedOrder.id);
     final currentOrders = List<OrderEntity>.from(state.currentOrders);
@@ -220,13 +231,15 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     } else {
       currentOrders.add(updatedOrder);
     }
-    emit(state.copyWith(
-      selectedTab: OrdersTab.current,
-      pendingOrders: pendingOrders,
-      currentOrders: currentOrders,
-      deliveringStartedMessage: 'تم اضافة الطلب الى الطلبات الجارية',
-      homeTabIndex: 1,
-    ));
+    emit(
+      state.copyWith(
+        selectedTab: OrdersTab.current,
+        pendingOrders: pendingOrders,
+        currentOrders: currentOrders,
+        deliveringStartedMessage: 'تم اضافة الطلب الى الطلبات الجارية',
+        homeTabIndex: 1,
+      ),
+    );
   }
 
   void _onClearDeliveringStartedMessage(

@@ -14,11 +14,13 @@ class UserModel extends UserEntity {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id']?.toString() ?? '',
-      name: json['name']?.toString() ?? '',
+      name: json['name']?.toString() ?? json['fullname']?.toString() ?? '',
       email: json['email']?.toString() ?? '',
       phone: json['phone']?.toString() ?? '',
       token: json['token']?.toString() ?? '',
-      role: UserRole.fromString(json['role']?.toString() ?? json['user_type']?.toString()),
+      role: UserRole.fromString(
+        json['role']?.toString() ?? json['user_type']?.toString(),
+      ),
     );
   }
 
@@ -44,4 +46,3 @@ class UserModel extends UserEntity {
     );
   }
 }
-

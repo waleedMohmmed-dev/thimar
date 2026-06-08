@@ -22,9 +22,7 @@ class ProfileHeaderInfo extends StatelessWidget {
         SizedBox(height: 4.h),
         Text(
           phone ?? '',
-          style: tt.bodyLarge?.copyWith(
-            color: cs.onSurfaceVariant,
-          ),
+          style: tt.bodyLarge?.copyWith(color: cs.onSurfaceVariant),
         ),
       ],
     );

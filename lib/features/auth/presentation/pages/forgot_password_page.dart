@@ -52,8 +52,12 @@ class _ForgotPasswordViewState extends State<_ForgotPasswordView> {
         listener: (context, state) {
           if (state.successMessage != null) {
             context.showSnackBar(state.successMessage!);
-            final phoneNumber = '$_selectedCountryCode${_phoneController.text.trim()}';
-            context.goVerifyOtp(phoneNumber, purpose: VerifyPurpose.forgotPassword);
+            final phoneNumber =
+                '$_selectedCountryCode${_phoneController.text.trim()}';
+            context.goVerifyOtp(
+              phoneNumber,
+              purpose: VerifyPurpose.forgotPassword,
+            );
           }
           if (state.errorMessage != null) {
             context.showErrorSnackBar(state.errorMessage!);

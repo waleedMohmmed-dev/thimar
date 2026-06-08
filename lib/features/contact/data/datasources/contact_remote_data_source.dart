@@ -22,11 +22,7 @@ class ContactRemoteDataSourceImpl implements ContactRemoteDataSource {
   }) async {
     await _apiService.post(
       Endpoints.contact,
-      body: {
-        'name': name,
-        'phone': phone,
-        'message': message,
-      },
+      body: {'name': name, 'phone': phone, 'message': message},
     );
   }
 }

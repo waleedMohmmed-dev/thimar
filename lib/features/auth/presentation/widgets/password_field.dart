@@ -14,8 +14,10 @@ class PasswordField extends StatelessWidget {
       isPassword: true,
       prefixIcon: Icons.lock_outline_rounded,
       validator: (val) {
-        if (val == null || val.isEmpty) return 'كلمة المرور لا يمكن أن تكون فارغة';
-        if (val.length < 6) return 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل';
+        if (val == null || val.isEmpty)
+          return 'كلمة المرور لا يمكن أن تكون فارغة';
+        if (val.length < 6)
+          return 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل';
         return null;
       },
     );

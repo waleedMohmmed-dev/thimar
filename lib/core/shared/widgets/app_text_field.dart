@@ -100,23 +100,26 @@ class _AppTextFieldState extends State<AppTextField> {
             fillColor: widget.fillColor,
             counterText: widget.counterText,
             prefixIcon: widget.prefixIcon != null
-              ? Icon(widget.prefixIcon, color: cs.outline)
-              : null,
+                ? Icon(widget.prefixIcon, color: cs.outline)
+                : null,
             suffixIcon: widget.isPassword
-              ? GestureDetector(
-                  onTap: () => setState(() => _obscureText = !_obscureText),
-                  child: Icon(
-                    _obscureText ? Icons.visibility_off : Icons.visibility,
-                    color: cs.outline,
-                  ),
-                )
-              : widget.suffixWidget ?? (widget.suffixIcon != null
-                  ? GestureDetector(
-                      onTap: widget.onSuffixTap,
-                      child: Icon(widget.suffixIcon, color: cs.outline),
-                    )
-                  : null),
-            contentPadding: widget.contentPadding ?? EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                ? GestureDetector(
+                    onTap: () => setState(() => _obscureText = !_obscureText),
+                    child: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                      color: cs.outline,
+                    ),
+                  )
+                : widget.suffixWidget ??
+                      (widget.suffixIcon != null
+                          ? GestureDetector(
+                              onTap: widget.onSuffixTap,
+                              child: Icon(widget.suffixIcon, color: cs.outline),
+                            )
+                          : null),
+            contentPadding:
+                widget.contentPadding ??
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(color: cs.outline),

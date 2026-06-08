@@ -11,7 +11,8 @@ class TransactionTile extends StatelessWidget {
     final cs = context.colorScheme;
     final tt = context.textTheme;
 
-    final isPositive = transaction.type == TransactionType.deposit ||
+    final isPositive =
+        transaction.type == TransactionType.deposit ||
         transaction.type == TransactionType.refund;
 
     return Padding(
@@ -84,11 +85,17 @@ class TransactionTile extends StatelessWidget {
                         SizedBox(height: 8.h),
                         Row(
                           children: [
-                            const _ProductImage(path: 'assets/images/fruit.png'),
+                            const _ProductImage(
+                              path: 'assets/images/fruit.png',
+                            ),
                             SizedBox(width: 8.w),
-                            const _ProductImage(path: 'assets/images/vegetable.png'),
+                            const _ProductImage(
+                              path: 'assets/images/vegetable.png',
+                            ),
                             SizedBox(width: 8.w),
-                            const _ProductImage(path: 'assets/images/steak.png'),
+                            const _ProductImage(
+                              path: 'assets/images/steak.png',
+                            ),
                             SizedBox(width: 8.w),
                             Container(
                               padding: EdgeInsets.all(4.r),
@@ -125,8 +132,18 @@ class TransactionTile extends StatelessWidget {
 
   String _getMonthName(int month) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return months[month - 1];
   }
@@ -143,9 +160,7 @@ class _TypeIcon extends StatelessWidget {
       width: 32.w,
       height: 32.w,
       decoration: BoxDecoration(
-        color: isPositive
-            ? const Color(0xFFE2F3E2)
-            : const Color(0xFFFBE8E8),
+        color: isPositive ? const Color(0xFFE2F3E2) : const Color(0xFFFBE8E8),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Center(

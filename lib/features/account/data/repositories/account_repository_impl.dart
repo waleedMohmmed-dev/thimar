@@ -20,25 +20,27 @@ class AccountRepositoryImpl implements AccountRepository {
       final user = await remoteDataSource.getUserProfile();
       final cachedImage = await dataSource.getProfileImage();
       if (cachedImage != null && cachedImage.isNotEmpty) {
-        return Right(UserEntity(
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          profileImage: cachedImage,
-          address: user.address,
-          createdAt: user.createdAt,
-          role: user.role,
-          vehicleType: user.vehicleType,
-          vehicleModel: user.vehicleModel,
-          iban: user.iban,
-          bankName: user.bankName,
-          driverLicenseImage: user.driverLicenseImage,
-          vehicleRegistrationImage: user.vehicleRegistrationImage,
-          vehicleInsuranceImage: user.vehicleInsuranceImage,
-          vehicleFrontImage: user.vehicleFrontImage,
-          vehicleRearImage: user.vehicleRearImage,
-        ));
+        return Right(
+          UserEntity(
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            profileImage: cachedImage,
+            address: user.address,
+            createdAt: user.createdAt,
+            role: user.role,
+            vehicleType: user.vehicleType,
+            vehicleModel: user.vehicleModel,
+            iban: user.iban,
+            bankName: user.bankName,
+            driverLicenseImage: user.driverLicenseImage,
+            vehicleRegistrationImage: user.vehicleRegistrationImage,
+            vehicleInsuranceImage: user.vehicleInsuranceImage,
+            vehicleFrontImage: user.vehicleFrontImage,
+            vehicleRearImage: user.vehicleRearImage,
+          ),
+        );
       }
       return Right(user);
     } on ServerException catch (e) {
@@ -51,7 +53,9 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateDriverProfile(DriverProfileParams params) async {
+  Future<Either<Failure, void>> updateDriverProfile(
+    DriverProfileParams params,
+  ) async {
     try {
       await remoteDataSource.updateDriverProfile(params);
       return const Right(null);

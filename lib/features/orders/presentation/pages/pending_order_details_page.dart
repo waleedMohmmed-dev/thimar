@@ -146,8 +146,7 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                       SizedBox(height: 16.h),
                     ],
 
-                    if (order.address != null &&
-                        order.address!.isNotEmpty) ...[
+                    if (order.address != null && order.address!.isNotEmpty) ...[
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: DeliveryAddressSection(order: order),
@@ -197,9 +196,9 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                         ),
                         TextButton(
                           onPressed: () {
-                            context
-                                .read<OrderDetailsCubit>()
-                                .loadOrderDetails(widget.order.id);
+                            context.read<OrderDetailsCubit>().loadOrderDetails(
+                              widget.order.id,
+                            );
                           },
                           child: Text(
                             'إعادة المحاولة',
@@ -359,9 +358,9 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                     onPressed: orderState.isRejecting
                         ? null
                         : () {
-                            context
-                                .read<OrderDetailsCubit>()
-                                .rejectOrder(order.id);
+                            context.read<OrderDetailsCubit>().rejectOrder(
+                              order.id,
+                            );
                           },
                     child: orderState.isRejecting
                         ? SizedBox(
@@ -397,10 +396,10 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                 ),
                 onPressed: () {
                   context.read<OrdersBloc?>()?.add(
-                        OrderDeliveringStarted(
-                          order.copyWith(status: OrderStatus.onWay),
-                        ),
-                      );
+                    OrderDeliveringStarted(
+                      order.copyWith(status: OrderStatus.onWay),
+                    ),
+                  );
                   context.pop();
                 },
                 child: Text(

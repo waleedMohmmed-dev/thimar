@@ -6,7 +6,8 @@ abstract class NotificationsRemoteDataSource {
   Future<List<NotificationEntity>> getNotifications();
 }
 
-class NotificationsRemoteDataSourceImpl implements NotificationsRemoteDataSource {
+class NotificationsRemoteDataSourceImpl
+    implements NotificationsRemoteDataSource {
   final ApiService _apiService;
 
   NotificationsRemoteDataSourceImpl(this._apiService);
@@ -15,13 +16,20 @@ class NotificationsRemoteDataSourceImpl implements NotificationsRemoteDataSource
   Future<List<NotificationEntity>> getNotifications() async {
     final response = await _apiService.get(Endpoints.notifications);
     final List data = response['data'] ?? [];
-    return data.map((json) => NotificationEntity(
-      id: json['id']?.toString() ?? '',
-      titleKey: json['title']?.toString() ?? json['body']?.toString() ?? '',
-      bodyKey: json['body']?.toString() ?? 'notification_body_sample',
-      timeKey: json['created_at']?.toString() ?? 'notification_time_two_hours_ago',
-      visual: _parseVisual(json['type']?.toString()),
-    )).toList();
+    return data
+        .map(
+          (json) => NotificationEntity(
+            id: json['id']?.toString() ?? '',
+            titleKey:
+                json['title']?.toString() ?? json['body']?.toString() ?? '',
+            bodyKey: json['body']?.toString() ?? 'notification_body_sample',
+            timeKey:
+                json['created_at']?.toString() ??
+                'notification_time_two_hours_ago',
+            visual: _parseVisual(json['type']?.toString()),
+          ),
+        )
+        .toList();
   }
 
   NotificationVisual _parseVisual(String? type) {

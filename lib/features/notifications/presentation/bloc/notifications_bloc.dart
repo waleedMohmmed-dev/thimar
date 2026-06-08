@@ -8,8 +8,8 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   final NotificationsRepository _notificationsRepository;
 
   NotificationsBloc({required NotificationsRepository notificationsRepository})
-      : _notificationsRepository = notificationsRepository,
-        super(const NotificationsState()) {
+    : _notificationsRepository = notificationsRepository,
+      super(const NotificationsState()) {
     on<NotificationsFetched>(_onNotificationsFetched);
   }
 
@@ -20,14 +20,10 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     emit(state.copyWith(isLoading: true));
     final result = await _notificationsRepository.getNotifications();
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (notifications) => emit(state.copyWith(
-        isLoading: false,
-        notifications: notifications,
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (notifications) =>
+          emit(state.copyWith(isLoading: false, notifications: notifications)),
     );
   }
 }

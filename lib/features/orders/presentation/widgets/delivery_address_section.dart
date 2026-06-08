@@ -79,7 +79,7 @@ class DeliveryAddressSection extends StatelessWidget {
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ]
+                  ],
                 ],
               ),
             ),

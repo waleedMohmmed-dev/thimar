@@ -36,13 +36,9 @@ abstract class AuthRepository {
     required String phone,
   });
 
-  Future<Either<Failure, void>> forgotPassword({
-    required String phone,
-  });
+  Future<Either<Failure, void>> forgotPassword({required String phone});
 
-  Future<Either<Failure, void>> resendCode({
-    required String phone,
-  });
+  Future<Either<Failure, void>> resendCode({required String phone});
 
   Future<Either<Failure, void>> resetPassword({
     required String phone,

@@ -121,7 +121,7 @@ class DriverOrderCard extends StatelessWidget {
 
               // Products Section
               OrderProductsPreview(order: order),
-              
+
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 child: Divider(
@@ -168,9 +168,9 @@ class DriverOrderCard extends StatelessWidget {
                               variant: ButtonVariant.error,
                               isLoading: state.isRefusingOrder,
                               onPressed: () {
-                                context
-                                    .read<OrdersBloc>()
-                                    .add(OrderRefused(order.id));
+                                context.read<OrdersBloc>().add(
+                                  OrderRefused(order.id),
+                                );
                               },
                             ),
                           ),

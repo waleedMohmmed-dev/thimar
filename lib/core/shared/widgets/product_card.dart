@@ -44,8 +44,9 @@ class ProductCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(16.r)),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(16.r),
+                  ),
                   child: AppImage(
                     imageUrl: product.imageUrl,
                     height: 120.h,
@@ -66,7 +67,7 @@ class ProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                       child: Text(
-                        '${product.discount}%',
+                        '${(product.discount! * 100).round()}%',
                         style: tt.bodySmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -118,60 +119,71 @@ class ProductCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4.h),
-                  Row(
-                    children: [
-                      Text(
-                        'price'.tr(),
-                        style: tt.bodySmall?.copyWith(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                      Text(
-                        'per_kg'.tr(),
-                        style: tt.bodySmall?.copyWith(
-                          color: cs.onSurfaceVariant,
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    product.unitName,
+                    style: tt.bodySmall?.copyWith(
+                      color: cs.onSurfaceVariant,
+                      fontSize: 12.sp,
+                    ),
                   ),
-                  SizedBox(height: 8.h),
+                  SizedBox(height: 4.h),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            '${product.price}',
-                            style: tt.titleSmall?.copyWith(
-                              color: cs.primary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
+                      Flexible(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                product.price.toStringAsFixed(1),
+                                style: tt.titleSmall?.copyWith(
+                                  color: cs.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.sp,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            'sar'.tr(),
-                            style: tt.bodySmall?.copyWith(
-                              color: cs.onSurfaceVariant,
-                              fontSize: 12.sp,
+                            SizedBox(width: 2.w),
+                            Text(
+                              'sar'.tr(),
+                              style: tt.bodySmall?.copyWith(
+                                color: cs.onSurfaceVariant,
+                                fontSize: 10.sp,
+                              ),
                             ),
-                          ),
-                        ],
+                            if (product.priceBeforeDiscount != null &&
+                                product.priceBeforeDiscount! > product.price)
+                              Padding(
+                                padding: EdgeInsetsDirectional.only(start: 4.w),
+                                child: Text(
+                                  '${product.priceBeforeDiscount!.toStringAsFixed(1)} ${'sar'.tr()}',
+                                  style: tt.bodySmall?.copyWith(
+                                    color: cs.onSurfaceVariant,
+                                    fontSize: 9.sp,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                      // Add to cart button
+                      SizedBox(width: 4.w),
                       GestureDetector(
                         onTap: onAddToCart,
                         child: Container(
-                          width: 36.w,
-                          height: 36.w,
+                          width: 24.w,
+                          height: 24.w,
                           decoration: BoxDecoration(
                             color: cs.primary,
-                            borderRadius: BorderRadius.circular(8.r),
+                            borderRadius: BorderRadius.circular(6.r),
                           ),
-                          child:
-                              Icon(Icons.add, color: Colors.white, size: 24.r),
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 16.r,
+                          ),
                         ),
                       ),
                     ],

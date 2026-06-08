@@ -15,12 +15,14 @@ class AboutAppCubit extends Cubit<AboutAppStates> {
     if (isClosed) return;
     result.fold(
       (failure) => emit(AboutAppError(failure.message)),
-      (about) => emit(AboutAppLoaded(
-        phone: about.phone,
-        email: about.email,
-        address: about.address,
-        terms: about.terms,
-      )),
+      (about) => emit(
+        AboutAppLoaded(
+          phone: about.phone,
+          email: about.email,
+          address: about.address,
+          terms: about.terms,
+        ),
+      ),
     );
   }
 }

@@ -23,18 +23,12 @@ class AppError extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 64.r,
-              color: cs.error,
-            ),
+            Icon(icon, size: 64.r, color: cs.error),
             SizedBox(height: 16.h),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: tt.bodyLarge?.copyWith(
-                color: cs.onSurface,
-              ),
+              style: tt.bodyLarge?.copyWith(color: cs.onSurface),
             ),
             if (onRetry != null) ...[
               SizedBox(height: 16.h),

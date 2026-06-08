@@ -41,16 +41,17 @@ class TransactionModel extends Equatable {
       id: json['id']?.toString() ?? '',
       type: mappedType,
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
-      dateTime: json['date']?.toString() ??
+      dateTime:
+          json['date']?.toString() ??
           json['created_at']?.toString() ??
           DateTime.now().toIso8601String(),
       description: json['description']?.toString(),
       orderId: json['order_id']?.toString() ?? json['orderId']?.toString(),
       productImagePaths: json['products'] != null
           ? (json['products'] as List)
-              .map((p) => p['url']?.toString() ?? '')
-              .where((u) => u.isNotEmpty)
-              .toList()
+                .map((p) => p['url']?.toString() ?? '')
+                .where((u) => u.isNotEmpty)
+                .toList()
           : null,
       extraProductsCount: json['extra_products_count'] as int?,
       isIncome: json['is_income'] ?? json['isIncome'] ?? false,

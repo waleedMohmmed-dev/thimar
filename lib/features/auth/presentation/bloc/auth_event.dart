@@ -91,35 +91,32 @@ class DriverRegisterSubmitted extends AuthEvent {
 
   @override
   List<Object?> get props => [
-        name,
-        email,
-        phone,
-        cityId,
-        password,
-        identityNumber,
-        lat,
-        lng,
-        locationDescription,
-        vehicleType,
-        modelId,
-        iban,
-        bankName,
-        driverLicensePath,
-        vehicleRegistrationPath,
-        vehicleInsurancePath,
-        vehicleFrontPath,
-        vehicleRearPath,
-      ];
+    name,
+    email,
+    phone,
+    cityId,
+    password,
+    identityNumber,
+    lat,
+    lng,
+    locationDescription,
+    vehicleType,
+    modelId,
+    iban,
+    bankName,
+    driverLicensePath,
+    vehicleRegistrationPath,
+    vehicleInsurancePath,
+    vehicleFrontPath,
+    vehicleRearPath,
+  ];
 }
 
 class VerifyOtpSubmitted extends AuthEvent {
   final String code;
   final String phone;
 
-  const VerifyOtpSubmitted({
-    required this.code,
-    required this.phone,
-  });
+  const VerifyOtpSubmitted({required this.code, required this.phone});
 
   @override
   List<Object?> get props => [code, phone];

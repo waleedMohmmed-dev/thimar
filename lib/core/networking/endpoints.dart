@@ -14,6 +14,15 @@ class Endpoints {
 
   static const String editPassword = "edit_password";
 
+  // Products
+  static const String products = "products";
+  static const String sliders = "sliders";
+  static const String clientFavorites = "client/products/favorites";
+  static String addToFavorite(String id) =>
+      "client/products/$id/add_to_favorite";
+  static String removeFromFavorite(String id) =>
+      "client/products/$id/remove_from_favorite";
+
   // Orders
   static const String orderDetails = "orders";
 

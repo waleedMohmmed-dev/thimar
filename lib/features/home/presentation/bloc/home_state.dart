@@ -4,6 +4,7 @@ import 'package:thimar/features/home/domain/entities/product_entity.dart';
 
 class HomeState extends Equatable {
   final List<ProductEntity> products;
+  final List<String> banners;
   final bool isLoading;
   final String? errorMessage;
   final Set<String> favoriteIds;
@@ -13,6 +14,7 @@ class HomeState extends Equatable {
 
   const HomeState({
     this.products = const [],
+    this.banners = const [],
     this.isLoading = false,
     this.errorMessage,
     this.favoriteIds = const {},
@@ -23,6 +25,7 @@ class HomeState extends Equatable {
 
   HomeState copyWith({
     List<ProductEntity>? products,
+    List<String>? banners,
     bool? isLoading,
     String? errorMessage,
     Set<String>? favoriteIds,
@@ -32,6 +35,7 @@ class HomeState extends Equatable {
   }) {
     return HomeState(
       products: products ?? this.products,
+      banners: banners ?? this.banners,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
       favoriteIds: favoriteIds ?? this.favoriteIds,
@@ -43,12 +47,13 @@ class HomeState extends Equatable {
 
   @override
   List<Object?> get props => [
-        products,
-        isLoading,
-        errorMessage,
-        favoriteIds,
-        searchResults,
-        isSearching,
-        searchError,
-      ];
+    products,
+    banners,
+    isLoading,
+    errorMessage,
+    favoriteIds,
+    searchResults,
+    isSearching,
+    searchError,
+  ];
 }

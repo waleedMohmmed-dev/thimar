@@ -21,10 +21,12 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> {
       message: event.message,
     );
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: ContactStatus.failure,
-        errorMessage: failure.message,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: ContactStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
       (_) => emit(state.copyWith(status: ContactStatus.success)),
     );
   }

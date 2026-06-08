@@ -4,11 +4,7 @@ class AppLoading extends StatelessWidget {
   final String? message;
   final Color? color;
 
-  const AppLoading({
-    super.key,
-    this.message,
-    this.color,
-  });
+  const AppLoading({super.key, this.message, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -20,18 +16,14 @@ class AppLoading extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(
-              color ?? cs.primary,
-            ),
+            valueColor: AlwaysStoppedAnimation(color ?? cs.primary),
             strokeWidth: 3,
           ),
           if (message != null) ...[
             SizedBox(height: 16.h),
             Text(
               message!,
-              style: tt.bodyMedium?.copyWith(
-                color: cs.onSurfaceVariant,
-              ),
+              style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
             ),
           ],
         ],

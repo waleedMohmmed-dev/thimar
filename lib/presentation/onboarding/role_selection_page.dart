@@ -1,5 +1,4 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/core/models/user_role.dart';
 
 class RoleSelectionPage extends StatefulWidget {
@@ -50,7 +49,7 @@ class _RoleSelectionPageState extends State<RoleSelectionPage>
 
     if (mounted) {
       if (!role.isDriver) {
-        context.goLogin(role.apiValue);
+        context.goClientRegistration();
       } else {
         context.goDriverRegistration();
       }
@@ -174,6 +173,19 @@ class _RoleSelectionPageState extends State<RoleSelectionPage>
                             Expanded(
                               child: Column(
                                 children: [
+                                  Expanded(
+                                    child: _RoleCard(
+                                      role: UserRole.client,
+                                      label: 'مستخدم',
+                                      icon: Icons.person_outline,
+                                      isSelected:
+                                          _selectedRole == UserRole.client,
+                                      cs: cs,
+                                      tt: tt,
+                                      onTap: () => _selectRole(UserRole.client),
+                                    ),
+                                  ),
+                                  SizedBox(height: 16.h),
                                   Expanded(
                                     child: _RoleCard(
                                       role: UserRole.driver,

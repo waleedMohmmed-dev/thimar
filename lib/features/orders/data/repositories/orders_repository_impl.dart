@@ -38,7 +38,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
 
   @override
   Future<Either<Failure, ({List<OrderEntity> orders, bool hasMore})>>
-      getFinishedOrders({int page = 1}) async {
+  getFinishedOrders({int page = 1}) async {
     try {
       final result = await remoteDataSource.getFinishedOrders(page: page);
       return Right((

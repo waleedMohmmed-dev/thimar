@@ -26,9 +26,7 @@ class AppSvg extends StatelessWidget {
       placeholderBuilder: (BuildContext context) => SizedBox(
         width: width,
         height: height,
-        child: const Center(
-          child: AppLoading(),
-        ),
+        child: const Center(child: AppLoading()),
       ),
     );
   }

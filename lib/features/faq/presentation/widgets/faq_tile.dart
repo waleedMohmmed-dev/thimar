@@ -10,8 +10,7 @@ class FaqTile extends StatefulWidget {
   State<FaqTile> createState() => _FaqTileState();
 }
 
-class _FaqTileState extends State<FaqTile>
-    with SingleTickerProviderStateMixin {
+class _FaqTileState extends State<FaqTile> with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
   late final AnimationController _iconController;
   late final Animation<double> _iconRotation;

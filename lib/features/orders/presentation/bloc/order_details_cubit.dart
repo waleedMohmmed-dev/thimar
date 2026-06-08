@@ -23,22 +23,21 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
     required FinishOrderUseCase finishOrderUseCase,
     OrderStatus? initialStatus,
     OrderEntity? initialOrder,
-  })  : _getOrderDetailsUseCase = getOrderDetailsUseCase,
-        _acceptOrderUseCase = acceptOrderUseCase,
-        _refuseOrderUseCase = refuseOrderUseCase,
-        _startDeliveringOrderUseCase = startDeliveringOrderUseCase,
-        _finishOrderUseCase = finishOrderUseCase,
-        super(OrderDetailsState(
-          status: initialStatus,
-          order: initialOrder,
-        ));
+  }) : _getOrderDetailsUseCase = getOrderDetailsUseCase,
+       _acceptOrderUseCase = acceptOrderUseCase,
+       _refuseOrderUseCase = refuseOrderUseCase,
+       _startDeliveringOrderUseCase = startDeliveringOrderUseCase,
+       _finishOrderUseCase = finishOrderUseCase,
+       super(OrderDetailsState(status: initialStatus, order: initialOrder));
 
   void loadOrderDetails(String orderId) async {
     if (isClosed) return;
-    emit(state.copyWith(
-      detailsStatus: OrderDetailsStatus.loading,
-      clearError: true,
-    ));
+    emit(
+      state.copyWith(
+        detailsStatus: OrderDetailsStatus.loading,
+        clearError: true,
+      ),
+    );
 
     final result = await _getOrderDetailsUseCase(orderId);
     if (isClosed) return;
@@ -62,21 +61,20 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
 
   void acceptOrder(String orderId) async {
     if (isClosed) return;
-    emit(state.copyWith(
-      isAccepting: true,
-      clearAcceptError: true,
-      clearAcceptSuccess: true,
-    ));
+    emit(
+      state.copyWith(
+        isAccepting: true,
+        clearAcceptError: true,
+        clearAcceptSuccess: true,
+      ),
+    );
 
     final result = await _acceptOrderUseCase(orderId);
     if (isClosed) return;
 
     result.fold(
       (failure) => emit(
-        state.copyWith(
-          isAccepting: false,
-          acceptError: failure.message,
-        ),
+        state.copyWith(isAccepting: false, acceptError: failure.message),
       ),
       (message) => emit(
         state.copyWith(
@@ -90,11 +88,13 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
 
   void startDeliveringOrder(String orderId) async {
     if (isClosed) return;
-    emit(state.copyWith(
-      isStartingDelivery: true,
-      clearStartDeliveryError: true,
-      clearStartDeliverySuccess: true,
-    ));
+    emit(
+      state.copyWith(
+        isStartingDelivery: true,
+        clearStartDeliveryError: true,
+        clearStartDeliverySuccess: true,
+      ),
+    );
 
     final result = await _startDeliveringOrderUseCase(orderId);
     if (isClosed) return;
@@ -118,21 +118,20 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
 
   void finishOrder(String orderId, double clientPaidAmount) async {
     if (isClosed) return;
-    emit(state.copyWith(
-      isFinishing: true,
-      clearFinishError: true,
-      clearFinishSuccess: true,
-    ));
+    emit(
+      state.copyWith(
+        isFinishing: true,
+        clearFinishError: true,
+        clearFinishSuccess: true,
+      ),
+    );
 
     final result = await _finishOrderUseCase(orderId, clientPaidAmount);
     if (isClosed) return;
 
     result.fold(
       (failure) => emit(
-        state.copyWith(
-          isFinishing: false,
-          finishError: failure.message,
-        ),
+        state.copyWith(isFinishing: false, finishError: failure.message),
       ),
       (message) => emit(
         state.copyWith(
@@ -146,21 +145,20 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
 
   void rejectOrder(String orderId) async {
     if (isClosed) return;
-    emit(state.copyWith(
-      isRejecting: true,
-      clearRejectError: true,
-      clearRejectSuccess: true,
-    ));
+    emit(
+      state.copyWith(
+        isRejecting: true,
+        clearRejectError: true,
+        clearRejectSuccess: true,
+      ),
+    );
 
     final result = await _refuseOrderUseCase(orderId);
     if (isClosed) return;
 
     result.fold(
       (failure) => emit(
-        state.copyWith(
-          isRejecting: false,
-          rejectError: failure.message,
-        ),
+        state.copyWith(isRejecting: false, rejectError: failure.message),
       ),
       (message) => emit(
         state.copyWith(

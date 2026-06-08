@@ -1,5 +1,5 @@
 enum UserRole {
-  client('user'),
+  client('client'),
   driver('driver');
 
   final String apiValue;

@@ -1,13 +1,7 @@
 import 'package:thimar/core/imports/core_imports.dart';
 import 'package:thimar/core/imports/packages_imports.dart';
 
-enum OrderStatus {
-  pendingApproval,
-  preparing,
-  onWay,
-  delivered,
-  cancelled,
-}
+enum OrderStatus { pendingApproval, preparing, onWay, delivered, cancelled }
 
 class OrderEntity extends Equatable {
   final String id;
@@ -96,23 +90,23 @@ class OrderEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        dateKey,
-        total,
-        status,
-        productImagePaths,
-        productNames,
-        extraProductsCount,
-        customerName,
-        phoneNumber,
-        clientImage,
-        address,
-        deliveryDate,
-        deliveryTime,
-        notes,
-        paymentMethod,
-        productsTotal,
-        deliveryPrice,
-        discount,
-      ];
+    id,
+    dateKey,
+    total,
+    status,
+    productImagePaths,
+    productNames,
+    extraProductsCount,
+    customerName,
+    phoneNumber,
+    clientImage,
+    address,
+    deliveryDate,
+    deliveryTime,
+    notes,
+    paymentMethod,
+    productsTotal,
+    deliveryPrice,
+    discount,
+  ];
 }

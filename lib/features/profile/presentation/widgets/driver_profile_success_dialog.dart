@@ -15,10 +15,12 @@ class DriverProfileSuccessDialog extends StatefulWidget {
   }
 
   @override
-  State<DriverProfileSuccessDialog> createState() => _DriverProfileSuccessDialogState();
+  State<DriverProfileSuccessDialog> createState() =>
+      _DriverProfileSuccessDialogState();
 }
 
-class _DriverProfileSuccessDialogState extends State<DriverProfileSuccessDialog> {
+class _DriverProfileSuccessDialogState
+    extends State<DriverProfileSuccessDialog> {
   bool _isLoading = false;
 
   Future<void> _handleProceed() async {
@@ -40,10 +42,13 @@ class _DriverProfileSuccessDialogState extends State<DriverProfileSuccessDialog>
         context.pop();
 
         // Find active order (preparing or onWay)
-        final activeOrder = orders.where((order) => 
-          order.status == OrderStatus.preparing || 
-          order.status == OrderStatus.onWay
-        ).firstOrNull;
+        final activeOrder = orders
+            .where(
+              (order) =>
+                  order.status == OrderStatus.preparing ||
+                  order.status == OrderStatus.onWay,
+            )
+            .firstOrNull;
 
         if (activeOrder != null) {
           context.goPendingOrderDetails(activeOrder);
@@ -72,11 +77,7 @@ class _DriverProfileSuccessDialogState extends State<DriverProfileSuccessDialog>
                 color: cs.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.check_circle,
-                color: cs.primary,
-                size: 48.r,
-              ),
+              child: Icon(Icons.check_circle, color: cs.primary, size: 48.r),
             ),
             SizedBox(height: 24.h),
             Text(
@@ -90,9 +91,7 @@ class _DriverProfileSuccessDialogState extends State<DriverProfileSuccessDialog>
             SizedBox(height: 12.h),
             Text(
               'يمكنك متابعة الطلب لتسليم المنتجات وإنهائها',
-              style: tt.bodyMedium?.copyWith(
-                color: cs.onSurfaceVariant,
-              ),
+              style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 32.h),

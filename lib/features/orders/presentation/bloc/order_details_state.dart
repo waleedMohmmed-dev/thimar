@@ -92,9 +92,7 @@ class OrderDetailsState extends Equatable {
           ? null
           : startDeliverySuccessMessage ?? this.startDeliverySuccessMessage,
       isFinishing: isFinishing ?? this.isFinishing,
-      finishError: clearFinishError
-          ? null
-          : finishError ?? this.finishError,
+      finishError: clearFinishError ? null : finishError ?? this.finishError,
       finishSuccessMessage: clearFinishSuccess
           ? null
           : finishSuccessMessage ?? this.finishSuccessMessage,
@@ -103,21 +101,21 @@ class OrderDetailsState extends Equatable {
 
   @override
   List<Object?> get props => [
-        detailsStatus,
-        status,
-        order,
-        errorMessage,
-        isAccepting,
-        acceptError,
-        acceptSuccessMessage,
-        isRejecting,
-        rejectError,
-        rejectSuccessMessage,
-        isStartingDelivery,
-        startDeliveryError,
-        startDeliverySuccessMessage,
-        isFinishing,
-        finishError,
-        finishSuccessMessage,
-      ];
+    detailsStatus,
+    status,
+    order,
+    errorMessage,
+    isAccepting,
+    acceptError,
+    acceptSuccessMessage,
+    isRejecting,
+    rejectError,
+    rejectSuccessMessage,
+    isStartingDelivery,
+    startDeliveryError,
+    startDeliverySuccessMessage,
+    isFinishing,
+    finishError,
+    finishSuccessMessage,
+  ];
 }

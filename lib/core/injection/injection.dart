@@ -39,8 +39,11 @@ import 'package:thimar/features/profile/presentation/cubit/driver_profile_cubit.
 import 'package:thimar/features/home/data/datasources/home_remote_data_source.dart';
 import 'package:thimar/features/home/data/repositories/home_repository_impl.dart';
 import 'package:thimar/features/home/domain/repositories/home_repository.dart';
+import 'package:thimar/features/home/domain/usecases/get_favorite_ids_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/get_products_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/get_sliders_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/search_products_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/toggle_favorite_use_case.dart';
 import 'package:thimar/features/home/presentation/bloc/home_bloc.dart';
 
 import 'package:thimar/features/transaction_history/data/datasources/transaction_history_remote_data_source.dart';
@@ -230,10 +233,22 @@ Future<void> initInjection() async {
   sl.registerLazySingleton<SearchProductsUseCase>(
     () => SearchProductsUseCase(sl<HomeRepository>()),
   );
+  sl.registerLazySingleton<GetSlidersUseCase>(
+    () => GetSlidersUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<ToggleFavoriteUseCase>(
+    () => ToggleFavoriteUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<GetFavoriteIdsUseCase>(
+    () => GetFavoriteIdsUseCase(sl<HomeRepository>()),
+  );
   sl.registerFactoryParam<HomeBloc, UserRole, void>(
     (role, _) => HomeBloc(
       getProductsUseCase: sl<GetProductsUseCase>(),
       searchProductsUseCase: sl<SearchProductsUseCase>(),
+      getSlidersUseCase: sl<GetSlidersUseCase>(),
+      toggleFavoriteUseCase: sl<ToggleFavoriteUseCase>(),
+      getFavoriteIdsUseCase: sl<GetFavoriteIdsUseCase>(),
       role: role,
     ),
   );

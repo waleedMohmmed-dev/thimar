@@ -17,14 +17,9 @@ class CarModelsBloc extends Bloc<CarModelsEvent, CarModelsState> {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     final result = await _getCarModelsUseCase(const NoParams());
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoading: false,
-        errorMessage: failure.message,
-      )),
-      (models) => emit(state.copyWith(
-        isLoading: false,
-        carModels: models,
-      )),
+      (failure) =>
+          emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
+      (models) => emit(state.copyWith(isLoading: false, carModels: models)),
     );
   }
 }

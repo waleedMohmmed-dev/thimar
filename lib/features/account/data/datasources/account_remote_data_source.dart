@@ -99,10 +99,7 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
   Future<void> logout() async {
     await _apiService.post(
       Endpoints.logout,
-      body: {
-        'device_token': 'test',
-        'type': 'ios',
-      },
+      body: {'device_token': 'test', 'type': 'ios'},
     );
   }
 }

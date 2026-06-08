@@ -15,7 +15,8 @@ class UsernameField extends StatelessWidget {
       keyboardType: TextInputType.text,
       prefixIcon: Icons.person_outline_rounded,
       validator: (val) {
-        if (val == null || val.isEmpty) return '$displayLabel لا يمكن أن يكون فارغاً';
+        if (val == null || val.isEmpty)
+          return '$displayLabel لا يمكن أن يكون فارغاً';
         if (val.length < 3) return 'يجب أن يكون الاسم 3 أحرف على الأقل';
         return null;
       },

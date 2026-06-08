@@ -3,10 +3,7 @@ import 'package:thimar/core/imports/core_imports.dart';
 class OtpBottomLink extends StatelessWidget {
   final VoidCallback onLoginTap;
 
-  const OtpBottomLink({
-    super.key,
-    required this.onLoginTap,
-  });
+  const OtpBottomLink({super.key, required this.onLoginTap});
 
   @override
   Widget build(BuildContext context) {

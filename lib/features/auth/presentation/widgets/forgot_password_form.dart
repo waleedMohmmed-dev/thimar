@@ -32,7 +32,8 @@ class ForgotPasswordForm extends StatelessWidget {
                 hintTextDirection: TextDirection.rtl,
                 prefixIcon: Icons.phone_outlined,
                 validator: (val) {
-                  if (val == null || val.isEmpty) return 'رقم الجوال لا يمكن أن يكون فارغاً';
+                  if (val == null || val.isEmpty)
+                    return 'رقم الجوال لا يمكن أن يكون فارغاً';
                   if (val.length < 9) return 'رقم الجوال غير صحيح';
                   return null;
                 },
@@ -78,7 +79,8 @@ class _ConfirmPhoneButton extends StatelessWidget {
           isLoading: isLoading,
           onPressed: () {
             if (formKey.currentState?.validate() ?? false) {
-              final phoneNumber = '$selectedCountryCode${phoneController.text.trim()}';
+              final phoneNumber =
+                  '$selectedCountryCode${phoneController.text.trim()}';
               context.read<AuthBloc>().add(
                 ForgotPasswordSubmitted(phone: phoneNumber),
               );

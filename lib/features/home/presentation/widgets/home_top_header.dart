@@ -10,9 +10,7 @@ class HomeTopHeader extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          CartBadgeIcon(),
-        ],
+        children: [CartBadgeIcon()],
       ),
     );
   }

@@ -10,28 +10,25 @@ extension ContextExtensions on BuildContext {
   }
 
   void showSnackBar(String message) {
-    ScaffoldMessenger.of(this).showSnackBar(
-      AppSnackBar.success(message, colorScheme),
-    );
+    ScaffoldMessenger.of(
+      this,
+    ).showSnackBar(AppSnackBar.success(message, colorScheme));
   }
 
   void showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(this).showSnackBar(
-      AppSnackBar.success(message, colorScheme),
-    );
+    ScaffoldMessenger.of(
+      this,
+    ).showSnackBar(AppSnackBar.success(message, colorScheme));
   }
 
   void showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(this).showSnackBar(
-      AppSnackBar.error(message, colorScheme),
-    );
+    ScaffoldMessenger.of(
+      this,
+    ).showSnackBar(AppSnackBar.error(message, colorScheme));
   }
 
   Future<T?> showAppDialog<T>({required WidgetBuilder builder}) {
-    return showDialog<T>(
-      context: this,
-      builder: builder,
-    );
+    return showDialog<T>(context: this, builder: builder);
   }
 
   Future<T?> showAppBottomSheet<T>({required WidgetBuilder builder}) {

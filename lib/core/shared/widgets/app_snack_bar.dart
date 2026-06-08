@@ -51,9 +51,7 @@ class AppSnackBar {
       behavior: SnackBarBehavior.floating,
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       elevation: 4,
       duration: const Duration(seconds: 3),
       dismissDirection: DismissDirection.horizontal,

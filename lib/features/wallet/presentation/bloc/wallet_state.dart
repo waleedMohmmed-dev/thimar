@@ -7,11 +7,7 @@ class WalletState extends Equatable {
   final bool isLoading;
   final String? errorMessage;
 
-  const WalletState({
-    this.wallet,
-    this.isLoading = false,
-    this.errorMessage,
-  });
+  const WalletState({this.wallet, this.isLoading = false, this.errorMessage});
 
   WalletState copyWith({
     WalletEntity? wallet,

@@ -6,7 +6,10 @@ class FinishOrderUseCase {
 
   FinishOrderUseCase(this.repository);
 
-  Future<Either<Failure, String>> call(String orderId, double clientPaidAmount) {
+  Future<Either<Failure, String>> call(
+    String orderId,
+    double clientPaidAmount,
+  ) {
     return repository.finishOrder(orderId, clientPaidAmount);
   }
 }

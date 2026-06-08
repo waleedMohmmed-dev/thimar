@@ -91,10 +91,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     final result = await accountRepository.saveProfileImage(event.imagePath);
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          status: AccountStatus.failure,
-          errorMessage: failure.message,
-        ));
+        emit(
+          state.copyWith(
+            status: AccountStatus.failure,
+            errorMessage: failure.message,
+          ),
+        );
       },
       (_) {
         final updatedUser = state.user != null
@@ -118,11 +120,13 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
                 vehicleRearImage: state.user!.vehicleRearImage,
               )
             : null;
-        emit(state.copyWith(
-          status: AccountStatus.success,
-          user: updatedUser,
-          clearError: true,
-        ));
+        emit(
+          state.copyWith(
+            status: AccountStatus.success,
+            user: updatedUser,
+            clearError: true,
+          ),
+        );
       },
     );
   }
@@ -135,10 +139,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     final result = await updateDriverProfileUseCase(event.params);
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          status: AccountStatus.failure,
-          errorMessage: failure.message,
-        ));
+        emit(
+          state.copyWith(
+            status: AccountStatus.failure,
+            errorMessage: failure.message,
+          ),
+        );
       },
       (_) {
         // Refresh profile after update
