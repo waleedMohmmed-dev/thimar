@@ -1,11 +1,11 @@
 import 'package:thimar/core/imports/core_imports.dart';
 
-/// Category card widget displaying category image and name
 class CategoryCard extends StatelessWidget {
   final String label;
   final String imagePath;
   final Color backgroundColor;
   final VoidCallback? onTap;
+  final bool isNetworkImage;
 
   const CategoryCard({
     super.key,
@@ -13,6 +13,7 @@ class CategoryCard extends StatelessWidget {
     required this.imagePath,
     required this.backgroundColor,
     this.onTap,
+    this.isNetworkImage = false,
   });
 
   @override
@@ -30,7 +31,9 @@ class CategoryCard extends StatelessWidget {
               color: backgroundColor,
               borderRadius: BorderRadius.circular(16.r),
               image: DecorationImage(
-                image: AssetImage(imagePath),
+                image: isNetworkImage
+                    ? NetworkImage(imagePath) as ImageProvider
+                    : AssetImage(imagePath),
                 fit: BoxFit.cover,
               ),
             ),

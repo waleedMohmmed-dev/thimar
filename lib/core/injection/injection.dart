@@ -41,6 +41,8 @@ import 'package:thimar/features/home/data/repositories/home_repository_impl.dart
 import 'package:thimar/features/home/domain/repositories/home_repository.dart';
 import 'package:thimar/features/home/domain/usecases/get_favorite_ids_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/add_product_rate_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/get_categories_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/get_category_products_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/get_product_rates_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/get_products_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/get_sliders_use_case.dart';
@@ -249,6 +251,12 @@ Future<void> initInjection() async {
   );
   sl.registerLazySingleton<AddProductRateUseCase>(
     () => AddProductRateUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<GetCategoriesUseCase>(
+    () => GetCategoriesUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<GetCategoryProductsUseCase>(
+    () => GetCategoryProductsUseCase(sl<HomeRepository>()),
   );
   sl.registerFactoryParam<HomeBloc, UserRole, void>(
     (role, _) => HomeBloc(

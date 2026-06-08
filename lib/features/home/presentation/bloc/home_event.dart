@@ -26,9 +26,17 @@ class ProductFavoriteToggled extends HomeEvent {
 
 class ProductsSearched extends HomeEvent {
   final String keyword;
+  final String? filter;
+  final double? minPrice;
+  final double? maxPrice;
 
-  const ProductsSearched(this.keyword);
+  const ProductsSearched({
+    required this.keyword,
+    this.filter,
+    this.minPrice,
+    this.maxPrice,
+  });
 
   @override
-  List<Object?> get props => [keyword];
+  List<Object?> get props => [keyword, filter, minPrice, maxPrice];
 }

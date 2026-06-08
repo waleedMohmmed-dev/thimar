@@ -4,6 +4,8 @@ import 'package:thimar/features/auth/presentation/pages/verify_otp_page.dart';
 import 'package:thimar/features/orders/domain/entities/order_entity.dart';
 
 /// ============================================================================
+
+/// ============================================================================
 /// [NavigationExtensions] - Easy navigation from anywhere in the app
 /// ============================================================================
 ///

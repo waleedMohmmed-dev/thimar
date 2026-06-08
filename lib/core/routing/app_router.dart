@@ -31,6 +31,7 @@ import 'package:thimar/features/notifications/presentation/pages/notifications_p
 
 // Products Pages
 import 'package:thimar/features/products/presentation/pages/product_details_page.dart';
+import 'package:thimar/features/products/presentation/pages/category_products_page.dart';
 
 // Orders Pages
 import 'package:thimar/features/orders/domain/entities/order_entity.dart';
@@ -77,6 +78,7 @@ class AppRoutes {
 
   // =========== PRODUCTS FLOW ===========
   static const String productDetails = '/product-details';
+  static const String categoryProducts = '/category-products';
 
   // =========== ORDERS FLOW ===========
   static const String orders = '/orders';
@@ -129,6 +131,7 @@ const _protectedRoutes = {
   AppRoutes.account,
   AppRoutes.notifications,
   AppRoutes.productDetails,
+  AppRoutes.categoryProducts,
   AppRoutes.orders,
   AppRoutes.currentOrders,
   AppRoutes.finishedOrders,
@@ -378,6 +381,28 @@ final goRouter = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage<void>(
         key: state.pageKey,
         child: ProductDetailsPage(productId: state.pathParameters['id'] ?? ''),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            _rtlAwareSlideTransition(
+              context: context,
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+      ),
+    ),
+
+    GoRoute(
+      path: '${AppRoutes.categoryProducts}/:categoryId',
+      name: 'Category Products',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: CategoryProductsPage(
+          categoryId: int.tryParse(
+                state.pathParameters['categoryId'] ?? '',
+              ) ??
+              0,
+          categoryName: state.uri.queryParameters['name'] ?? '',
+        ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             _rtlAwareSlideTransition(
               context: context,

@@ -132,7 +132,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     emit(state.copyWith(isSearching: true, searchError: null));
 
-    final result = await _searchProductsUseCase(event.keyword);
+    final result = await _searchProductsUseCase(
+      SearchProductsParams(
+        keyword: event.keyword,
+        filter: event.filter,
+        minPrice: event.minPrice,
+        maxPrice: event.maxPrice,
+      ),
+    );
 
     if (isClosed) return;
     result.fold(

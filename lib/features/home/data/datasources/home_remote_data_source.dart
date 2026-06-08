@@ -2,10 +2,18 @@ import 'package:thimar/core/networking/api_service.dart';
 import 'package:thimar/core/networking/endpoints.dart';
 import 'package:thimar/features/home/data/models/product_model.dart';
 import 'package:thimar/features/home/data/models/rate_model.dart';
+import 'package:thimar/features/home/data/models/category_model.dart';
 
 abstract class HomeRemoteDataSource {
+  Future<List<CategoryModel>> getCategories();
+  Future<List<ProductModel>> getCategoryProducts(int categoryId);
   Future<List<ProductModel>> getProducts();
-  Future<List<ProductModel>> searchProducts(String keyword);
+  Future<List<ProductModel>> searchProducts({
+    required String keyword,
+    String? filter,
+    double? minPrice,
+    double? maxPrice,
+  });
   Future<List<String>> getSliders();
   Future<Set<String>> getFavoriteIds();
   Future<List<ProductModel>> getFavoriteProducts();
@@ -28,12 +36,24 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   }
 
   @override
-  Future<List<ProductModel>> searchProducts(String keyword) async {
+  Future<List<ProductModel>> searchProducts({
+    required String keyword,
+    String? filter,
+    double? minPrice,
+    double? maxPrice,
+  }) async {
+    final params = <String, dynamic>{
+      'keyword': keyword,
+    };
+    if (filter != null) params['filter'] = filter;
+    if (minPrice != null) params['min_price'] = minPrice;
+    if (maxPrice != null) params['max_price'] = maxPrice;
+
     final response = await _apiService.get(
-      Endpoints.products,
-      params: {'search': keyword},
+      Endpoints.search,
+      params: params,
     );
-    final List data = response['data'] ?? [];
+    final List data = response['data']?['search_result'] ?? [];
     return data.map((json) => ProductModel.fromJson(json)).toList();
   }
 
@@ -90,5 +110,21 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
       Endpoints.addProductRate(productId),
       body: {'value': value, 'comment': comment},
     );
+  }
+
+  @override
+  Future<List<CategoryModel>> getCategories() async {
+    final response = await _apiService.get(Endpoints.categories);
+    final List data = response['data'] ?? [];
+    return data.map((json) => CategoryModel.fromJson(json)).toList();
+  }
+
+  @override
+  Future<List<ProductModel>> getCategoryProducts(int categoryId) async {
+    final response = await _apiService.get(
+      Endpoints.categoryProducts(categoryId.toString()),
+    );
+    final List data = response['data'] ?? [];
+    return data.map((json) => ProductModel.fromJson(json)).toList();
   }
 }

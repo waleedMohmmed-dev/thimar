@@ -16,6 +16,7 @@ import 'package:thimar/features/home/presentation/widgets/home_top_header.dart';
 import 'package:thimar/features/home/presentation/widgets/promo_banner_section.dart';
 import 'package:thimar/features/home/presentation/widgets/search_field.dart'
     as home_search;
+import 'package:thimar/features/home/presentation/widgets/categories_section.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_event.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_state.dart';
@@ -201,7 +202,9 @@ class _ClientHomeTabState extends State<_ClientHomeTab> {
                 controller: _searchController,
                 onChanged: (value) {
                   setState(() {});
-                  context.read<HomeBloc>().add(ProductsSearched(value));
+                  context
+                      .read<HomeBloc>()
+                      .add(ProductsSearched(keyword: value));
                 },
               ),
               Padding(
@@ -214,6 +217,9 @@ class _ClientHomeTabState extends State<_ClientHomeTab> {
                   },
                 ),
               ),
+              SizedBox(height: 24.h),
+              const CategoriesSection(),
+              SizedBox(height: 24.h),
               if (state.isLoading)
                 SizedBox(
                   height: 240.h,

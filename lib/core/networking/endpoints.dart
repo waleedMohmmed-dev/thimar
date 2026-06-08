@@ -16,6 +16,7 @@ class Endpoints {
 
   // Products
   static const String products = "products";
+  static const String search = "search";
   static const String sliders = "sliders";
   static const String clientFavorites = "client/products/favorites";
   static String addToFavorite(String id) =>
@@ -28,6 +29,10 @@ class Endpoints {
 
   // Orders
   static const String orderDetails = "orders";
+
+  // Categories
+  static const String categories = "categories";
+  static String categoryProducts(String id) => "categories/$id";
 
   // Helpers
   static const String notifications = "notifications";
