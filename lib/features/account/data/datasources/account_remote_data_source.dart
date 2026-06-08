@@ -28,7 +28,7 @@ class AccountRemoteDataSourceImpl implements AccountRemoteDataSource {
     if (userType == 'driver') {
       return DriverEndpoints.profile;
     }
-    return DriverEndpoints.profile;
+    return Endpoints.clientProfile;
   }
 
   @override

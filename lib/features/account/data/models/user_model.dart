@@ -10,6 +10,8 @@ class UserModel extends UserEntity {
     super.address,
     super.createdAt,
     super.role = null,
+    super.cityName,
+    super.isVip,
     super.identityNumber,
     super.cityId,
     super.vehicleType,
@@ -24,6 +26,18 @@ class UserModel extends UserEntity {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    int? parsedCityId;
+    String? parsedCityName;
+    if (json['city'] is Map) {
+      final city = json['city'] as Map;
+      parsedCityId = city['id'] is int ? city['id'] as int : int.tryParse(city['id']?.toString() ?? '');
+      parsedCityName = city['name']?.toString();
+    } else {
+      parsedCityId = json['city_id'] is int
+          ? json['city_id'] as int
+          : int.tryParse(json['city_id']?.toString() ?? '');
+    }
+
     return UserModel(
       id: json['id']?.toString(),
       name: (json['name'] as String?) ?? (json['fullname'] as String?),
@@ -37,10 +51,10 @@ class UserModel extends UserEntity {
           : null,
       role: (json['role'] as String? ?? json['user_type'] as String? ?? 'user')
           .toLowerCase(),
+      cityName: parsedCityName,
+      isVip: json['is_vip'] is int ? json['is_vip'] as int : int.tryParse(json['is_vip']?.toString() ?? ''),
       identityNumber: json['identity_number'] as String?,
-      cityId: json['city_id'] is int
-          ? json['city_id'] as int
-          : int.tryParse(json['city_id']?.toString() ?? ''),
+      cityId: parsedCityId,
       vehicleType: json['vehicle_type'] as String?,
       vehicleModel: json['vehicle_model'] as String?,
       iban: json['iban'] as String?,
@@ -63,6 +77,8 @@ class UserModel extends UserEntity {
       address: address,
       createdAt: createdAt,
       role: role,
+      cityName: cityName,
+      isVip: isVip,
       identityNumber: identityNumber,
       cityId: cityId,
       vehicleType: vehicleType,
@@ -87,6 +103,8 @@ class UserModel extends UserEntity {
       'address': address,
       'created_at': createdAt?.toIso8601String(),
       'role': role,
+      'city_name': cityName,
+      'is_vip': isVip,
       'identity_number': identityNumber,
       'city_id': cityId,
       'vehicle_type': vehicleType,

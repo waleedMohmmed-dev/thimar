@@ -21,18 +21,25 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDriver = sl<HiveCacheService>().get<String>(
+          key: CacheKeys.userType,
+          boxName: CacheConstants.userBox,
+        ) ==
+        'driver';
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<DriverProfileCubit>()),
-        BlocProvider(create: (context) => sl<CarModelsBloc>()),
+        if (isDriver) BlocProvider(create: (context) => sl<CarModelsBloc>()),
       ],
-      child: const _ProfileView(),
+      child: _ProfileView(isDriver: isDriver),
     );
   }
 }
 
 class _ProfileView extends StatefulWidget {
-  const _ProfileView();
+  final bool isDriver;
+  const _ProfileView({required this.isDriver});
 
   @override
   State<_ProfileView> createState() => _ProfileViewState();
@@ -77,7 +84,9 @@ class _ProfileViewState extends State<_ProfileView> {
     _ibanController = TextEditingController();
 
     context.read<DriverProfileCubit>().getProfile();
-    context.read<CarModelsBloc>().add(const CarModelsFetched());
+    if (widget.isDriver) {
+      context.read<CarModelsBloc>().add(const CarModelsFetched());
+    }
     _fetchCities();
   }
 
@@ -143,8 +152,10 @@ class _ProfileViewState extends State<_ProfileView> {
       return;
     }
 
+    final cubit = context.read<DriverProfileCubit>();
     final oldPassword = _oldPasswordController.text.trim();
     final newPassword = _passwordController.text.trim();
+
     if (oldPassword.isNotEmpty || newPassword.isNotEmpty) {
       if (oldPassword.isEmpty) {
         context.showErrorSnackBar('يرجى إدخال كلمة المرور القديمة');
@@ -155,10 +166,9 @@ class _ProfileViewState extends State<_ProfileView> {
         return;
       }
       try {
-        final apiService = sl<ApiService>();
-        await apiService.put(
-          Endpoints.editPassword,
-          body: {'old_password': oldPassword, 'password': newPassword},
+        await cubit.updatePassword(
+          oldPassword: oldPassword,
+          newPassword: newPassword,
         );
       } catch (e) {
         context.showErrorSnackBar('فشل تغيير كلمة المرور');
@@ -166,22 +176,33 @@ class _ProfileViewState extends State<_ProfileView> {
       }
     }
 
-    final params = DriverProfileParams(
-      fullname: _fullnameController.text.trim(),
-      phone: _phoneController.text.trim(),
-      identityNumber: _identityNumberController.text.trim(),
-      iban: _ibanController.text.trim(),
-      carType: _vehicleTypeController.text.trim(),
-      carModel: _vehicleModelController.text.trim(),
-      cityId: int.parse(_selectedCityId!),
-      imagePath: _profileImageFile?.path,
-      carLicenceImagePath: _driverLicenseImage?.path,
-      carFormImagePath: _vehicleRegistrationImage?.path,
-      carInsuranceImagePath: _vehicleInsuranceImage?.path,
-      carFrontImagePath: _vehicleFrontImage?.path,
-      carBackImagePath: _vehicleRearImage?.path,
-    );
-    context.read<DriverProfileCubit>().updateProfile(params);
+    if (widget.isDriver) {
+      final params = DriverProfileParams(
+        fullname: _fullnameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        identityNumber: _identityNumberController.text.trim(),
+        iban: _ibanController.text.trim(),
+        carType: _vehicleTypeController.text.trim(),
+        carModel: _vehicleModelController.text.trim(),
+        cityId: int.parse(_selectedCityId!),
+        imagePath: _profileImageFile?.path,
+        carLicenceImagePath: _driverLicenseImage?.path,
+        carFormImagePath: _vehicleRegistrationImage?.path,
+        carInsuranceImagePath: _vehicleInsuranceImage?.path,
+        carFrontImagePath: _vehicleFrontImage?.path,
+        carBackImagePath: _vehicleRearImage?.path,
+      );
+      cubit.updateProfile(params);
+    } else {
+      cubit.updateClientProfile(
+        fullname: _fullnameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        cityId: int.parse(_selectedCityId!),
+        imagePath: _profileImageFile?.path,
+        password: newPassword.isNotEmpty ? newPassword : null,
+        passwordConfirmation: newPassword.isNotEmpty ? newPassword : null,
+      );
+    }
   }
 
   @override
@@ -191,6 +212,7 @@ class _ProfileViewState extends State<_ProfileView> {
         if (state.status == DriverProfileStatus.success &&
             state.successMessage != null) {
           context.showSnackBar(state.successMessage!);
+          context.goBack();
         } else if (state.status == DriverProfileStatus.failure) {
           context.showErrorSnackBar(
             state.errorMessage ?? 'خطأ في تحديث البيانات',
@@ -219,26 +241,28 @@ class _ProfileViewState extends State<_ProfileView> {
           body: SafeArea(
             child: Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 12.h,
+                if (widget.isDriver)
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                    child: AppSegmentedControl<bool>(
+                      value: _isPersonalData,
+                      onChanged: (val) =>
+                          setState(() => _isPersonalData = val),
+                      items: [
+                        AppSegmentedControlItem(
+                          value: true,
+                          labelKey: 'البيانات الشخصية',
+                        ),
+                        AppSegmentedControlItem(
+                          value: false,
+                          labelKey: 'بيانات السياره',
+                        ),
+                      ],
+                    ),
                   ),
-                  child: AppSegmentedControl<bool>(
-                    value: _isPersonalData,
-                    onChanged: (val) => setState(() => _isPersonalData = val),
-                    items: [
-                      AppSegmentedControlItem(
-                        value: true,
-                        labelKey: 'البيانات الشخصية',
-                      ),
-                      AppSegmentedControlItem(
-                        value: false,
-                        labelKey: 'بيانات السياره',
-                      ),
-                    ],
-                  ),
-                ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(16.w),
@@ -248,17 +272,36 @@ class _ProfileViewState extends State<_ProfileView> {
                           onTap: () => _pickImage(
                             (f) => setState(() => _profileImageFile = f),
                           ),
-                          child: CircleAvatar(
-                            radius: 48.r,
-                            backgroundColor:
-                                context.colorScheme.primaryContainer,
-                            child: _buildProfileImage(),
+                          child: Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 48.r,
+                                backgroundColor:
+                                    context.colorScheme.primaryContainer,
+                                child: _buildProfileImage(),
+                              ),
+                              if (user?.isVip == 1)
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: EdgeInsets.all(4.r),
+                                    decoration: BoxDecoration(
+                                      color: Colors.amber,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.verified,
+                                      color: Colors.white,
+                                      size: 16.r,
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                         SizedBox(height: 24.h),
-                        _isPersonalData
-                            ? _buildPersonalDataSection(context, user, state)
-                            : _buildCarDataSection(),
+                        _buildPersonalDataSection(context, user, state),
                       ],
                     ),
                   ),
@@ -288,8 +331,8 @@ class _ProfileViewState extends State<_ProfileView> {
       final imagePath = user.profileImage!;
       final resolved =
           imagePath.startsWith('http://') || imagePath.startsWith('https://')
-          ? imagePath
-          : '${Endpoints.baseUrl.replaceAll('/api/', '/')}${imagePath.startsWith('/') ? imagePath.substring(1) : imagePath}';
+              ? imagePath
+              : '${Endpoints.baseUrl.replaceAll('/api/', '/')}${imagePath.startsWith('/') ? imagePath.substring(1) : imagePath}';
       return ClipRRect(
         borderRadius: BorderRadius.circular(48.r),
         child: Image.network(
@@ -320,6 +363,23 @@ class _ProfileViewState extends State<_ProfileView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (user?.cityName != null)
+          Padding(
+            padding: EdgeInsets.only(bottom: 16.h),
+            child: Row(
+              children: [
+                Icon(Icons.location_on_outlined,
+                    color: context.colorScheme.primary),
+                SizedBox(width: 8.w),
+                Text(
+                  user!.cityName!,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: context.colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+          ),
         UsernameField(controller: _fullnameController, label: 'الاسم'),
         SizedBox(height: 16.h),
         PhoneField(
@@ -330,8 +390,10 @@ class _ProfileViewState extends State<_ProfileView> {
         ),
         SizedBox(height: 16.h),
         _buildCityDropdown(),
-        SizedBox(height: 16.h),
-        IdentityNumberField(controller: _identityNumberController),
+        if (widget.isDriver) ...[
+          SizedBox(height: 16.h),
+          IdentityNumberField(controller: _identityNumberController),
+        ],
         SizedBox(height: 16.h),
         PasswordField(
           controller: _oldPasswordController,
@@ -349,6 +411,10 @@ class _ProfileViewState extends State<_ProfileView> {
           isLoading: state.status == DriverProfileStatus.loading,
           onPressed: _onSave,
         ),
+        if (widget.isDriver) ...[
+          SizedBox(height: 16.h),
+          _buildCarDataSection(),
+        ],
         SizedBox(height: 16.h),
       ],
     );

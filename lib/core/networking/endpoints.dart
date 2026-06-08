@@ -30,6 +30,9 @@ class Endpoints {
   // Orders
   static const String orderDetails = "orders";
 
+  // Client Profile
+  static const String clientProfile = "client/profile";
+
   // Categories
   static const String categories = "categories";
   static String categoryProducts(String id) => "categories/$id";
