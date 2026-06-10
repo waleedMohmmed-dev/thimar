@@ -1,5 +1,6 @@
 import 'package:thimar/core/networking/api_service.dart';
 import 'package:thimar/core/networking/endpoints.dart';
+import 'package:thimar/features/home/data/models/cart_item_model.dart';
 import 'package:thimar/features/home/data/models/product_model.dart';
 import 'package:thimar/features/home/data/models/rate_model.dart';
 import 'package:thimar/features/home/data/models/category_model.dart';
@@ -21,6 +22,11 @@ abstract class HomeRemoteDataSource {
   Future<void> toggleFavorite(String productId, bool isAdding);
   Future<List<RateModel>> getProductRates(String productId);
   Future<void> addProductRate(String productId, int value, String comment);
+  Future<List<CartItemModel>> getCart();
+  Future<void> addToCart(String productId, int amount);
+  Future<void> deleteCartItem(String itemId);
+  Future<void> updateCartItem(String itemId, int amount);
+  Future<Map<String, dynamic>> applyCoupon(String code);
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
@@ -126,5 +132,42 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     );
     final List data = response['data'] ?? [];
     return data.map((json) => ProductModel.fromJson(json)).toList();
+  }
+
+  @override
+  Future<List<CartItemModel>> getCart() async {
+    final response = await _apiService.get(Endpoints.cart);
+    final List data = response['data'] ?? [];
+    return data.map((json) => CartItemModel.fromJson(json)).toList();
+  }
+
+  @override
+  Future<void> addToCart(String productId, int amount) async {
+    await _apiService.post(
+      Endpoints.cart,
+      body: {'product_id': productId, 'amount': amount},
+    );
+  }
+
+  @override
+  Future<void> deleteCartItem(String itemId) async {
+    await _apiService.delete(Endpoints.cartDeleteItem(itemId));
+  }
+
+  @override
+  Future<void> updateCartItem(String itemId, int amount) async {
+    await _apiService.put(
+      Endpoints.cartUpdate(itemId),
+      body: {'amount': amount},
+    );
+  }
+
+  @override
+  Future<Map<String, dynamic>> applyCoupon(String code) async {
+    final response = await _apiService.post(
+      Endpoints.coupon,
+      body: {'code': code},
+    );
+    return response['data'] as Map<String, dynamic>? ?? {};
   }
 }

@@ -25,7 +25,13 @@ import 'package:thimar/features/orders/domain/repositories/client_orders_reposit
 import 'package:thimar/features/orders/domain/usecases/get_pending_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/get_current_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/get_finished_orders_use_case.dart';
-import 'package:thimar/features/orders/domain/usecases/get_client_orders_use_case.dart';
+import 'package:thimar/features/orders/domain/usecases/get_client_current_orders_use_case.dart';
+import 'package:thimar/features/orders/domain/usecases/get_client_finished_orders_use_case.dart';
+import 'package:thimar/features/orders/domain/usecases/get_client_order_details_use_case.dart';
+import 'package:thimar/features/orders/domain/usecases/store_order_use_case.dart';
+import 'package:thimar/features/orders/domain/usecases/get_delivery_cost_use_case.dart';
+import 'package:thimar/features/orders/domain/usecases/get_all_orders_use_case.dart';
+import 'package:thimar/features/orders/domain/usecases/get_order_products_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/search_current_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/search_finished_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/refuse_order_use_case.dart';
@@ -41,6 +47,10 @@ import 'package:thimar/features/home/data/repositories/home_repository_impl.dart
 import 'package:thimar/features/home/domain/repositories/home_repository.dart';
 import 'package:thimar/features/home/domain/usecases/get_favorite_ids_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/add_product_rate_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/add_to_cart_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/apply_coupon_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/delete_cart_item_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/get_cart_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/get_categories_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/get_category_products_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/get_product_rates_use_case.dart';
@@ -48,6 +58,7 @@ import 'package:thimar/features/home/domain/usecases/get_products_use_case.dart'
 import 'package:thimar/features/home/domain/usecases/get_sliders_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/search_products_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/toggle_favorite_use_case.dart';
+import 'package:thimar/features/home/domain/usecases/update_cart_item_use_case.dart';
 import 'package:thimar/features/home/presentation/bloc/home_bloc.dart';
 
 import 'package:thimar/features/transaction_history/data/datasources/transaction_history_remote_data_source.dart';
@@ -216,12 +227,32 @@ Future<void> initInjection() async {
   sl.registerLazySingleton<ClientOrdersRepository>(
     () => ClientOrdersRepositoryImpl(sl<ClientOrdersRemoteDataSource>()),
   );
-  sl.registerLazySingleton<GetClientOrdersUseCase>(
-    () => GetClientOrdersUseCase(sl<ClientOrdersRepository>()),
+  sl.registerLazySingleton<GetClientCurrentOrdersUseCase>(
+    () => GetClientCurrentOrdersUseCase(sl<ClientOrdersRepository>()),
+  );
+  sl.registerLazySingleton<GetClientFinishedOrdersUseCase>(
+    () => GetClientFinishedOrdersUseCase(sl<ClientOrdersRepository>()),
+  );
+  sl.registerLazySingleton<GetClientOrderDetailsUseCase>(
+    () => GetClientOrderDetailsUseCase(sl<ClientOrdersRepository>()),
+  );
+  sl.registerLazySingleton<StoreOrderUseCase>(
+    () => StoreOrderUseCase(sl<ClientOrdersRepository>()),
+  );
+  sl.registerLazySingleton<GetDeliveryCostUseCase>(
+    () => GetDeliveryCostUseCase(sl<ClientOrdersRepository>()),
+  );
+  sl.registerLazySingleton<GetAllOrdersUseCase>(
+    () => GetAllOrdersUseCase(sl<ClientOrdersRepository>()),
+  );
+  sl.registerLazySingleton<GetOrderProductsUseCase>(
+    () => GetOrderProductsUseCase(sl<ClientOrdersRepository>()),
   );
   sl.registerFactory<ClientOrdersBloc>(
-    () =>
-        ClientOrdersBloc(getClientOrdersUseCase: sl<GetClientOrdersUseCase>()),
+    () => ClientOrdersBloc(
+      getClientCurrentOrdersUseCase: sl<GetClientCurrentOrdersUseCase>(),
+      getClientFinishedOrdersUseCase: sl<GetClientFinishedOrdersUseCase>(),
+    ),
   );
 
   // --- Home Feature ---
@@ -257,6 +288,21 @@ Future<void> initInjection() async {
   );
   sl.registerLazySingleton<GetCategoryProductsUseCase>(
     () => GetCategoryProductsUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<GetCartUseCase>(
+    () => GetCartUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<AddToCartUseCase>(
+    () => AddToCartUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<DeleteCartItemUseCase>(
+    () => DeleteCartItemUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<UpdateCartItemUseCase>(
+    () => UpdateCartItemUseCase(sl<HomeRepository>()),
+  );
+  sl.registerLazySingleton<ApplyCouponUseCase>(
+    () => ApplyCouponUseCase(sl<HomeRepository>()),
   );
   sl.registerFactoryParam<HomeBloc, UserRole, void>(
     (role, _) => HomeBloc(

@@ -1,4 +1,5 @@
 import 'package:thimar/core/imports/core_imports.dart';
+import 'package:thimar/features/home/domain/entities/cart_item_entity.dart';
 import 'package:thimar/features/home/domain/entities/category_entity.dart';
 import 'package:thimar/features/home/domain/entities/product_entity.dart';
 import 'package:thimar/features/home/domain/entities/rate_entity.dart';
@@ -26,4 +27,9 @@ abstract class HomeRepository {
   Future<Either<Failure, List<ProductEntity>>> getCategoryProducts(
     int categoryId,
   );
+  Future<Either<Failure, List<CartItemEntity>>> getCart();
+  Future<Either<Failure, void>> addToCart(String productId, int amount);
+  Future<Either<Failure, void>> deleteCartItem(String itemId);
+  Future<Either<Failure, void>> updateCartItem(String itemId, int amount);
+  Future<Either<Failure, Map<String, dynamic>>> applyCoupon(String code);
 }

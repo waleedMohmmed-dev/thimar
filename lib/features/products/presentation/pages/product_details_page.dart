@@ -3,6 +3,7 @@ import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/features/home/domain/entities/product_entity.dart';
 import 'package:thimar/features/home/domain/entities/rate_entity.dart';
 import 'package:thimar/features/home/domain/repositories/home_repository.dart';
+import 'package:thimar/features/home/domain/usecases/add_to_cart_use_case.dart';
 import 'package:thimar/features/home/presentation/bloc/home_bloc.dart';
 import 'package:thimar/features/home/presentation/bloc/home_event.dart';
 
@@ -18,8 +19,10 @@ class ProductDetailsPage extends StatefulWidget {
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late Future<Either<Failure, ProductEntity>> _detailsFuture;
   late Future<Either<Failure, List<RateEntity>>> _ratesFuture;
+  final AddToCartUseCase _addToCartUseCase = sl<AddToCartUseCase>();
   bool _isFavorite = false;
   int _quantity = 1;
+  bool _isAddingToCart = false;
 
   @override
   void initState() {
@@ -54,6 +57,23 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Future<Either<Failure, void>> _addRate(int value, String comment) {
     final repo = sl<HomeRepository>();
     return repo.addProductRate(widget.productId, value, comment);
+  }
+
+  Future<void> _addToCart() async {
+    if (_isAddingToCart) return;
+    setState(() => _isAddingToCart = true);
+    final result = await _addToCartUseCase(
+      AddToCartParams(productId: widget.productId, amount: _quantity),
+    );
+    if (!mounted) return;
+    setState(() => _isAddingToCart = false);
+    result.fold(
+      (failure) => context.showErrorSnackBar(failure.message),
+      (_) {
+        context.showSuccessSnackBar('تم إضافة المنتج إلى السلة');
+        context.goCart();
+      },
+    );
   }
 
   @override
@@ -91,6 +111,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     ratesFuture: _ratesFuture,
                     isFavorite: _isFavorite,
                     quantity: _quantity,
+                    isAddingToCart: _isAddingToCart,
                     onFavoriteToggle: () {
                       context.read<HomeBloc>().add(
                         ProductFavoriteToggled(product.id),
@@ -98,7 +119,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       setState(() => _isFavorite = !_isFavorite);
                     },
                     onQuantityChanged: (qty) => setState(() => _quantity = qty),
-                    onAddToCart: () {},
+                    onAddToCart: _addToCart,
                     onRateAdded: _refreshRates,
                     addRate: _addRate,
                   );
@@ -117,6 +138,7 @@ class _ProductDetailsContent extends StatelessWidget {
   final Future<Either<Failure, List<RateEntity>>> ratesFuture;
   final bool isFavorite;
   final int quantity;
+  final bool isAddingToCart;
   final VoidCallback onFavoriteToggle;
   final ValueChanged<int> onQuantityChanged;
   final VoidCallback onAddToCart;
@@ -130,6 +152,7 @@ class _ProductDetailsContent extends StatelessWidget {
     required this.ratesFuture,
     required this.isFavorite,
     required this.quantity,
+    required this.isAddingToCart,
     required this.onFavoriteToggle,
     required this.onQuantityChanged,
     required this.onAddToCart,
@@ -195,6 +218,7 @@ class _ProductDetailsContent extends StatelessWidget {
           price: product.price,
           quantity: quantity,
           onAddToCart: onAddToCart,
+          isLoading: isAddingToCart,
         ),
       ],
     );
@@ -1048,11 +1072,13 @@ class _BottomCartBar extends StatelessWidget {
   final double price;
   final int quantity;
   final VoidCallback onAddToCart;
+  final bool isLoading;
 
   const _BottomCartBar({
     required this.price,
     required this.quantity,
     required this.onAddToCart,
+    this.isLoading = false,
   });
 
   @override
@@ -1118,7 +1144,7 @@ class _BottomCartBar extends StatelessWidget {
               width: 180.w,
               height: 54.h,
               child: ElevatedButton(
-                onPressed: onAddToCart,
+                onPressed: isLoading ? null : onAddToCart,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: cs.primary,
                   foregroundColor: cs.onPrimary,
@@ -1127,20 +1153,29 @@ class _BottomCartBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16.r),
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.shopping_cart_outlined, size: 20.r),
-                    SizedBox(width: 8.w),
-                    Text(
-                      'أضف إلى السلة',
-                      style: tt.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: cs.onPrimary,
+                child: isLoading
+                    ? SizedBox(
+                        width: 22.r,
+                        height: 22.r,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: cs.onPrimary,
+                        ),
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.shopping_cart_outlined, size: 20.r),
+                          SizedBox(width: 8.w),
+                          Text(
+                            'أضف إلى السلة',
+                            style: tt.labelLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: cs.onPrimary,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ],

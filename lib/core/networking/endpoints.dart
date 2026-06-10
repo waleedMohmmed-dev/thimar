@@ -30,6 +30,20 @@ class Endpoints {
   // Orders
   static const String orderDetails = "orders";
 
+  // Client Orders
+  static const String clientOrders = "client/orders";
+  static const String clientCurrentOrders = "client/orders/current";
+  static const String clientFinishedOrders = "client/orders/finished";
+  static const String clientDeliveryCost = "client/orders/delivery_cost";
+  static String clientOrderDetails(String id) => "client/orders/$id";
+  static String clientOrderProducts(String id) => "client/orders/$id/products";
+
+  // Cart
+  static const String cart = "client/cart";
+  static String cartDeleteItem(String id) => "client/cart/delete_item/$id";
+  static String cartUpdate(String id) => "client/cart/$id";
+  static const String coupon = "client/cart/apply_coupon";
+
   // Client Profile
   static const String clientProfile = "client/profile";
 

@@ -32,6 +32,7 @@ import 'package:thimar/features/notifications/presentation/pages/notifications_p
 // Products Pages
 import 'package:thimar/features/products/presentation/pages/product_details_page.dart';
 import 'package:thimar/features/products/presentation/pages/category_products_page.dart';
+import 'package:thimar/features/products/presentation/pages/cart_page.dart';
 
 // Orders Pages
 import 'package:thimar/features/orders/domain/entities/order_entity.dart';
@@ -39,6 +40,7 @@ import 'package:thimar/features/orders/presentation/pages/orders_page.dart';
 import 'package:thimar/features/orders/presentation/pages/current_orders_page.dart';
 import 'package:thimar/features/orders/presentation/pages/finished_orders_page.dart';
 import 'package:thimar/features/orders/presentation/pages/pending_order_details_page.dart';
+import 'package:thimar/features/orders/presentation/pages/client_order_details_page.dart';
 import 'package:thimar/features/orders/presentation/bloc/order_details_cubit.dart';
 import 'package:thimar/features/orders/domain/usecases/get_order_details_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/accept_order_use_case.dart';
@@ -79,12 +81,14 @@ class AppRoutes {
   // =========== PRODUCTS FLOW ===========
   static const String productDetails = '/product-details';
   static const String categoryProducts = '/category-products';
+  static const String cart = '/cart';
 
   // =========== ORDERS FLOW ===========
   static const String orders = '/orders';
   static const String currentOrders = '/current-orders';
   static const String finishedOrders = '/finished-orders';
   static const String pendingOrderDetails = '/pending-order-details';
+  static const String clientOrderDetails = '/client-order-details';
 
   // =========== SETTINGS & INFO ===========
   static const String faq = '/faq';
@@ -132,10 +136,12 @@ const _protectedRoutes = {
   AppRoutes.notifications,
   AppRoutes.productDetails,
   AppRoutes.categoryProducts,
+  AppRoutes.cart,
   AppRoutes.orders,
   AppRoutes.currentOrders,
   AppRoutes.finishedOrders,
   AppRoutes.pendingOrderDetails,
+  AppRoutes.clientOrderDetails,
 };
 
 /// Check if a path (or its prefix) requires authentication
@@ -390,7 +396,6 @@ final goRouter = GoRouter(
             ),
       ),
     ),
-
     GoRoute(
       path: '${AppRoutes.categoryProducts}/:categoryId',
       name: 'Category Products',
@@ -403,6 +408,21 @@ final goRouter = GoRouter(
               0,
           categoryName: state.uri.queryParameters['name'] ?? '',
         ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            _rtlAwareSlideTransition(
+              context: context,
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.cart,
+      name: 'Cart',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: const CartPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             _rtlAwareSlideTransition(
               context: context,
@@ -474,6 +494,23 @@ final goRouter = GoRouter(
             initialOrder: state.extra as OrderEntity,
           ),
           child: PendingOrderDetailsPage(order: state.extra as OrderEntity),
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            _rtlAwareSlideTransition(
+              context: context,
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+      ),
+    ),
+    GoRoute(
+      path: '${AppRoutes.clientOrderDetails}/:orderId',
+      name: 'Client Order Details',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: ClientOrderDetailsPage(
+          orderId: state.pathParameters['orderId'] ?? '',
         ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             _rtlAwareSlideTransition(

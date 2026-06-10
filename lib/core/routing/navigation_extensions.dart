@@ -34,6 +34,7 @@ extension NavigationExtensions on BuildContext {
 
   void goProfile() => push(AppRoutes.profile);
   void goAccount() => push(AppRoutes.account);
+  void goCart() => push(AppRoutes.cart);
   void goNotifications() => push(AppRoutes.notifications);
 
   // =========== ORDERS NAVIGATION ===========
@@ -42,6 +43,8 @@ extension NavigationExtensions on BuildContext {
   void goFinishedOrders() => push(AppRoutes.finishedOrders);
   void goPendingOrderDetails(OrderEntity order) =>
       push(AppRoutes.pendingOrderDetails, extra: order);
+  void goClientOrderDetails(String orderId) =>
+      push('${AppRoutes.clientOrderDetails}/$orderId');
 
   // =========== SETTINGS & INFO ===========
   void goFaq() => push(AppRoutes.faq);

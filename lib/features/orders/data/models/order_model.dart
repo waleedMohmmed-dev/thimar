@@ -8,6 +8,9 @@ class OrderModel extends Equatable {
   final OrderStatus status;
   final List<String> productImagePaths;
   final int extraProductsCount;
+  final String? productsTotal;
+  final String? deliveryPrice;
+  final String? discount;
 
   const OrderModel({
     required this.id,
@@ -16,6 +19,9 @@ class OrderModel extends Equatable {
     required this.status,
     required this.productImagePaths,
     this.extraProductsCount = 0,
+    this.productsTotal,
+    this.deliveryPrice,
+    this.discount,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -36,6 +42,9 @@ class OrderModel extends Equatable {
       status: _parseStatus(json['status']?.toString() ?? ''),
       productImagePaths: imagePaths,
       extraProductsCount: extraCount,
+      productsTotal: json['products_total']?.toString(),
+      deliveryPrice: json['delivery_price']?.toString(),
+      discount: json['discount']?.toString(),
     );
   }
 
@@ -58,6 +67,9 @@ class OrderModel extends Equatable {
       status: status,
       productImagePaths: productImagePaths,
       extraProductsCount: extraProductsCount,
+      productsTotal: productsTotal,
+      deliveryPrice: deliveryPrice,
+      discount: discount,
     );
   }
 
@@ -69,5 +81,8 @@ class OrderModel extends Equatable {
     status,
     productImagePaths,
     extraProductsCount,
+    productsTotal,
+    deliveryPrice,
+    discount,
   ];
 }

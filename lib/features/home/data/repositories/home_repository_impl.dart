@@ -1,4 +1,5 @@
 import 'package:thimar/core/imports/core_imports.dart';
+import 'package:thimar/features/home/domain/entities/cart_item_entity.dart';
 import 'package:thimar/features/home/domain/entities/category_entity.dart';
 import 'package:thimar/features/home/domain/entities/product_entity.dart';
 import 'package:thimar/features/home/domain/entities/rate_entity.dart';
@@ -178,6 +179,84 @@ class HomeRepositoryImpl implements HomeRepository {
     try {
       final models = await remoteDataSource.getCategoryProducts(categoryId);
       return Right(models.map((m) => m.toEntity()).toList());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CartItemEntity>>> getCart() async {
+    try {
+      final models = await remoteDataSource.getCart();
+      return Right(models.map((m) => m.toEntity()).toList());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> addToCart(
+    String productId,
+    int amount,
+  ) async {
+    try {
+      await remoteDataSource.addToCart(productId, amount);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteCartItem(String itemId) async {
+    try {
+      await remoteDataSource.deleteCartItem(itemId);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateCartItem(
+    String itemId,
+    int amount,
+  ) async {
+    try {
+      await remoteDataSource.updateCartItem(itemId, amount);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> applyCoupon(
+    String code,
+  ) async {
+    try {
+      final data = await remoteDataSource.applyCoupon(code);
+      return Right(data);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on NetworkException catch (e) {

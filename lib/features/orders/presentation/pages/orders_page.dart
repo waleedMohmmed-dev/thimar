@@ -23,7 +23,9 @@ class OrdersPage extends StatelessWidget {
 
     if (!currentRole.isDriver) {
       return BlocProvider(
-        create: (_) => sl<ClientOrdersBloc>()..add(const ClientOrdersStarted()),
+        create: (_) => sl<ClientOrdersBloc>()
+          ..add(const ClientCurrentOrdersRequested())
+          ..add(const ClientFinishedOrdersRequested()),
         child: _ClientOrdersView(showScaffold: role == null),
       );
     }
@@ -152,6 +154,7 @@ class _ClientOrdersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = context.colorScheme;
     final tt = context.textTheme;
 
     final content = Column(
@@ -162,7 +165,7 @@ class _ClientOrdersView extends StatelessWidget {
             child: Text(
               'orders_title'.tr(),
               style: tt.headlineSmall?.copyWith(
-                color: context.colorScheme.primary,
+                color: cs.primary,
                 fontSize: 27.sp,
                 fontWeight: FontWeight.w900,
                 height: 1.15,
@@ -172,26 +175,59 @@ class _ClientOrdersView extends StatelessWidget {
           ),
           SizedBox(height: 18.h),
         ],
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: BlocSelector<ClientOrdersBloc, ClientOrdersState, ClientOrdersTab>(
+            selector: (state) => state.selectedTab,
+            builder: (context, selectedTab) {
+              return AppSegmentedControl<ClientOrdersTab>(
+                value: selectedTab,
+                items: [
+                  AppSegmentedControlItem(
+                    value: ClientOrdersTab.current,
+                    labelKey: 'current',
+                  ),
+                  AppSegmentedControlItem(
+                    value: ClientOrdersTab.finished,
+                    labelKey: 'finished',
+                  ),
+                ],
+                onChanged: (tab) {
+                  context.read<ClientOrdersBloc>().add(
+                    ClientOrdersTabChanged(tab),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        SizedBox(height: 18.h),
         Expanded(
           child: BlocBuilder<ClientOrdersBloc, ClientOrdersState>(
             builder: (context, state) {
-              if (state.status == ClientOrdersStatus.loading ||
-                  state.status == ClientOrdersStatus.initial) {
+              final isCurrentTab = state.selectedTab == ClientOrdersTab.current;
+              final orders = isCurrentTab ? state.currentOrders : state.finishedOrders;
+              final status = isCurrentTab ? state.currentStatus : state.finishedStatus;
+
+              if (status == ClientOrdersStatus.loading ||
+                  status == ClientOrdersStatus.initial) {
                 return const Center(child: AppLoading());
               }
 
-              if (state.status == ClientOrdersStatus.failure) {
+              if (status == ClientOrdersStatus.failure) {
                 return AppError(
                   message: state.errorMessage ?? 'unexpected_error'.tr(),
                   onRetry: () {
                     context.read<ClientOrdersBloc>().add(
-                      const ClientOrdersStarted(),
+                      isCurrentTab
+                          ? const ClientCurrentOrdersRequested()
+                          : const ClientFinishedOrdersRequested(),
                     );
                   },
                 );
               }
 
-              if (state.orders.isEmpty) {
+              if (orders.isEmpty) {
                 return AppEmptyState(
                   icon: Icons.receipt_long_outlined,
                   title: 'no_orders'.tr(),
@@ -201,11 +237,14 @@ class _ClientOrdersView extends StatelessWidget {
 
               return ListView.separated(
                 padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 100.h),
-                itemCount: state.orders.length,
+                itemCount: orders.length,
                 separatorBuilder: (context, index) => SizedBox(height: 14.h),
                 itemBuilder: (context, index) {
-                  final order = state.orders[index];
-                  return OrderCard(order: order);
+                  final order = orders[index];
+                  return OrderCard(
+                    order: order,
+                    onTap: () => context.goClientOrderDetails(order.id),
+                  );
                 },
               );
             },
@@ -221,7 +260,7 @@ class _ClientOrdersView extends StatelessWidget {
         title: Text(
           'orders_title'.tr(),
           style: tt.headlineSmall?.copyWith(
-            color: context.colorScheme.primary,
+            color: cs.primary,
             fontSize: 27.sp,
             fontWeight: FontWeight.w900,
             height: 1.15,

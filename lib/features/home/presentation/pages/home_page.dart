@@ -88,9 +88,19 @@ class _HomeShellState extends State<_HomeShell> {
           context.read<OrdersBloc>().add(const CurrentOrdersRequested());
         }
       case 2:
-        context.read<NotificationsBloc>().add(const NotificationsFetched());
+        if (widget.role.isDriver) {
+          context.read<NotificationsBloc>().add(const NotificationsFetched());
+        }
       case 3:
-        context.read<AccountBloc>().add(const AccountStarted());
+        if (widget.role.isDriver) {
+          context.read<AccountBloc>().add(const AccountStarted());
+        } else {
+          context.read<NotificationsBloc>().add(const NotificationsFetched());
+        }
+      case 4:
+        if (!widget.role.isDriver) {
+          context.read<AccountBloc>().add(const AccountStarted());
+        }
     }
   }
 
@@ -102,14 +112,23 @@ class _HomeShellState extends State<_HomeShell> {
           key: ValueKey(_currentIndex),
           index: _currentIndex,
           children: [
+            // 0 - Home
             widget.role.isDriver
                 ? const DriverHomeTab()
                 : const _ClientHomeTab(),
+            // 1 - Orders
+            OrdersPage(role: widget.role),
+            // 2 - Favorites (client) / Notifications (driver)
             widget.role.isDriver
-                ? OrdersPage(role: widget.role)
+                ? const NotificationsPage()
                 : const FavoritesPage(),
-            const NotificationsPage(),
-            const AccountPage(),
+            // 3 - Notifications (client) / Account (driver)
+            widget.role.isDriver
+                ? const AccountPage()
+                : const NotificationsPage(),
+            // 4 - Account (client only)
+            if (widget.role.isDriver) const SizedBox.shrink()
+            else const AccountPage(),
           ],
         ),
       ),
@@ -134,6 +153,10 @@ class _HomeShellState extends State<_HomeShell> {
               ]
             : const [
                 AppNavBarItem(labelKey: 'nav_home', icon: Icons.home_outlined),
+                AppNavBarItem(
+                  labelKey: 'nav_orders',
+                  icon: Icons.receipt_long_outlined,
+                ),
                 AppNavBarItem(
                   labelKey: 'nav_favorites',
                   icon: Icons.favorite_outline,
