@@ -11,21 +11,11 @@ enum TransactionType {
 extension TransactionTypeX on TransactionType {
   String get label {
     return switch (this) {
-      TransactionType.walletTopUp => 'wallet_top_up',
-      TransactionType.orderPayment => 'order_payment',
-      TransactionType.walletWithdraw => 'wallet_withdraw',
-      TransactionType.refund => 'refund',
-      TransactionType.bonus => 'bonus',
-    };
-  }
-
-  String get icon {
-    return switch (this) {
-      TransactionType.walletTopUp => '➕',
-      TransactionType.orderPayment => '💳',
-      TransactionType.walletWithdraw => '📤',
-      TransactionType.refund => '↩️',
-      TransactionType.bonus => '🎁',
+      TransactionType.walletTopUp => 'شحن المحفظة',
+      TransactionType.orderPayment => 'دفعت مقابل هذا الطلب',
+      TransactionType.walletWithdraw => 'سحب من المحفظة',
+      TransactionType.refund => 'استرجاع',
+      TransactionType.bonus => 'مكافأة',
     };
   }
 }
@@ -36,10 +26,9 @@ class TransactionEntity extends Equatable {
   final double amount;
   final DateTime dateTime;
   final String? description;
-  final String? orderId;
-  final List<String>? productImagePaths;
-  final int? extraProductsCount;
-  final bool isIncome; // true for income, false for expense
+  final double beforeCharge;
+  final double afterCharge;
+  final bool isIncome;
 
   const TransactionEntity({
     required this.id,
@@ -47,22 +36,20 @@ class TransactionEntity extends Equatable {
     required this.amount,
     required this.dateTime,
     this.description,
-    this.orderId,
-    this.productImagePaths,
-    this.extraProductsCount,
+    this.beforeCharge = 0,
+    this.afterCharge = 0,
     required this.isIncome,
   });
 
   @override
   List<Object?> get props => [
-    id,
-    type,
-    amount,
-    dateTime,
-    description,
-    orderId,
-    productImagePaths,
-    extraProductsCount,
-    isIncome,
-  ];
+        id,
+        type,
+        amount,
+        dateTime,
+        description,
+        beforeCharge,
+        afterCharge,
+        isIncome,
+      ];
 }

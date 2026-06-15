@@ -46,6 +46,9 @@ extension NavigationExtensions on BuildContext {
   void goClientOrderDetails(String orderId) =>
       push('${AppRoutes.clientOrderDetails}/$orderId');
 
+  // =========== WALLET ===========
+  void goWallet() => push(AppRoutes.wallet);
+
   // =========== SETTINGS & INFO ===========
   void goFaq() => push(AppRoutes.faq);
   void goPrivacy() => push(AppRoutes.privacy);

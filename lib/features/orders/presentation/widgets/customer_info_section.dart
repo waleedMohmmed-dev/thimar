@@ -16,64 +16,24 @@ class CustomerInfoSection extends StatelessWidget {
     final tt = context.textTheme;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Row(
-          children: [
-            Icon(Icons.person, color: cs.primary, size: 20.sp),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'customer_name'.tr(),
-                    style: tt.bodyMedium?.copyWith(
-                      color: cs.outline,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                  Text(
-                    name,
-                    style: tt.bodyMedium?.copyWith(
-                      color: cs.primary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        Text(
+          '${'customer_name'.tr()} : $name',
+          style: tt.bodyLarge?.copyWith(
+            color: cs.primary,
+            fontWeight: FontWeight.w700,
+            fontSize: 16.sp,
+          ),
         ),
-        SizedBox(height: 12.h),
-        Row(
-          children: [
-            Icon(Icons.phone, color: cs.primary, size: 20.sp),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'phone_number'.tr(),
-                    style: tt.bodyMedium?.copyWith(
-                      color: cs.outline,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                  Text(
-                    phone,
-                    style: tt.bodyMedium?.copyWith(
-                      color: cs.primary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        SizedBox(height: 8.h),
+        Text(
+          '${'phone_number'.tr()} : $phone',
+          style: tt.bodyLarge?.copyWith(
+            color: cs.primary,
+            fontWeight: FontWeight.w700,
+            fontSize: 16.sp,
+          ),
         ),
       ],
     );

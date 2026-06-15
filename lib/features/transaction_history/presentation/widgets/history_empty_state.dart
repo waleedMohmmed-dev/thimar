@@ -1,7 +1,9 @@
 import 'package:thimar/core/imports/core_imports.dart';
 
 class HistoryEmptyState extends StatelessWidget {
-  const HistoryEmptyState({super.key});
+  final VoidCallback? onRefresh;
+
+  const HistoryEmptyState({super.key, this.onRefresh});
 
   @override
   Widget build(BuildContext context) {

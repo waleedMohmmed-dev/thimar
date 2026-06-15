@@ -21,29 +21,27 @@ class TimePickerCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: AppCard(
-        padding: EdgeInsets.all(12.w),
-        backgroundColor: cs.surfaceContainerHighest,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: cs.outline.withValues(alpha: 0.4)),
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Row(
           children: [
-            Icon(icon, color: cs.primary, size: 20.sp),
-            SizedBox(height: 8.h),
-            Text(
-              label,
-              style: tt.bodySmall?.copyWith(color: cs.outline, fontSize: 12.sp),
-            ),
-            if (value.isNotEmpty) ...[
-              SizedBox(height: 4.h),
-              Text(
-                value,
+            Icon(icon, color: cs.primary, size: 22.sp),
+            SizedBox(width: 10.w),
+            Expanded(
+              child: Text(
+                value.isNotEmpty ? value : label,
                 style: tt.bodyMedium?.copyWith(
-                  color: cs.primary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13.sp,
+                  color: value.isNotEmpty ? cs.primary : cs.outline,
+                  fontWeight: value.isNotEmpty ? FontWeight.w600 : FontWeight.w500,
+                  fontSize: 14.sp,
                 ),
+                textAlign: TextAlign.center,
               ),
-            ],
+            ),
           ],
         ),
       ),

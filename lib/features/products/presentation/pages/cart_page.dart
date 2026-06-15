@@ -5,6 +5,8 @@ import 'package:thimar/features/home/domain/usecases/apply_coupon_use_case.dart'
 import 'package:thimar/features/home/domain/usecases/delete_cart_item_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/get_cart_use_case.dart';
 import 'package:thimar/features/home/domain/usecases/update_cart_item_use_case.dart';
+import 'package:thimar/features/orders/domain/entities/order_entity.dart';
+import 'package:thimar/features/orders/presentation/pages/complete_order_page.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -24,6 +26,7 @@ class _CartPageState extends State<CartPage> {
   double _couponDiscount = 0;
   String? _appliedCouponCode;
   bool _isApplyingCoupon = false;
+  final bool _isLoading = false;
   late Future<List<CartItemEntity>> _cartFuture;
 
   @override
@@ -92,6 +95,38 @@ class _CartPageState extends State<CartPage> {
         });
         context.showSuccessSnackBar('تم تطبيق الكوبون بنجاح');
       },
+    );
+  }
+
+  void _completeOrder(List<CartItemEntity> items) {
+    final productImages = items
+        .where((item) => item.image.isNotEmpty)
+        .map((item) => item.image)
+        .toList();
+    final productNames = items.map((item) => item.title).toList();
+    final total = items.fold(0.0, (sum, item) => sum + item.price * item.amount);
+
+    final order = OrderEntity(
+      id: '',
+      dateKey: DateTime.now().toIso8601String(),
+      total: total - _couponDiscount,
+      status: OrderStatus.pendingApproval,
+      productImagePaths: productImages,
+      productNames: productNames,
+      productsTotal: '${total.toStringAsFixed(1)} ${'sar'.tr()}',
+      discount: _couponDiscount > 0
+          ? '${_couponDiscount.toStringAsFixed(1)} ${'sar'.tr()}'
+          : null,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CompleteOrderPage(
+          order: order,
+          couponCode: _appliedCouponCode,
+        ),
+      ),
     );
   }
 
@@ -297,7 +332,7 @@ class _CartPageState extends State<CartPage> {
                       width: double.infinity,
                       height: 54.h,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _isLoading ? null : () => _completeOrder(items),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: cs.primary,
                           foregroundColor: cs.onPrimary,
@@ -306,20 +341,29 @@ class _CartPageState extends State<CartPage> {
                             borderRadius: BorderRadius.circular(16.r),
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.shopping_bag_outlined, size: 20.r),
-                            SizedBox(width: 8.w),
-                            Text(
-                              'إتمام الطلب',
-                              style: tt.labelLarge?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: cs.onPrimary,
+                        child: _isLoading
+                            ? SizedBox(
+                                width: 24.r,
+                                height: 24.r,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: cs.onPrimary,
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.shopping_bag_outlined, size: 20.r),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    'إتمام الطلب',
+                                    style: tt.labelLarge?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: cs.onPrimary,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
                       ),
                     ),
                     SizedBox(height: 16.h),
@@ -508,3 +552,7 @@ class _SmallIconButton extends StatelessWidget {
     );
   }
 }
+
+
+
+

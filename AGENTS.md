@@ -61,3 +61,7 @@ This is a Flutter application named `thimar`. It uses a feature-first Clean Arch
 
 - Git commands may require configuring `safe.directory` because the sandbox user differs from the repository owner.
 - Avoid changing generated or build output directories such as `.dart_tool` and `build`.
+
+
+
+

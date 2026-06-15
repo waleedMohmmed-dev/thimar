@@ -109,4 +109,18 @@ class ClientOrdersRepositoryImpl implements ClientOrdersRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> deleteOrder(int orderId) async {
+    try {
+      final data = await remoteDataSource.deleteOrder(orderId);
+      return Right(data);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

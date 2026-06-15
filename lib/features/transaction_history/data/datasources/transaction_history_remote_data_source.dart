@@ -1,3 +1,5 @@
+import 'package:thimar/core/networking/api_service.dart';
+import 'package:thimar/core/networking/endpoints.dart';
 import 'package:thimar/features/transaction_history/data/models/transaction_model.dart';
 
 abstract class TransactionHistoryRemoteDataSource {
@@ -7,17 +9,30 @@ abstract class TransactionHistoryRemoteDataSource {
 
 class TransactionHistoryRemoteDataSourceImpl
     implements TransactionHistoryRemoteDataSource {
-  TransactionHistoryRemoteDataSourceImpl(dynamic apiService);
+  final ApiService _apiService;
+
+  TransactionHistoryRemoteDataSourceImpl(this._apiService);
 
   @override
   Future<List<TransactionModel>> getTransactionHistory() async {
-    return [];
+    final response = await _apiService.get(Endpoints.walletTransactions);
+    final data = response['data'] as List<dynamic>? ?? [];
+    return data
+        .map((json) => TransactionModel.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   @override
   Future<List<TransactionModel>> getTransactionHistoryByType(
     String type,
   ) async {
-    return [];
+    final response = await _apiService.get(
+      Endpoints.walletTransactions,
+      params: {'type': type},
+    );
+    final data = response['data'] as List<dynamic>? ?? [];
+    return data
+        .map((json) => TransactionModel.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 }

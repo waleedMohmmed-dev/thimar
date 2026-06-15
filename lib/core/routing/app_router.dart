@@ -41,6 +41,10 @@ import 'package:thimar/features/orders/presentation/pages/current_orders_page.da
 import 'package:thimar/features/orders/presentation/pages/finished_orders_page.dart';
 import 'package:thimar/features/orders/presentation/pages/pending_order_details_page.dart';
 import 'package:thimar/features/orders/presentation/pages/client_order_details_page.dart';
+import 'package:thimar/features/orders/presentation/pages/rate_order_page.dart';
+import 'package:thimar/features/transaction_history/presentation/pages/transaction_history_page.dart';
+import 'package:thimar/features/transaction_history/presentation/bloc/transaction_history_bloc.dart';
+import 'package:thimar/features/transaction_history/presentation/bloc/transaction_history_event.dart';
 import 'package:thimar/features/orders/presentation/bloc/order_details_cubit.dart';
 import 'package:thimar/features/orders/domain/usecases/get_order_details_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/accept_order_use_case.dart';
@@ -53,6 +57,9 @@ import 'package:thimar/features/faq/presentation/pages/faq_page.dart';
 import 'package:thimar/features/privacy/presentation/pages/privacy_page.dart';
 import 'package:thimar/features/contact/presentation/pages/contact_page.dart';
 import 'package:thimar/features/about_app/presentation/pages/about_app_page.dart';
+import 'package:thimar/features/wallet/presentation/pages/wallet_page.dart';
+import 'package:thimar/features/wallet/presentation/pages/charge_wallet_page.dart';
+import 'package:thimar/features/wallet/presentation/bloc/wallet_bloc.dart';
 
 /// ============================================================================
 /// [AppRoutes] - Centralized route path definitions
@@ -89,6 +96,12 @@ class AppRoutes {
   static const String finishedOrders = '/finished-orders';
   static const String pendingOrderDetails = '/pending-order-details';
   static const String clientOrderDetails = '/client-order-details';
+  static const String rateOrder = '/rate-order';
+  static const String transactionHistory = '/transaction-history';
+
+  // =========== WALLET ===========
+  static const String wallet = '/wallet';
+  static const String chargeWallet = '/charge-wallet';
 
   // =========== SETTINGS & INFO ===========
   static const String faq = '/faq';
@@ -521,6 +534,40 @@ final goRouter = GoRouter(
             ),
       ),
     ),
+    GoRoute(
+      path: AppRoutes.rateOrder,
+      name: 'Rate Order',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: RateOrderPage(order: state.extra as OrderEntity),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            _rtlAwareSlideTransition(
+              context: context,
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.transactionHistory,
+      name: 'Transaction History',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: BlocProvider(
+          create: (_) => sl<TransactionHistoryBloc>()
+            ..add(const TransactionHistoryLoaded()),
+          child: const TransactionHistoryPage(),
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            _rtlAwareSlideTransition(
+              context: context,
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+      ),
+    ),
 
     // =========== SETTINGS & INFO ===========
     GoRoute(
@@ -634,6 +681,39 @@ final goRouter = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage<void>(
         key: state.pageKey,
         child: const LanguagePage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            _rtlAwareSlideTransition(
+              context: context,
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.wallet,
+      name: 'Wallet',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: BlocProvider(
+          create: (_) => sl<WalletBloc>()..add(const WalletLoadRequested()),
+          child: const WalletPage(),
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            _rtlAwareSlideTransition(
+              context: context,
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            ),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.chargeWallet,
+      name: 'Charge Wallet',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: const ChargeWalletPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             _rtlAwareSlideTransition(
               context: context,

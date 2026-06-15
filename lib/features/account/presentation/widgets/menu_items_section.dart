@@ -75,6 +75,11 @@ class MenuItemsSection extends StatelessWidget {
         onTap: () => context.goContact(),
       ),
       MenuItemData(
+        icon: Icons.wallet,
+        label: 'المحفظة',
+        onTap: () => context.goWallet(),
+      ),
+      MenuItemData(
         icon: Icons.logout,
         label: 'تسجيل الخروج',
         isLogout: true,
@@ -85,6 +90,11 @@ class MenuItemsSection extends StatelessWidget {
 
   List<MenuItemData> _clientItems(BuildContext context) {
     return [
+      MenuItemData(
+        icon: Icons.wallet,
+        label: 'المحفظة',
+        onTap: () => context.goWallet(),
+      ),
       MenuItemData(
         icon: Icons.person,
         label: 'البيانات الشخصية',

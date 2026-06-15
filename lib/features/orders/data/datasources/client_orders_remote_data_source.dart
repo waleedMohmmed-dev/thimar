@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:thimar/core/networking/api_service.dart';
 import 'package:thimar/core/networking/endpoints.dart';
 import 'package:thimar/features/orders/data/models/order_model.dart';
@@ -10,6 +11,7 @@ abstract class ClientOrdersRemoteDataSource {
   Future<List<dynamic>> getOrderProducts(int orderId);
   Future<Map<String, dynamic>> storeOrder(Map<String, dynamic> body);
   Future<Map<String, dynamic>> getDeliveryCost(int addressId);
+  Future<Map<String, dynamic>> deleteOrder(int orderId);
 }
 
 class ClientOrdersRemoteDataSourceImpl implements ClientOrdersRemoteDataSource {
@@ -63,7 +65,11 @@ class ClientOrdersRemoteDataSourceImpl implements ClientOrdersRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> storeOrder(Map<String, dynamic> body) async {
-    final response = await _apiService.post(Endpoints.clientOrders, body: body);
+    final formData = FormData.fromMap(body);
+    final response = await _apiService.post(
+      Endpoints.clientOrders,
+      body: formData,
+    );
     return response['data'] as Map<String, dynamic>? ?? {};
   }
 
@@ -74,5 +80,13 @@ class ClientOrdersRemoteDataSourceImpl implements ClientOrdersRemoteDataSource {
       params: {'address_id': addressId.toString()},
     );
     return response['data'] as Map<String, dynamic>? ?? {};
+  }
+
+  @override
+  Future<Map<String, dynamic>> deleteOrder(int orderId) async {
+    final response = await _apiService.delete(
+      Endpoints.clientOrderDetails(orderId.toString()),
+    );
+    return response['data'] as Map<String, dynamic>? ?? response as Map<String, dynamic>? ?? {};
   }
 }

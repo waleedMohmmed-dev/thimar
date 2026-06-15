@@ -1,14 +1,12 @@
 import 'package:thimar/core/imports/core_imports.dart';
-import 'package:thimar/core/imports/packages_imports.dart';
+import 'package:thimar/features/addresses/domain/entities/address_entity.dart';
 import 'package:thimar/features/orders/domain/entities/order_entity.dart';
 import 'package:thimar/features/orders/presentation/widgets/complete_order_widgets.dart';
-import 'package:thimar/features/orders/presentation/widgets/order_success_dialog.dart';
-
-// ignore_for_file: unnecessary_import
 
 class CompleteOrderPage extends StatefulWidget {
   final OrderEntity? order;
-  const CompleteOrderPage({super.key, this.order});
+  final String? couponCode;
+  const CompleteOrderPage({super.key, this.order, this.couponCode});
 
   @override
   State<CompleteOrderPage> createState() => _CompleteOrderPageState();
@@ -17,7 +15,7 @@ class CompleteOrderPage extends StatefulWidget {
 class _CompleteOrderPageState extends State<CompleteOrderPage> {
   late TextEditingController _notesController;
   PaymentMethod _selectedPaymentMethod = PaymentMethod.cash;
-  String? _selectedAddress;
+  AddressEntity? _selectedAddress;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
 
@@ -63,21 +61,25 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               CustomerInfoSection(
                 name: _order.customerName ?? 'عميل',
                 phone: _order.phoneNumber ?? '',
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 28.h),
 
               AddressPickerSection(
-                selectedAddress: _selectedAddress ?? _order.address,
-                onAddAddress: () {}, // Client address picker disabled
+                selectedAddress: _selectedAddress,
+                onAddressSelected: (address) {
+                  setState(() {
+                    _selectedAddress = address;
+                  });
+                },
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 28.h),
 
               DeliveryTimePickerSection(
                 selectedDate: _selectedDate,
@@ -85,10 +87,10 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
                 onDateSelected: (_) => _selectDate(context),
                 onTimeSelected: (_) => _selectTime(context),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 28.h),
 
               NotesInputSection(controller: _notesController),
-              SizedBox(height: 24.h),
+              SizedBox(height: 28.h),
 
               PaymentMethodSection(
                 selectedMethod: _selectedPaymentMethod,
@@ -98,7 +100,7 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
                   });
                 },
               ),
-              SizedBox(height: 50.h),
+              SizedBox(height: 28.h),
 
               CompleteOrderSummaryWidget(
                 productsTotal:
@@ -107,23 +109,18 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
                 deliveryPrice: _order.deliveryPrice ?? '0 ${'sar'.tr()}',
                 discount: _order.discount ?? '0 ${'sar'.tr()}',
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: 32.h),
 
-              AppButton(
-                label: 'complete_order_btn'.tr(),
-                onPressed: () {
-                  final order = _buildOrderEntity();
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) => OrderSuccessDialog(
-                      onViewDetails: () {
-                        context.goPendingOrderDetails(order);
-                      },
-                    ),
-                  );
-                },
-                size: ButtonSize.large,
+              SizedBox(
+                width: double.infinity,
+                height: 56.h,
+                child: AppButton(
+                  label: 'complete_order_btn'.tr(),
+                  onPressed: () {
+                    _submitOrder();
+                  },
+                  size: ButtonSize.large,
+                ),
               ),
               SizedBox(height: 24.h),
             ],
@@ -159,28 +156,37 @@ class _CompleteOrderPageState extends State<CompleteOrderPage> {
     }
   }
 
-  OrderEntity _buildOrderEntity() {
-    final paymentLabel = switch (_selectedPaymentMethod) {
-      PaymentMethod.mastercard => 'Mastercard',
-      PaymentMethod.visa => 'Visa',
-      PaymentMethod.cash => 'cash'.tr(),
-    };
+  Future<void> _submitOrder() async {
+    if (_selectedAddress == null) {
+      context.showErrorSnackBar('يرجى اختيار العنوان');
+      return;
+    }
 
     final dateStr = _selectedDate != null
-        ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-        : _order.deliveryDate;
+        ? '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}'
+        : '${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}';
     final timeStr = _selectedTime != null
-        ? _selectedTime!.format(context)
-        : _order.deliveryTime;
+        ? '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}'
+        : '${TimeOfDay.now().hour.toString().padLeft(2, '0')}:${TimeOfDay.now().minute.toString().padLeft(2, '0')}';
 
-    return _order.copyWith(
-      address: _selectedAddress ?? _order.address,
+    final paymentLabel = switch (_selectedPaymentMethod) {
+      PaymentMethod.mastercard => 'mastercard',
+      PaymentMethod.visa => 'visa',
+      PaymentMethod.cash => 'cash',
+    };
+
+    final order = _order.copyWith(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      address: _selectedAddress!.location,
       deliveryDate: dateStr,
       deliveryTime: timeStr,
-      notes: _notesController.text.isNotEmpty
-          ? _notesController.text
+      notes: _notesController.text.trim().isNotEmpty
+          ? _notesController.text.trim()
           : _order.notes,
       paymentMethod: paymentLabel,
+      status: OrderStatus.pendingApproval,
     );
+
+    context.push(AppRoutes.pendingOrderDetails, extra: order);
   }
 }

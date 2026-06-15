@@ -36,23 +36,23 @@ class DeliveryTimePickerSection extends StatelessWidget {
           children: [
             Expanded(
               child: TimePickerCard(
-                icon: Icons.calendar_today,
-                label: 'choose_date'.tr(),
-                value: selectedDate != null
-                    ? '${selectedDate!.day}/${selectedDate!.month}'
-                    : '',
-                onTap: () => onDateSelected(selectedDate ?? DateTime.now()),
-              ),
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: TimePickerCard(
                 icon: Icons.access_time,
                 label: 'choose_time'.tr(),
                 value: selectedTime != null
                     ? selectedTime!.format(context)
                     : '',
                 onTap: () => onTimeSelected(selectedTime ?? TimeOfDay.now()),
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: TimePickerCard(
+                icon: Icons.calendar_today,
+                label: 'choose_date'.tr(),
+                value: selectedDate != null
+                    ? '${selectedDate!.day}/${selectedDate!.month}'
+                    : '',
+                onTap: () => onDateSelected(selectedDate ?? DateTime.now()),
               ),
             ),
           ],

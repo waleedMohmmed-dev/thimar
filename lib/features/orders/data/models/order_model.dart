@@ -7,10 +7,19 @@ class OrderModel extends Equatable {
   final double total;
   final OrderStatus status;
   final List<String> productImagePaths;
+  final List<String> productNames;
   final int extraProductsCount;
   final String? productsTotal;
   final String? deliveryPrice;
   final String? discount;
+  final String? address;
+  final String? notes;
+  final String? deliveryDate;
+  final String? deliveryTime;
+  final String? paymentMethod;
+  final String? customerName;
+  final String? phoneNumber;
+  final String? clientImage;
 
   const OrderModel({
     required this.id,
@@ -18,10 +27,19 @@ class OrderModel extends Equatable {
     required this.total,
     required this.status,
     required this.productImagePaths,
+    this.productNames = const [],
     this.extraProductsCount = 0,
     this.productsTotal,
     this.deliveryPrice,
     this.discount,
+    this.address,
+    this.notes,
+    this.deliveryDate,
+    this.deliveryTime,
+    this.paymentMethod,
+    this.customerName,
+    this.phoneNumber,
+    this.clientImage,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -30,7 +48,13 @@ class OrderModel extends Equatable {
         .map((p) => p['url']?.toString() ?? '')
         .where((url) => url.isNotEmpty)
         .toList();
+    final names = products
+        .map((p) => p['name']?.toString() ?? '')
+        .where((name) => name.isNotEmpty)
+        .toList();
     final extraCount = products.length > 2 ? products.length - 2 : 0;
+
+    final user = json['user'] as Map<String, dynamic>?;
 
     return OrderModel(
       id: json['id']?.toString() ?? '',
@@ -41,10 +65,19 @@ class OrderModel extends Equatable {
           0.0,
       status: _parseStatus(json['status']?.toString() ?? ''),
       productImagePaths: imagePaths,
+      productNames: names,
       extraProductsCount: extraCount,
       productsTotal: json['products_total']?.toString(),
       deliveryPrice: json['delivery_price']?.toString(),
       discount: json['discount']?.toString(),
+      address: json['address']?.toString(),
+      notes: json['notes']?.toString(),
+      deliveryDate: json['delivery_date']?.toString(),
+      deliveryTime: json['delivery_time']?.toString(),
+      paymentMethod: json['payment_type']?.toString(),
+      customerName: user?['name']?.toString(),
+      phoneNumber: user?['phone']?.toString(),
+      clientImage: user?['image_url']?.toString(),
     );
   }
 
@@ -66,10 +99,19 @@ class OrderModel extends Equatable {
       total: total,
       status: status,
       productImagePaths: productImagePaths,
+      productNames: productNames,
       extraProductsCount: extraProductsCount,
       productsTotal: productsTotal,
       deliveryPrice: deliveryPrice,
       discount: discount,
+      address: address,
+      notes: notes,
+      deliveryDate: deliveryDate,
+      deliveryTime: deliveryTime,
+      paymentMethod: paymentMethod,
+      customerName: customerName,
+      phoneNumber: phoneNumber,
+      clientImage: clientImage,
     );
   }
 
@@ -84,5 +126,13 @@ class OrderModel extends Equatable {
     productsTotal,
     deliveryPrice,
     discount,
+    address,
+    notes,
+    deliveryDate,
+    deliveryTime,
+    paymentMethod,
+    customerName,
+    phoneNumber,
+    clientImage,
   ];
 }

@@ -51,6 +51,16 @@ class Endpoints {
   static const String categories = "categories";
   static String categoryProducts(String id) => "categories/$id";
 
+  // Wallet
+  static const String wallet = "wallet";
+  static const String walletCharge = "wallet/charge";
+  static const String walletCashout = "wallet/cashout";
+  static const String walletTransactions = "wallet/get_wallet_transactions";
+
+  // Client Addresses
+  static const String clientAddresses = "client/addresses";
+  static String clientAddressDetails(String id) => "client/addresses/$id";
+
   // Helpers
   static const String notifications = "notifications";
   static const String policy = "policy";

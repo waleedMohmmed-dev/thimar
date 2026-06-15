@@ -38,6 +38,19 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
         centerTitle: true,
         leading: const AppBackButton(),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push(AppRoutes.chargeWallet),
+        backgroundColor: cs.primary,
+        foregroundColor: cs.onPrimary,
+        icon: Icon(Icons.add_rounded, size: 22.sp),
+        label: Text(
+          'شحن المحفظة',
+          style: tt.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+            fontSize: 14.sp,
+          ),
+        ),
+      ),
       body: BlocBuilder<TransactionHistoryBloc, TransactionHistoryState>(
         builder: (context, state) {
           if (state.status == TransactionHistoryStatus.loading) {
@@ -45,17 +58,32 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage> {
           }
 
           if (state.transactions.isEmpty) {
-            return const HistoryEmptyState();
+            return HistoryEmptyState(
+              onRefresh: () async {
+                context.read<TransactionHistoryBloc>().add(
+                  const TransactionHistoryLoaded(),
+                );
+              },
+            );
           }
 
-          return ListView.separated(
-            padding: EdgeInsets.all(16.w),
-            itemCount: state.transactions.length,
-            separatorBuilder: (context, index) => SizedBox(height: 16.h),
-            itemBuilder: (context, index) {
-              final transaction = state.transactions[index];
-              return HistoryTransactionItem(transaction: transaction);
+          return RefreshIndicator(
+            onRefresh: () async {
+              context.read<TransactionHistoryBloc>().add(
+                const TransactionHistoryLoaded(),
+              );
+              await Future.delayed(const Duration(milliseconds: 500));
             },
+            color: cs.primary,
+            child: ListView.separated(
+              padding: EdgeInsets.all(16.w),
+              itemCount: state.transactions.length,
+              separatorBuilder: (context, index) => SizedBox(height: 16.h),
+              itemBuilder: (context, index) {
+                final transaction = state.transactions[index];
+                return HistoryTransactionItem(transaction: transaction);
+              },
+            ),
           );
         },
       ),

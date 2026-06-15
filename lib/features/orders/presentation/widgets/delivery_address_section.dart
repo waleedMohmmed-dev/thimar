@@ -16,9 +16,9 @@ class DeliveryAddressSection extends StatelessWidget {
       children: [
         Text(
           'delivery_address'.tr(),
-          style: tt.titleMedium?.copyWith(
+          style: tt.bodyLarge?.copyWith(
             color: cs.primary,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             fontSize: 16.sp,
           ),
         ),
@@ -27,59 +27,46 @@ class DeliveryAddressSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 100.w,
-              height: 100.h,
+              width: 90.w,
+              height: 90.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.r),
-                color: Colors.grey[400],
+                color: cs.primary.withValues(alpha: 0.1),
               ),
-              child: Stack(
-                children: [
-                  Center(
-                    child: Icon(
-                      Icons.location_on,
-                      color: Colors.white,
-                      size: 40.sp,
-                    ),
-                  ),
-                  PositionedDirectional(
-                    bottom: 8.w,
-                    end: 8.w,
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white,
-                      size: 20.sp,
-                    ),
-                  ),
-                ],
+              child: Center(
+                child: Icon(
+                  Icons.location_on,
+                  color: cs.primary,
+                  size: 36.sp,
+                ),
               ),
             ),
-            SizedBox(width: 16.w),
+            SizedBox(width: 14.w),
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'delivery_address'.tr(),
+                    'المنزل',
                     style: tt.titleSmall?.copyWith(
                       color: cs.primary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15.sp,
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  if (order.address != null) ...[
+                  if (order.address != null)
                     Text(
                       order.address!,
                       style: tt.bodySmall?.copyWith(
                         color: cs.outline,
-                        fontSize: 12.sp,
-                        height: 1.4,
+                        fontSize: 13.sp,
+                        height: 1.5,
                       ),
+                      textAlign: TextAlign.end,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ],
                 ],
               ),
             ),

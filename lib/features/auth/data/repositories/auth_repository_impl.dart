@@ -122,6 +122,11 @@ class AuthRepositoryImpl implements AuthRepository {
         value: userModel.role.apiValue,
         boxName: CacheConstants.userBox,
       ),
+      _cacheService.save(
+        key: CacheKeys.userName,
+        value: userModel.name,
+        boxName: CacheConstants.userBox,
+      ),
     ]);
   }
 

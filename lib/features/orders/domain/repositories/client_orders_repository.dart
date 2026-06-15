@@ -11,4 +11,5 @@ abstract class ClientOrdersRepository {
     Map<String, dynamic> body,
   );
   Future<Either<Failure, Map<String, dynamic>>> getDeliveryCost(int addressId);
+  Future<Either<Failure, Map<String, dynamic>>> deleteOrder(int orderId);
 }

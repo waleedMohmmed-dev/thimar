@@ -21,27 +21,22 @@ class PendingOrderDetailsPage extends StatefulWidget {
 }
 
 class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
-  late PageController _pageController;
   OrderStatus? _actionStatus;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
     _actionStatus = widget.order.status;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<OrderDetailsCubit>().loadOrderDetails(widget.order.id);
-    });
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
+    if (_currentRole.isDriver) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<OrderDetailsCubit>().loadOrderDetails(widget.order.id);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = context.colorScheme;
     final tt = context.textTheme;
 
     return BlocConsumer<OrderDetailsCubit, OrderDetailsState>(
@@ -96,7 +91,7 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
             title: Text(
               'order_details'.tr(),
               style: tt.headlineSmall?.copyWith(
-                color: context.theme.primaryColor,
+                color: cs.primary,
                 fontSize: 24.sp,
                 fontWeight: FontWeight.w900,
               ),
@@ -107,62 +102,25 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
           body: Stack(
             children: [
               SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(16.w),
-                      child: OrderInfoHeader(order: order),
-                    ),
-                    SizedBox(height: 16.h),
-
-                    if (order.clientImage != null &&
-                        order.clientImage!.isNotEmpty) ...[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: _buildClientInfoSection(context, order),
-                      ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       SizedBox(height: 16.h),
-                    ],
+                      OrderInfoHeader(order: order),
+                      SizedBox(height: 24.h),
 
-                    if (order.productImagePaths.isNotEmpty) ...[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: _buildProductsSection(context, order),
-                      ),
-                      SizedBox(height: 16.h),
-                    ],
+                      DeliveryAddressSection(order: order),
+                      SizedBox(height: 24.h),
 
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: DeliveryTimeSection(order: order),
-                    ),
-                    SizedBox(height: 16.h),
+                      OrderSummaryCard(order: order),
+                      SizedBox(height: 32.h),
 
-                    if (order.notes != null && order.notes!.isNotEmpty) ...[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: NotesDisplaySection(notes: order.notes!),
-                      ),
-                      SizedBox(height: 16.h),
-                    ],
-
-                    if (order.address != null && order.address!.isNotEmpty) ...[
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: DeliveryAddressSection(order: order),
-                      ),
+                      _buildOrderActions(context, orderState, order),
                       SizedBox(height: 24.h),
                     ],
-
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: OrderSummaryCard(order: order),
-                    ),
-                    SizedBox(height: 16.h),
-
-                    _buildOrderActions(context, orderState, order),
-                    SizedBox(height: 16.h),
-                  ],
+                  ),
                 ),
               ),
               if (orderState.detailsStatus == OrderDetailsStatus.loading)
@@ -171,17 +129,18 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                   left: 0,
                   right: 0,
                   child: LinearProgressIndicator(
-                    color: context.theme.primaryColor,
-                    backgroundColor: context.theme.primaryColor.withAlpha(30),
+                    color: cs.primary,
+                    backgroundColor: cs.primary.withAlpha(30),
                   ),
                 ),
-              if (orderState.detailsStatus == OrderDetailsStatus.failure)
+              if (_currentRole.isDriver &&
+                  orderState.detailsStatus == OrderDetailsStatus.failure)
                 Positioned(
                   bottom: 0,
                   left: 0,
                   right: 0,
                   child: Container(
-                    color: context.colorScheme.error,
+                    color: cs.error,
                     padding: EdgeInsets.all(12.w),
                     child: Row(
                       children: [
@@ -219,29 +178,80 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
     );
   }
 
-  Widget _buildClientInfoSection(BuildContext context, OrderEntity order) {
+  Widget _buildOrderActions(
+    BuildContext context,
+    OrderDetailsState orderState,
+    OrderEntity order,
+  ) {
     final cs = context.colorScheme;
     final tt = context.textTheme;
 
-    return Row(
+    if (_currentRole.isDriver) {
+      return _buildDriverActions(context, orderState, order);
+    }
+
+    return _buildClientActions(context, order, tt, cs);
+  }
+
+  Widget _buildClientActions(
+    BuildContext context,
+    OrderEntity order,
+    TextTheme tt,
+    ColorScheme cs,
+  ) {
+    if (order.status == OrderStatus.cancelled) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8.r),
-          child: AppImage(
-            imageUrl: order.clientImage!,
-            width: 46.w,
-            height: 41.h,
-            fit: BoxFit.cover,
+        if (order.status != OrderStatus.delivered)
+          SizedBox(
+            width: double.infinity,
+            height: 56.h,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFDE8E8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                elevation: 0,
+              ),
+              onPressed: () {
+                _showCancelDialog(context, order);
+              },
+              child: Text(
+                'إلغاء الطلب',
+                style: tt.bodyLarge?.copyWith(
+                  color: const Color(0xFFDC3545),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16.sp,
+                ),
+              ),
+            ),
           ),
-        ),
-        SizedBox(width: 12.w),
-        Expanded(
-          child: Text(
-            order.customerName ?? '',
-            style: tt.titleMedium?.copyWith(
-              color: cs.primary,
-              fontWeight: FontWeight.w700,
-              fontSize: 16.sp,
+        if (order.status != OrderStatus.delivered) SizedBox(height: 12.h),
+        SizedBox(
+          width: double.infinity,
+          height: 56.h,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: cs.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              elevation: 0,
+            ),
+            onPressed: () {
+              context.push(AppRoutes.rateOrder, extra: order);
+            },
+            child: Text(
+              'تقييم المنتج',
+              style: tt.bodyLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 16.sp,
+              ),
             ),
           ),
         ),
@@ -249,79 +259,21 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
     );
   }
 
-  Widget _buildProductsSection(BuildContext context, OrderEntity order) {
-    final cs = context.colorScheme;
-    final tt = context.textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'المنتجات',
-          style: tt.titleMedium?.copyWith(
-            color: cs.primary,
-            fontWeight: FontWeight.w700,
-            fontSize: 16.sp,
-          ),
-        ),
-        SizedBox(height: 12.h),
-        SizedBox(
-          height: 100.h,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: order.productImagePaths.length,
-            separatorBuilder: (_, __) => SizedBox(width: 12.w),
-            itemBuilder: (context, i) {
-              final name = i < order.productNames.length
-                  ? order.productNames[i]
-                  : '';
-              return Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.r),
-                    child: AppImage(
-                      imageUrl: order.productImagePaths[i],
-                      width: 64.w,
-                      height: 64.h,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    name,
-                    style: tt.bodySmall?.copyWith(fontSize: 12.sp),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOrderActions(
+  Widget _buildDriverActions(
     BuildContext context,
     OrderDetailsState orderState,
     OrderEntity order,
   ) {
-    if (!_currentRole.isDriver) return const SizedBox.shrink();
-
     final tt = context.textTheme;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        children: [
-          if (_actionStatus == OrderStatus.pendingApproval)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 163.w,
-                  height: 60.h,
+    return Column(
+      children: [
+        if (_actionStatus == OrderStatus.pendingApproval)
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 56.h,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
@@ -344,10 +296,11 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                     ),
                   ),
                 ),
-                SizedBox(width: 16.w),
-                SizedBox(
-                  width: 163.w,
-                  height: 60.h,
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: SizedBox(
+                  height: 56.h,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -366,7 +319,7 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                         ? SizedBox(
                             width: 24.w,
                             height: 24.h,
-                            child: CircularProgressIndicator(
+                            child: const CircularProgressIndicator(
                               strokeWidth: 2,
                               color: Colors.white,
                             ),
@@ -381,37 +334,86 @@ class _PendingOrderDetailsPageState extends State<PendingOrderDetailsPage> {
                           ),
                   ),
                 ),
-              ],
-            ),
-          if (_actionStatus == OrderStatus.preparing)
-            SizedBox(
-              width: 343.w,
-              height: 60.h,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
+              ),
+            ],
+          ),
+        if (_actionStatus == OrderStatus.preparing)
+          SizedBox(
+            width: double.infinity,
+            height: 56.h,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                onPressed: () {
-                  context.read<OrdersBloc?>()?.add(
-                    OrderDeliveringStarted(
-                      order.copyWith(status: OrderStatus.onWay),
-                    ),
-                  );
-                  context.pop();
-                },
-                child: Text(
-                  'بدء التوصيل',
-                  style: tt.bodyMedium?.copyWith(
-                    color: Colors.white,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
+              ),
+              onPressed: () {
+                context.read<OrdersBloc?>()?.add(
+                  OrderDeliveringStarted(
+                    order.copyWith(status: OrderStatus.onWay),
                   ),
+                );
+                context.pop();
+              },
+              child: Text(
+                'بدء التوصيل',
+                style: tt.bodyMedium?.copyWith(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
+          ),
+      ],
+    );
+  }
+
+  void _showCancelDialog(BuildContext context, OrderEntity order) {
+    final tt = context.textTheme;
+    final cs = context.colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Text(
+          'إلغاء الطلب',
+          style: tt.titleLarge?.copyWith(
+            color: cs.error,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        content: Text(
+          'هل أنت متأكد من إلغاء هذا الطلب؟',
+          style: tt.bodyMedium?.copyWith(
+            color: cs.onSurface,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'لا',
+              style: tt.bodyMedium?.copyWith(color: cs.outline),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              context.pop();
+            },
+            child: Text(
+              'نعم، إلغاء',
+              style: tt.bodyMedium?.copyWith(
+                color: cs.error,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
     );

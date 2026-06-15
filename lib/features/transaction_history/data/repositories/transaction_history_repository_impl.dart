@@ -49,7 +49,7 @@ class TransactionHistoryRepositoryImpl implements TransactionHistoryRepository {
     try {
       final all = await remoteDataSource.getTransactionHistory();
       final tx = all.firstWhere(
-        (t) => t.id == transactionId,
+        (t) => t.id.toString() == transactionId,
         orElse: () => all.first,
       );
       return Right(tx.toEntity());

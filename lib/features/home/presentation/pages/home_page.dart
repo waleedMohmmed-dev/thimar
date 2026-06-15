@@ -4,6 +4,7 @@ import 'package:thimar/core/cache/cache_keys.dart';
 import 'package:thimar/core/cache/cache_service.dart';
 import 'package:thimar/core/injection/injection.dart';
 import 'package:thimar/core/models/user_role.dart';
+import 'package:thimar/core/services/tab_navigation_service.dart';
 import 'package:thimar/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:thimar/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:thimar/features/orders/presentation/pages/orders_page.dart';
@@ -69,7 +70,22 @@ class _HomeShellState extends State<_HomeShell> {
   @override
   void initState() {
     super.initState();
+    TabNavigationService.pendingTabIndex.addListener(_onPendingTab);
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadTabData(0));
+  }
+
+  @override
+  void dispose() {
+    TabNavigationService.pendingTabIndex.removeListener(_onPendingTab);
+    super.dispose();
+  }
+
+  void _onPendingTab() {
+    final tab = TabNavigationService.pendingTabIndex.value;
+    if (tab != null) {
+      TabNavigationService.pendingTabIndex.value = null;
+      _onTabTapped(tab);
+    }
   }
 
   void _onTabTapped(int index) {
@@ -104,33 +120,34 @@ class _HomeShellState extends State<_HomeShell> {
     }
   }
 
+  Widget _buildCurrentTab() {
+    switch (_currentIndex) {
+      case 0:
+        return widget.role.isDriver
+            ? const DriverHomeTab()
+            : const _ClientHomeTab();
+      case 1:
+        return OrdersPage(role: widget.role);
+      case 2:
+        return widget.role.isDriver
+            ? const NotificationsPage()
+            : const FavoritesPage();
+      case 3:
+        return widget.role.isDriver
+            ? const AccountPage()
+            : const NotificationsPage();
+      case 4:
+        return const AccountPage();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final scaffold = Scaffold(
       body: SafeArea(
-        child: IndexedStack(
-          key: ValueKey(_currentIndex),
-          index: _currentIndex,
-          children: [
-            // 0 - Home
-            widget.role.isDriver
-                ? const DriverHomeTab()
-                : const _ClientHomeTab(),
-            // 1 - Orders
-            OrdersPage(role: widget.role),
-            // 2 - Favorites (client) / Notifications (driver)
-            widget.role.isDriver
-                ? const NotificationsPage()
-                : const FavoritesPage(),
-            // 3 - Notifications (client) / Account (driver)
-            widget.role.isDriver
-                ? const AccountPage()
-                : const NotificationsPage(),
-            // 4 - Account (client only)
-            if (widget.role.isDriver) const SizedBox.shrink()
-            else const AccountPage(),
-          ],
-        ),
+        child: _buildCurrentTab(),
       ),
       bottomNavigationBar: AppNavBar(
         currentIndex: _currentIndex,

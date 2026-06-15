@@ -32,6 +32,7 @@ import 'package:thimar/features/orders/domain/usecases/store_order_use_case.dart
 import 'package:thimar/features/orders/domain/usecases/get_delivery_cost_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/get_all_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/get_order_products_use_case.dart';
+import 'package:thimar/features/orders/domain/usecases/delete_client_order_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/search_current_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/search_finished_orders_use_case.dart';
 import 'package:thimar/features/orders/domain/usecases/refuse_order_use_case.dart';
@@ -41,6 +42,14 @@ import 'package:thimar/features/orders/domain/usecases/start_delivering_order_us
 import 'package:thimar/features/orders/domain/usecases/finish_order_use_case.dart';
 import 'package:thimar/features/orders/presentation/bloc/client_orders_bloc.dart';
 import 'package:thimar/features/orders/presentation/bloc/orders_bloc.dart';
+import 'package:thimar/features/wallet/data/datasources/wallet_remote_data_source.dart';
+import 'package:thimar/features/wallet/data/repositories/wallet_repository_impl.dart';
+import 'package:thimar/features/wallet/domain/repositories/wallet_repository.dart';
+import 'package:thimar/features/wallet/domain/usecases/cashout_wallet_use_case.dart';
+import 'package:thimar/features/wallet/domain/usecases/charge_wallet_use_case.dart';
+import 'package:thimar/features/wallet/domain/usecases/get_wallet_balance_use_case.dart';
+import 'package:thimar/features/wallet/domain/usecases/get_wallet_transactions_use_case.dart';
+import 'package:thimar/features/wallet/presentation/bloc/wallet_bloc.dart';
 import 'package:thimar/features/profile/presentation/cubit/driver_profile_cubit.dart';
 import 'package:thimar/features/home/data/datasources/home_remote_data_source.dart';
 import 'package:thimar/features/home/data/repositories/home_repository_impl.dart';
@@ -68,11 +77,6 @@ import 'package:thimar/features/transaction_history/domain/usecases/get_transact
 import 'package:thimar/features/transaction_history/domain/usecases/get_transaction_history_by_type_use_case.dart';
 import 'package:thimar/features/transaction_history/domain/usecases/get_transaction_details_use_case.dart';
 import 'package:thimar/features/transaction_history/presentation/bloc/transaction_history_bloc.dart';
-import 'package:thimar/features/wallet/data/datasources/wallet_remote_data_source.dart';
-import 'package:thimar/features/wallet/data/repositories/wallet_repository_impl.dart';
-import 'package:thimar/features/wallet/domain/repositories/wallet_repository.dart';
-import 'package:thimar/features/wallet/domain/usecases/get_wallet_use_case.dart';
-import 'package:thimar/features/wallet/presentation/bloc/wallet_bloc.dart';
 import 'package:thimar/features/faq/data/datasources/faq_remote_data_source.dart';
 import 'package:thimar/features/faq/data/repositories/faq_repository_impl.dart';
 import 'package:thimar/features/faq/domain/repositories/faq_repository.dart';
@@ -111,6 +115,14 @@ import 'package:thimar/features/car_models/domain/repositories/car_models_reposi
 import 'package:thimar/features/car_models/domain/usecases/get_car_models_use_case.dart';
 import 'package:thimar/features/car_models/presentation/bloc/car_models_bloc.dart';
 
+import 'package:thimar/features/addresses/data/datasources/address_remote_data_source.dart';
+import 'package:thimar/features/addresses/data/repositories/address_repository_impl.dart';
+import 'package:thimar/features/addresses/domain/repositories/address_repository.dart';
+import 'package:thimar/features/addresses/domain/usecases/get_addresses_use_case.dart';
+import 'package:thimar/features/addresses/domain/usecases/add_address_use_case.dart';
+import 'package:thimar/features/addresses/domain/usecases/delete_address_use_case.dart';
+import 'package:thimar/features/addresses/domain/usecases/update_address_use_case.dart';
+import 'package:thimar/features/addresses/presentation/cubit/addresses_cubit.dart';
 import 'package:thimar/features/splash/presentation/bloc/splash_bloc.dart';
 
 final sl = GetIt.instance;
@@ -248,6 +260,9 @@ Future<void> initInjection() async {
   sl.registerLazySingleton<GetOrderProductsUseCase>(
     () => GetOrderProductsUseCase(sl<ClientOrdersRepository>()),
   );
+  sl.registerLazySingleton<DeleteClientOrderUseCase>(
+    () => DeleteClientOrderUseCase(sl<ClientOrdersRepository>()),
+  );
   sl.registerFactory<ClientOrdersBloc>(
     () => ClientOrdersBloc(
       getClientCurrentOrdersUseCase: sl<GetClientCurrentOrdersUseCase>(),
@@ -342,16 +357,30 @@ Future<void> initInjection() async {
 
   // --- Wallet Feature ---
   sl.registerLazySingleton<WalletRemoteDataSource>(
-    () => WalletRemoteDataSourceImpl(sl<ApiService>()),
+    () => WalletRemoteDataSource(sl<ApiService>()),
   );
   sl.registerLazySingleton<WalletRepository>(
     () => WalletRepositoryImpl(sl<WalletRemoteDataSource>()),
   );
-  sl.registerLazySingleton<GetWalletUseCase>(
-    () => GetWalletUseCase(sl<WalletRepository>()),
+  sl.registerLazySingleton<ChargeWalletUseCase>(
+    () => ChargeWalletUseCase(sl<WalletRepository>()),
+  );
+  sl.registerLazySingleton<GetWalletBalanceUseCase>(
+    () => GetWalletBalanceUseCase(sl<WalletRepository>()),
+  );
+  sl.registerLazySingleton<GetWalletTransactionsUseCase>(
+    () => GetWalletTransactionsUseCase(sl<WalletRepository>()),
+  );
+  sl.registerLazySingleton<CashoutWalletUseCase>(
+    () => CashoutWalletUseCase(sl<WalletRepository>()),
   );
   sl.registerFactory<WalletBloc>(
-    () => WalletBloc(getWalletUseCase: sl<GetWalletUseCase>()),
+    () => WalletBloc(
+      getWalletBalanceUseCase: sl<GetWalletBalanceUseCase>(),
+      getWalletTransactionsUseCase: sl<GetWalletTransactionsUseCase>(),
+      chargeWalletUseCase: sl<ChargeWalletUseCase>(),
+      cashoutWalletUseCase: sl<CashoutWalletUseCase>(),
+    ),
   );
 
   // --- FAQ Feature ---
@@ -475,7 +504,36 @@ Future<void> initInjection() async {
   );
 
   // --- Splash Feature ---
+  // --- Addresses Feature ---
+  sl.registerLazySingleton<AddressRemoteDataSource>(
+    () => AddressRemoteDataSourceImpl(sl<ApiService>()),
+  );
+  sl.registerLazySingleton<AddressRepository>(
+    () => AddressRepositoryImpl(sl<AddressRemoteDataSource>()),
+  );
+  sl.registerLazySingleton<GetAddressesUseCase>(
+    () => GetAddressesUseCase(sl<AddressRepository>()),
+  );
+  sl.registerLazySingleton<AddAddressUseCase>(
+    () => AddAddressUseCase(sl<AddressRepository>()),
+  );
+  sl.registerLazySingleton<DeleteAddressUseCase>(
+    () => DeleteAddressUseCase(sl<AddressRepository>()),
+  );
+  sl.registerLazySingleton<UpdateAddressUseCase>(
+    () => UpdateAddressUseCase(sl<AddressRepository>()),
+  );
+  sl.registerFactory<AddressesCubit>(
+    () => AddressesCubit(
+      getAddressesUseCase: sl<GetAddressesUseCase>(),
+      addAddressUseCase: sl<AddAddressUseCase>(),
+      updateAddressUseCase: sl<UpdateAddressUseCase>(),
+      deleteAddressUseCase: sl<DeleteAddressUseCase>(),
+    ),
+  );
+
   sl.registerFactory<SplashBloc>(
     () => SplashBloc(cacheService: sl<HiveCacheService>()),
   );
+
 }
